@@ -1,0 +1,1081 @@
+<title>Firm Dossier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a case-file register. Summary tables first, then one card per firm, split into one panel per target market. */
+:root{
+  --paper:#f3f5f4; --sheet:#ffffff; --ink:#15201c; --muted:#56635d; --rule:#d5ddd9;
+  --accent:#1d5c48; --accent-soft:#e1efe9; --flag:#9a3b1c; --flag-soft:#f8e7df; --warn:#7a5a00; --warn-soft:#f6efd6;
+  --pl:#5b3f8f; --pl-soft:#ece6f6; --lit:#2e8b57; --tx:#c2412d;
+  --f-display:"Libre Franklin",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --f-data:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#101614; --sheet:#171f1c; --ink:#e3ebe7; --muted:#9aaba3; --rule:#2c3833;
+  --accent:#7cc7aa; --accent-soft:#1d3129; --flag:#f0a07f; --flag-soft:#3a2219; --warn:#e7c766; --warn-soft:#332a10;
+  --pl:#c3aef0; --pl-soft:#2a2238; --lit:#5cc28a; --tx:#ec7a66; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#101614; --sheet:#171f1c; --ink:#e3ebe7; --muted:#9aaba3; --rule:#2c3833;
+  --accent:#7cc7aa; --accent-soft:#1d3129; --flag:#f0a07f; --flag-soft:#3a2219; --warn:#e7c766; --warn-soft:#332a10;
+  --pl:#c3aef0; --pl-soft:#2a2238; --lit:#5cc28a; --tx:#ec7a66; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:28px 64px}
+h1,h2,h3,h4{font-family:var(--f-display);text-wrap:balance;margin:0}
+a{color:var(--accent)} a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--f-data);font-variant-numeric:tabular-nums}
+header.top{display:grid;gap:10px;padding-bottom:18px;border-bottom:2px solid var(--ink)}
+.eyebrow{font-family:var(--f-data);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-size:clamp(28px,4.2vw,42px);font-weight:800;letter-spacing:-.01em}
+.lede{max-width:70ch;color:var(--muted);margin:0}
+.src{display:inline-block;font-family:var(--f-data);font-size:10.5px;letter-spacing:.04em;padding:1px 5px;border-radius:3px;border:1px solid var(--rule);color:var(--muted);vertical-align:1px;white-space:nowrap}
+.src.lb{border-color:var(--accent);color:var(--accent)}
+.src.fp{border-color:var(--ink);color:var(--ink)}
+.src.inf{border-color:var(--warn);color:var(--warn)}
+.src.tp{border-color:var(--flag);color:var(--flag)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13px;color:var(--muted)}
+section.block{margin-top:30px}
+details.block{margin-top:30px}
+details.block>summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+details.block>summary::-webkit-details-marker{display:none}
+details.block>summary::before{content:"▸";font-size:12px;color:var(--muted);transition:transform .15s;display:inline-block}
+details.block[open]>summary::before{transform:rotate(90deg)}
+details.block>summary h2{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:0}
+details.block>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tcount{font-family:var(--f-data);font-size:11px;color:var(--muted)}
+.tclear{font-family:var(--f-display);font-size:12px;font-weight:600;border:1px solid var(--rule);background:var(--sheet);color:var(--ink);padding:2px 9px;border-radius:999px;cursor:pointer}
+th.sortable{cursor:pointer;user-select:none}
+th.sortable:hover{color:var(--ink)}
+th.sortable .arr{display:inline-block;width:1em;color:var(--accent)}
+tr.filters th{padding:4px 6px 6px;background:var(--sheet)}
+tr.filters input{width:100%;min-width:70px;font:12px var(--f-data);border:1px solid var(--rule);border-radius:4px;padding:3px 6px;background:var(--paper);color:var(--ink)}
+section.block>h2{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:10px}
+.scroll{overflow-x:auto;background:var(--sheet);border:1px solid var(--rule);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:var(--f-display);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:700;white-space:nowrap}
+td.firm{font-family:var(--f-display);font-weight:700;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.controls{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);padding-block:10px;border-bottom:1px solid var(--rule);display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-top:26px}
+.seg{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.seg span{font-family:var(--f-data);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-right:4px}
+.seg button{font-family:var(--f-display);font-size:13px;font-weight:600;border:1px solid var(--rule);background:var(--sheet);color:var(--ink);padding:5px 11px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.seg select{font-family:var(--f-display);font-size:13px;font-weight:600;border:1px solid var(--rule);background:var(--sheet);color:var(--ink);padding:5px 8px;border-radius:999px;max-width:100%}
+.count{font-family:var(--f-data);font-size:12px;color:var(--ink);background:var(--accent-soft);padding:4px 10px;border-radius:999px;white-space:nowrap}
+a.flink{color:var(--ink);text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:3px}
+a.flink:hover{color:var(--accent);text-decoration-color:var(--accent)}
+.jump{display:flex;flex-wrap:wrap;gap:6px 12px;font-family:var(--f-display);font-size:13px;margin-top:12px}
+article.firm{margin-top:34px;background:var(--sheet);border:1px solid var(--rule);border-radius:8px;overflow:hidden}
+.fhead{padding:18px 18px 14px;display:grid;gap:10px;border-bottom:1px solid var(--rule)}
+.ftitle{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 14px}
+.ftitle h3{font-size:24px;font-weight:800}
+.heart{font-family:var(--f-display);font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;border:1.5px solid var(--ink);color:var(--ink)}
+.heart-s{font-family:var(--f-data);font-size:11px;font-weight:400;color:var(--muted);white-space:normal}
+.recent{font-family:var(--f-data);font-size:10.5px;padding:0 5px;border-radius:3px;background:var(--accent);color:var(--sheet)}
+.side{font-family:var(--f-data);font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:3px;background:var(--accent-soft);color:var(--accent)}
+.side.pl{background:var(--pl-soft);color:var(--pl)}
+.side.both{background:var(--warn-soft);color:var(--warn)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 18px}
+.fact{min-width:0}
+.fact dt{font-family:var(--f-data);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.fact dd{margin:2px 0 0;font-size:14px}
+.split{display:flex;height:8px;border-radius:2px;overflow:hidden;background:var(--rule);margin-top:5px;max-width:220px}
+.split i{display:block;background:var(--lit)} .split em{display:block;background:var(--tx)}
+.split.sm{height:6px;max-width:110px;margin-top:4px}
+.key{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:4px}
+.gbtn{font-family:var(--f-display);font-size:13px;font-weight:600;border:1px solid var(--ink);background:var(--sheet);color:var(--ink);padding:4px 11px;border-radius:999px;cursor:pointer}
+dialog#gloss{border:1px solid var(--rule);border-radius:10px;padding:0;background:var(--sheet);color:var(--ink);width:min(640px,calc(100vw - 32px));max-height:min(80vh,720px)}
+dialog#gloss::backdrop{background:rgba(10,16,14,.45)}
+.ghead{position:sticky;top:0;background:var(--sheet);display:flex;gap:10px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--rule)}
+.ghead h2{font-size:18px;font-weight:800;margin:0;flex:1}
+.ghead input{font:13px var(--f-data);border:1px solid var(--rule);border-radius:4px;padding:4px 8px;background:var(--paper);color:var(--ink);width:150px}
+.gbody{padding:4px 16px 16px}
+.gbody h3{font-size:11px;font-family:var(--f-data);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:14px 0 4px}
+.gbody dl{display:grid;grid-template-columns:minmax(90px,auto) 1fr;gap:4px 14px;margin:0;font-size:14px}
+.gbody dt{font-family:var(--f-data);font-weight:500;font-size:13px}
+.gbody dd{margin:0}
+.buzz{display:flex;flex-wrap:wrap;gap:6px}
+.buzz q{font-size:13px;background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:2px 8px;quotes:"\201C" "\201D"}
+.programs{background:var(--warn-soft);border-radius:6px;padding:10px 12px;font-size:14px}
+.programs ul{margin:4px 0 0;padding-left:18px}
+.offices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.office{padding:14px 16px 18px;border-right:1px solid var(--rule);min-width:0;display:flex;flex-direction:column;gap:10px}
+.office:last-child{border-right:0}
+.office h4{font-size:15px;font-weight:800;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.office h4 .mono{font-size:12px;font-weight:400;color:var(--muted)}
+.office.none{color:var(--muted);font-style:italic}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:13px}
+.kv b{font-family:var(--f-data);font-weight:500;font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding-top:2px}
+.kv span{min-width:0}
+.lbl{font-family:var(--f-data);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:3px}
+.pts{margin:0;padding-left:17px;font-size:14px;display:grid;gap:5px}
+.ask{background:var(--accent-soft);border-radius:4px;padding:8px 10px;font-size:14px}
+.ask::before{content:"Ask · ";font-family:var(--f-data);font-size:11px;text-transform:uppercase;color:var(--accent);letter-spacing:.06em}
+.alum{font-size:13px;display:grid;gap:3px}
+.alum div{display:flex;gap:6px;flex-wrap:wrap}
+.alum .n{font-family:var(--f-display);font-weight:600}
+.alum .t{color:var(--muted)}
+.caution{font-size:13px;color:var(--flag)}
+.standing{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;border-top:1px dashed var(--rule);padding-top:8px}
+.standing span{min-width:0}
+.standing b{font-family:var(--f-data);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-right:5px}
+.you{display:grid;gap:7px;font-size:13px}
+.you>div{display:grid;gap:1px;padding:6px 8px;border-radius:4px;background:var(--accent-soft)}
+.you .row1{display:flex;flex-wrap:wrap;gap:4px 7px;align-items:baseline}
+.you .n{font-family:var(--f-display);font-weight:700}
+.you .t{color:var(--muted)}
+.you .h{font-size:13px}
+.rel{font-family:var(--f-data);font-size:10px;letter-spacing:.05em;text-transform:uppercase;padding:0 5px;border-radius:3px;border:1px solid var(--accent);color:var(--accent);white-space:nowrap}
+.rel.met,.rel.worked{background:var(--accent);color:var(--sheet)}
+.rel.list{border-color:var(--muted);color:var(--muted)}
+.cd{font-family:var(--f-data);font-size:11px;padding:0 5px;border-radius:3px;background:var(--ink);color:var(--paper);white-space:nowrap}
+.cd:empty{display:none}
+.empty{margin-top:30px;color:var(--muted);font-style:italic}
+footer{margin-top:40px;font-size:13px;color:var(--muted);display:grid;gap:8px;max-width:80ch}
+@media (max-width:860px){.offices{grid-template-columns:1fr!important}.office{border-right:0;border-bottom:1px solid var(--rule)}.office:last-child{border-bottom:0}}
+@media (prefers-reduced-motion:no-preference){article.firm{transition:opacity .15s}}
+</style>
+
+<div class="wrap">
+<header class="top">
+  <div class="eyebrow" id="eyebrow"></div>
+  <h1 id="ttl"></h1>
+  <p class="lede" id="lede"></p>
+  <div class="legend" id="legSrc"></div>
+  <div class="legend" id="legRel"></div>
+</header>
+
+<details class="block" id="timingBox" open>
+  <summary><h2 id="timingH"></h2><span class="tcount" data-for="timing"></span><button type="button" class="tclear" data-for="timing" hidden>Clear sort &amp; filters</button></summary>
+  <div class="scroll"><table id="timing"><thead><tr><th>Firm</th><th>Hires 1Ls?</th><th>Application</th><th>Anticipated window</th><th>1L money tied to 2L</th></tr></thead><tbody></tbody></table></div>
+</details>
+
+<details class="block" id="sizeBox" open>
+  <summary><h2 id="sizeH"></h2><span class="tcount" data-for="size"></span><button type="button" class="tclear" data-for="size" hidden>Clear sort &amp; filters</button></summary>
+  <div class="scroll"><table id="size"><thead><tr></tr></thead><tbody></tbody></table></div>
+</details>
+
+<div class="controls" role="toolbar" aria-label="Filters">
+  <button type="button" class="gbtn" data-gloss>Glossary</button>
+  <div class="seg" id="mkt"><span>Market</span></div>
+  <div class="seg" id="sidef"><span>Side</span>
+    <button type="button" data-v="all" aria-pressed="true">All</button>
+    <button type="button" data-v="def" aria-pressed="false">Defense</button>
+    <button type="button" data-v="pl" aria-pressed="false">Plaintiff</button>
+  </div>
+  <div class="seg" id="heartf"><span>Home</span></div>
+  <div class="seg"><span>Alumni</span>
+    <button type="button" id="recentBtn" aria-pressed="false">2020+ grads only</button>
+  </div>
+  <div class="seg"><span>People</span>
+    <button type="button" id="mineBtn" aria-pressed="false">Firms with your people</button>
+  </div>
+  <div class="seg"><span>Sort</span>
+    <select id="sortSel" aria-label="Sort firms">
+      <option value="default">Dossier order</option>
+      <option value="az">Name</option>
+      <option value="vault">Vault rank</option>
+      <option value="size">Size (US, or the selected market's office)</option>
+      <option value="class">2L class (US, or selected market)</option>
+      <option value="cls">School alumni</option>
+      <option value="lit">Litigation share</option>
+      <option value="mine">Your people</option>
+    </select>
+    <button type="button" id="dirBtn" aria-label="Reverse sort order"></button>
+  </div>
+  <span class="count" id="fitCount" role="status" aria-live="polite"></span>
+</div>
+<nav class="jump" id="jump" aria-label="Jump to firm"></nav>
+
+<main id="firms"></main>
+
+<section class="block" id="othersBox">
+  <h2>Other firms that surfaced in research</h2>
+  <div class="scroll"><table id="others"><thead><tr><th>Firm</th><th>Why it came up</th></tr></thead><tbody></tbody></table></div>
+</section>
+
+<footer id="foot"></footer>
+</div>
+
+<dialog id="gloss" aria-labelledby="glossTitle">
+  <div class="ghead"><h2 id="glossTitle">Glossary</h2><input type="search" id="glossQ" placeholder="Search" aria-label="Search glossary"><button type="button" class="gbtn" id="glossClose">Close</button></div>
+  <div class="gbody" id="glossBody"></div>
+</dialog>
+
+<script>
+/* =====================================================================
+   FIRM DOSSIER TEMPLATE
+   Everything above this script is fixed layout. Everything a user sees
+   comes from the DATA section below. Edit only CONFIG, FIRMS, OTHERS,
+   GLOSSARY and FOOTER. The ENGINE section further down should not need
+   changes.
+   ===================================================================== */
+
+/* ---------- helpers usable inside data strings ---------- */
+const L  = (href, text) => `<a href="${href}" target="_blank" rel="noopener">${text}</a>`;   // linked source
+const CD = d => `<span class="cd" data-d="${d}"></span>`;                                       // countdown to YYYY-MM-DD
+const S  = t => `<span class="src ${t==='LB'?'lb':t==='FP'?'fp':t==='INF'?'inf':t==='3P'?'tp':''}">${t}</span>`; // source tag
+
+/* ======================= DATA: CONFIG ======================= */
+const CONFIG = {
+  owner: "Brooke Eli J Ferrell",                          // shown in the lede
+  title: "Firm Dossier",                        // h1 and <title>
+  eyebrow: "Class of 2029 · Litigation &amp; appellate · NYC + D.C.",   // small line above the title
+  classLabel: "Class of 2029",                  // heading of each firm's program box and the timing table
+  checked: "16 Oct 2026",                                  // date firm pages were last checked, e.g. "5 Oct 2026"
+  lbYear: "2L 2027",                            // label for the Look Book hiring numbers (the class hired during the user's 1L year)
+  vaultLabel: "Vault",                      // label for the Vault rank column
+  school: {short:"CLS", name:"Columbia Law"},   // used for the alumni column and labels
+  // 1–4 target markets: [key, label]. Keys are used in each firm's offices{} and lb{}.
+  markets: [["ny","New York"],["dc","Washington, DC"]],
+  // Groups for the "Home" filter: [key, label]. Each firm's home[1] must be one of these keys.
+  homes: [["ny","New York"],["dc","DC"],["west","West Coast"],["other","Elsewhere"]],
+  showSide: true,                               // show the Defense / Plaintiff filter
+  sources: [                                    // legend for source tags; drop any the user doesn't have
+    ["LB","Columbia OPSC Look Book"],
+    ["WEB","firm site or press, linked"],
+    ["MY","Your own notes"],
+    ["AN","Antoine's notes (conversations he had, not your contacts)"],
+    ["WWW","Columbia Who Worked Where: class of 2026 2Ls, summer 2025 (counts only)"],
+    ["3P","third-party only, confirm"],
+    ["INF","inferred from last cycle"]
+  ],
+  // relationship tags for "Your people": key -> [label, legend text]
+  rel: {
+    worked:["Worked with","saw your work"],
+    met:["Met","you met them"],
+    via:["Via a friend","a friend met them"],
+    list:["Outreach","on your list, cold"]
+  }
+};
+
+/* ======================= DATA: FIRMS =======================
+ One object per firm, in the order the user wants them shown. Schema:
+ {
+  id: "short-id",                       // unique, lowercase, used for anchors
+  name: "Firm Name",
+  side: "def" | "pl" | "both",          // defense, plaintiff, both
+  home: ["New York · litigation", "ny"],// [label after "Home:", CONFIG.homes key]
+  added: "29 Sept",                     // optional badge
+  facts: {
+    us: "1,234 US lawyers",             // headline; starts with a number so sorting by size works
+    lit: 500, corp: 400,                // practice-tag counts (null if unknown) -> green/red bar
+    cls: "12 (3 in NY)",                // school alumni; starts with a number for sorting
+    program: "…", assign: "…"           // summer program shape; how assignments work
+  },
+  buzz: ["phrase the firm uses", …],    // 3–6 short quotes from firm/recruiting material
+  programs: ["1L-relevant program, with dates and amount " + S('WEB'), …],
+  timing: {hires:"Yes " + S('LB'), app:"Separate 1L and 2L", window:"Opens 1 Nov 2026 " + CD("2026-11-01"), money:"$25k stipend"},
+  lb: {total: 40, ny: 20, dc: 5} | null,// Look Book hires for CONFIG.lbYear; null if not in the Look Book
+  std: {                                // standing line; every key optional
+    v: 12,                              // Vault rank (number)
+    vp: "#1 White Collar",              // Vault practice ranks
+    ch: "Antitrust B1 · Appellate B2",  // Chambers bands from the tables named in FOOTER
+    notes: [["2025 orders","…"]],       // any other labelled one-liners
+    fp: "AmLaw 30 · PPP $3.2m · two-tier · 292 P / 293 C / 583 A (US)"
+  },
+  offices: {                            // one key per CONFIG.markets key; null = no office there
+    ny: {
+      hc: "210 · P60 C30 A120",         // headcount, starts with a number
+      pa: "Lit 90 · Antitrust 20",      // practice mix
+      rec: "Recruiter name, title",     // or "None listed"
+      pts: ["Talking point with " + L("https://…","source"), …],  // 2–4 recent, linked
+      ask: "One good question to ask a lawyer here",
+      you: [["Name", "met|worked|via|list", "Title, practice", "How the user knows them / hook"]],
+      alum: [["Jane Doe '22", "Associate", "Antitrust"]]          // school alumni; '22 = class year
+    },
+    dc: null
+  }
+ }
+*/
+
+const CH={app:'https://chambers.com/legal-rankings/appellate-law-usa-nationwide-5:858:12788:1',ny:'https://chambers.com/legal-rankings/litigation-general-commercial-the-elite-new-york-5:1451:12806:1',hr:'https://chambers.com/legal-rankings/litigation-general-commercial-highly-regarded-new-york-5:1147:12806:1?l=en-GB'};
+const GR=["Grades","Anecdotal GPA-cutoff reports, dated "+S('3P')+" "+L('https://www.top-law-schools.com/forums/viewtopic.php?f=23&t=309563','TLS thread')];
+const NOCK="Not verified yet";
+const T0={hires:NOCK,app:"—",window:NOCK,money:"—"};
+const off=(pts,ask,alum)=>({hc:"—",pa:"—",rec:"—",pts,ask,you:[],alum});
+const Q1="How soon do juniors draft motions or brief sections rather than only research?";
+const FIRMS=[
+{id:"gibson",name:"Gibson Dunn",side:"def",home:["Los Angeles · appellate, litigation","west"],
+ facts:{us:"—",lit:null,corp:null,cls:"—",program:"Summer program, 2L; some offices also hire 1Ls "+S('WEB'),assign:"—"},
+ buzz:[],programs:["1L Summer IP Fellowship (IP litigation only); interviews selected Jan 2027 "+L('https://www.gibsondunn.com/wp-content/uploads/2026/09/Recruiting-IP-Fellowship-Flyer-0926-V3.pdf','flyer')+" "+S('WEB')],
+ timing:{hires:"NY/DC: not for 1L summer last cycle; LA and Houston are hiring 1Ls for 2027 "+S('WEB'),app:"Careers page",window:"NY/DC not posted; pages still show last cycle (3 Nov–6 Feb) "+L('https://www.gibsondunn.com/careers/law-students/how-to-apply-to-gibson-dunn-new-york/','NY')+" "+S('WEB'),money:"—"},
+ lb:null,std:{ch:"Appellate B1 · NY Lit B1",notes:[GR]},
+ offices:{ny:off(["Chambers 2026: Band 1 nationwide in appellate and Band 1 in NY commercial litigation "+L(CH.app,'appellate')+" · "+L(CH.ny,'NY lit')+" "+S('WEB'),"NY appellate/trial associates include Columbia alumni who clerked on the 2d Cir. "+L('https://www.gibsondunn.com/lawyer/christos-lefteri-j/','bio')+" "+S('WEB')],Q1,[["Lefteri Christos '20","Associate","Appellate; trials"],["Cesar Garcia '23","Associate","Litigation; appellate"]]),
+  dc:off(["Miguel Estrada is Chambers Band 2 in nationwide appellate "+L('https://chambers.com/lawyer/miguel-a-estrada-usa-5:194556','profile')+" "+S('WEB'),"D.C. appellate associates have clerked on the D.C. Cir. and 3d Cir. "+L('https://www.gibsondunn.com/lawyer/ben-dor-lavi/','bio')+" "+S('WEB')],Q1,[["Abby Dugan '16","Attorney","White collar"]])}},
+{id:"latham",name:"Latham & Watkins",side:"def",home:["Global · litigation & trial","other"],
+ facts:{us:"—",lit:null,corp:null,cls:"—",program:"Unassigned summer program "+S('WEB'),assign:"Summer associates are unassigned and choose their work "+S('WEB')},
+ buzz:["Unassigned Program","a genuine glimpse into the life of a junior associate"],programs:[],
+ timing:{hires:"1L program in Texas only; none for NY/DC "+S('WEB'),app:"2L (2028) program",window:"Opens 1 Nov 2026, closes 29 Jan 2027 "+CD("2026-11-01")+" "+L('https://www.lwcareers.com/en/beginning-your-legal-career/united-states/summer-associates','page')+" "+S('WEB'),money:"—"},
+ lb:null,std:{ch:"Appellate B1 · NY Lit B1",notes:[GR]},
+ offices:{ny:off(["Chambers 2026: Band 1 nationwide appellate and Band 1 NY commercial litigation "+L(CH.app,'appellate')+" · "+L(CH.ny,'NY lit')+" "+S('WEB'),"NY associates include Columbia alumni with trial and appellate work "+L('https://www.lw.com/en/people/connor-clerkin','bio')+" "+S('WEB')],Q1,[["Connor Clerkin '21","Associate","Securities litigation; appeals"]]),
+  dc:off(["Gregory Garre (Band 1) and Roman Martinez (Band 2) are Chambers-ranked appellate lawyers "+L('https://chambers.com/department/latham-watkins-llp-appellate-law-usa-5:858:12788:1:3689','Chambers')+" "+S('WEB'),"D.C. associate and Columbia alumna clerked on the 1st Cir. "+L('https://www.lw.com/en/people/ruth-hirsch','bio')+" "+S('WEB')],Q1,[["Ruth Hirsch '21","Associate","Litigation"]])}},
+{id:"wilmer",name:"WilmerHale",side:"def",home:["Boston · DC","dc"],
+ facts:{us:"—",lit:null,corp:null,cls:"—",program:"—",assign:"—"},buzz:[],programs:[],timing:T0,lb:null,std:{ch:"Appellate B2 · NY Lit B2"},
+ offices:{ny:off(["Chambers 2026: Band 2 in nationwide appellate and Band 2 in NY commercial litigation "+L(CH.app,'appellate')+" · "+L(CH.ny,'NY lit')+" "+S('WEB'),"NY associates include Columbia alumni who clerked on the 10th Cir. and SDNY "+L('https://www.wilmerhale.com/en/people/samuel-weitzman','bio')+" "+S('WEB')],Q1,[["Samuel Weitzman '21","Associate","Complex litigation"],["Gideon Hanft '18","Associate/counsel","Complex litigation"]]),
+  dc:off(["Seth Waxman is a Chambers Star Individual in appellate "+L('https://chambers.com/department/wilmerhale-appellate-law-usa-5:858:12788:1','Chambers')+" "+S('WEB'),"Recent Columbia grad worked on D.C. Cir. briefs as a summer associate "+L('https://www.wilmerhale.com/en/people/jane-recker','bio')+" "+S('WEB')],Q1,[["Jane Recker '25","Associate","Complex litigation"]])}},
+{id:"pw",name:"Paul, Weiss",side:"def",home:["New York · litigation","ny"],
+ facts:{us:"—",lit:null,corp:null,cls:"—",program:"—",assign:"—"},buzz:[],programs:[],timing:T0,lb:null,std:{ch:"Appellate B4 · NY Lit B1"},
+ offices:{ny:off(["Chambers 2026: Band 1 in NY commercial litigation "+L(CH.ny,'table')+" "+S('WEB'),"NY litigation associates include Columbia alumni who clerked on the 11th Cir. "+L('https://www.paulweiss.com/professionals/associates/benjamin-apfel','bio')+" "+S('WEB')],Q1,[["Benjamin Apfel","Associate","Litigation"],["Elon Swartz","Associate","Litigation"]]),
+  dc:off(["Kannon Shanmugam is a Chambers Star Individual in appellate "+L('https://chambers.com/department/paul-weiss-rifkind-wharton-garrison-llp-appellate-law-usa-5:858:12788:1:3642','Chambers')+" "+S('WEB')],Q1,[])}},
+{id:"skadden",name:"Skadden",side:"def",home:["New York · litigation","ny"],
+ facts:{us:"—",lit:null,corp:null,cls:"—",program:"Summer program; 1L only in select offices "+S('WEB'),assign:"—"},
+ buzz:["a direct pathway to a career at Skadden"],programs:[],
+ timing:{hires:"1L: Chicago, Houston, Palo Alto, Toronto; NY and DC are 2L only "+S('WEB'),app:"1L and 2L open together",window:"Opens Mon 2 Nov 2026 "+CD("2026-11-02")+" "+L('https://www.skadden.com/careers/attorneys/law-students-and-graduates/united-states','page')+" "+S('WEB'),money:"—"},
+ lb:null,std:{ch:"Appellate B4 · NY Lit B1"},
+ offices:{ny:off(["Dedicated Supreme Court & Appellate group; one Columbia alumnus won best brief at Stone Moot Court "+L('https://skadden.com/professionals/p/patashnik-jeremy','bio')+" "+S('WEB'),"Chambers 2026: Band 1 in NY commercial litigation "+L(CH.ny,'table')+" "+S('WEB')],Q1,[["Jeremy Patashnik '19","Associate","Supreme Court & appellate"],["Jacob Rosenberg '23","Associate","Supreme Court & appellate"]]),
+  dc:off(["Shay Dvoretzky is Chambers Band 2 in nationwide appellate "+L('https://chambers.com/department/skadden-arps-slate-meagher-flom-llp-affiliates-appellate-law-usa-5:858:12788:1:3656','Chambers')+" "+S('WEB'),"D.C. appellate associate clerked for Justice Sotomayor "+L('https://www.skadden.com/-/media/files/professionals/m/marcus-steven/marcus_steven.pdf','bio')+" "+S('WEB')],Q1,[])}},
+{id:"sc",name:"Sullivan & Cromwell",side:"def",home:["New York · litigation","ny"],
+ facts:{us:"—",lit:null,corp:null,cls:"—",program:"Generalist summer program "+S('WEB'),assign:"Summer associates try as many assignment types as they like "+S('WEB')},
+ buzz:["generalist model","replicate, as closely as possible, the experience of being an S&C lawyer"],programs:[],
+ timing:{hires:"1L program not confirmed "+S('3P'),app:"2L posting seen for summer 2027",window:"Not posted for your cycle",money:"$9,375 semi-monthly (2027 summer) "+L('https://florecruit.com/v2/app/sullcrom/jobs/MjEwMDl-azFCbmdlRzcyamlnUVpNclpnb0RObE9DaUFIR1Ny/apply','posting')+" "+S('WEB')},
+ lb:null,std:{ch:"NY Lit B1 (appellate: Wall B1)"},
+ offices:{ny:off(["Yaira Dubin co-heads the Supreme Court & Appellate practice "+L('https://www.sullcrom.com/Lawyers/Yaira-Dubin','bio')+" "+S('WEB'),"Chambers 2026: Band 1 in NY commercial litigation "+L(CH.ny,'table')+" "+S('WEB')],Q1,[["Michael Lemanski '19","Associate","Litigation"],["Alexandra Bodo '19","Associate","Litigation"]]),
+  dc:off(["Jeffrey Wall is Chambers Band 1 in nationwide appellate "+L(CH.app,'table')+" "+S('WEB')],Q1,[["Samuel Greene '25","Associate","Litigation"]])}},
+{id:"jenner",name:"Jenner & Block",side:"def",home:["Chicago","other"],
+ facts:{us:"—",lit:null,corp:null,cls:"—",program:"—",assign:"—"},buzz:[],programs:[],timing:T0,lb:null,std:{ch:"Appellate B3 · NY Lit (Highly Regarded) B1"},
+ offices:{ny:off(["Chambers 2026: Highly Regarded Band 1 in NY commercial litigation "+L(CH.hr,'table')+" "+S('WEB'),"NY associate and Columbia alumna clerked on the Alaska Supreme Court and D. Minn. "+L('https://www.jenner.com/print/v2/content/46669/idun-b-klakegg.pdf','bio')+" "+S('WEB')],Q1,[["Idun Klakegg '20","Associate","Litigation"]]),
+  dc:off(["Ian Gershengorn and Adam Unikowsky are Chambers Band 2 in nationwide appellate "+L('https://www.jenner.com/en/news-insights/recognition/2026-chambers-usa-recognizes-40-practice-areas-86-lawyers-from-jenner-and-block','Jenner')+" "+S('WEB')],Q1,[])}},
+{id:"wc",name:"Williams & Connolly",side:"both",home:["Washington, DC","dc"],
+ facts:{us:"—",lit:null,corp:null,cls:"—",program:"—",assign:"—"},buzz:[],programs:[],timing:T0,lb:null,
+ std:{ch:"Appellate B1",notes:[["Selectivity","Ranked 2nd most selective US firm "+S('3P')+" "+L('https://en.wikipedia.org/wiki/Williams_%26_Connolly','Wikipedia')]]},
+ offices:{ny:null,dc:off(["Lisa Blatt is a Chambers Star Individual in appellate "+L('https://chambers.com/department/williams-connolly-llp-appellate-law-usa-5:858:12788:1:3722','Chambers')+" "+S('WEB'),"Columbia alumnus argued a 2d Cir. appeal after clerking for Justice Alito "+L('https://wc.com/Attorneys/Richard-S-Cleary','bio')+" "+S('WEB')],Q1,[["Richard Cleary","Attorney","Litigation"]])}}
+];
+
+
+/* Firms considered but not added: [name, one-line reason] */
+const OTHERS = [["Cravath","Pass 2"],["Davis Polk","Pass 2"],["Sidley Austin","Pass 2"],["Quinn Emanuel","Pass 2"],["Susman Godfrey","Pass 2; clerkship required"],["Kellogg Hansen","Pass 2"],["MoloLamken","Pass 2; pay unconfirmed"],["Holwell Shuster & Goldberg","Pass 2; 1L applications open 30 Nov 2026"],["Kirkland & Ellis","Pass 2"],["Mayer Brown","Pass 2"],["Hogan Lovells Cadwalader","Pass 2"],["Orrick","Pass 2"],["Arnold & Porter","Pass 2"],["Cleary Gottlieb","Pass 2"],["Simpson Thacher","Pass 2"],["Selendy Gay","Pass 2"],["Jones Day","Not found on Cravath-scale lists"],["Clement & Murphy","Not found on Cravath-scale lists"],["Munger Tolles","No NYC/DC office confirmed"]];
+
+/* Glossary: [section, [[term, definition], …]]. Add every abbreviation the page uses. */
+const BL='https://news.bloomberglaw.com/business-and-practice/';
+const GET=id=>FIRMS.find(f=>f.id===id);
+// corrections: 2026 lateral moves postdate Chambers 2026
+GET('pw').offices.dc.pts=["Willy Jay (ex-Goodwin) joined in Aug 2026 to lead the SCOTUS practice; Kannon Shanmugam left for Davis Polk "+L(BL+'paul-weiss-nabs-goodwins-william-jay-to-lead-scotus-practice','Bloomberg Law')+" "+S('WEB')];
+GET('sc').offices.ny.pts=["Chambers 2026: Band 1 in NY commercial litigation "+L(CH.ny,'table')+" "+S('WEB'),"Jonathan Ellis and Michael Huston join to lead the Supreme Court & Appellate practice in D.C. (announced 5 Oct 2026) "+L(BL+'sullivan-cromwell-nabs-ashurst-mcguirewoods-appellate-chairs','Bloomberg Law')+" "+S('WEB')];
+GET('sc').offices.dc.pts=["Jeffrey Wall left for Gibson Dunn in April 2026; Ellis and Huston now lead the D.C. appellate group "+L(BL+'sullivan-cromwell-nabs-ashurst-mcguirewoods-appellate-chairs','Bloomberg Law')+" "+S('WEB')];
+GET('sc').std.ch="NY Lit B1";
+GET('gibson').offices.dc.pts.push("Jeffrey Wall, Yaira Dubin and two other appellate lawyers joined from S&C in April 2026 "+L(BL+'sullivan-cromwell-nabs-ashurst-mcguirewoods-appellate-chairs','Bloomberg Law')+" "+S('WEB'));
+const AP=(id,t)=>{const f=GET(id); f.std.notes=(f.std.notes||[]).concat([["Appellate group",t]]);};
+const CA=b=>"Yes: Chambers Band "+b+" nationwide "+L(CH.app,'table')+" "+S('WEB');
+const NC="Not confirmed: no group found in my sources";
+AP('gibson',CA(1));AP('latham',CA(1));AP('wilmer',CA(2));AP('jenner',CA(3));AP('wc',CA(1));
+AP('pw',CA(4)+"; new SCOTUS lead Aug 2026");
+AP('skadden',"Yes: Supreme Court & Appellate Litigation group "+L('https://skadden.com/professionals/p/patashnik-jeremy','bio')+" "+S('WEB'));
+AP('sc',"Yes: Supreme Court & Appellate practice, new D.C. leads Oct 2026 "+L(BL+'sullivan-cromwell-nabs-ashurst-mcguirewoods-appellate-chairs','Bloomberg Law')+" "+S('WEB'));
+const DP=L('https://www.davispolk.com/supreme-court-appellate','firm page'), L5=L('https://www.legal500.com/c/united-states/dispute-resolution/appellate-courts-of-appeals-appellate-supreme-courts-states-and-federal','Legal 500');
+// [id,name,side,homeLabel,homeKey,chambers,linkKey,appellate,hasNY,hasDC]
+[["cravath","Cravath","def","New York · litigation","ny","NY Lit B1","ny","Not confirmed: ranked by Legal 500 (appellate, tier 4) "+L5+" "+S('WEB')+"; no standalone group found",1,1],
+["davis","Davis Polk","def","New York · litigation","ny","NY Lit B2","ny","Yes: Supreme Court & Appellate practice led from D.C. by Kannon Shanmugam (joined 2026) "+DP+" "+S('WEB'),1,1],
+["sidley","Sidley Austin","def","Chicago","other","Appellate B2 · NY Lit B4","app",CA(2),1,1],
+["quinn","Quinn Emanuel","both","Los Angeles · trial","west","NY Lit B1","ny","Yes: national appellate practice; co-chair Christopher Michel left for Kirkland in June 2026 "+L(BL+'sullivan-cromwell-nabs-ashurst-mcguirewoods-appellate-chairs','Bloomberg Law')+" "+S('WEB'),1,1],
+["susman","Susman Godfrey","pl","Houston · plaintiff trial","other","NY Lit B1","ny",NC,1,0],
+["kellogg","Kellogg Hansen","both","Washington, DC","dc","Appellate B4","app",CA(4),0,1],
+["molo","MoloLamken","both","New York · DC","ny","NY Lit (Highly Regarded) B2","hr","Yes: Jeffrey Lamken is Chambers Band 1 in appellate; Legal 500 appellate tier 2 "+L5+" "+S('WEB'),1,1],
+["hsg","Holwell Shuster & Goldberg","both","New York · trial","ny","NY Lit B4","ny",NC,1,0],
+["kirkland","Kirkland & Ellis","def","Chicago","other","NY Lit B1","ny","Yes: Appellate group (Law360 Appellate Group of the Year, 2021) "+L('https://www.law360.com/articles/1446743/appellate-group-of-the-year-kirkland','Law360')+" "+S('WEB'),1,1],
+["mayer","Mayer Brown","def","Chicago","other","Appellate B3 · NY Lit (HR) B1","app",CA(3),1,1],
+["hogan","Hogan Lovells Cadwalader","def","Washington, DC","dc","Appellate B2 · NY Lit (HR) B4","app",CA(2),1,1],
+["orrick","Orrick","def","San Francisco","west","Appellate B2 · NY Lit (HR) B1","app",CA(2),1,1],
+["arnold","Arnold & Porter","def","Washington, DC","dc","Appellate B4 · NY Lit (HR) B1","app",CA(4),1,1],
+["cleary","Cleary Gottlieb","def","New York · litigation","ny","NY Lit B2","ny","Yes: Appellate Litigation practice "+L('https://www.clearygottlieb.com/practice-landing/appellate-litigation','firm page')+" "+S('WEB'),1,1],
+["simpson","Simpson Thacher","def","New York · litigation","ny","NY Lit B2","ny","Not confirmed: ranked by Legal 500 (appellate, tier 4) "+L5+" "+S('WEB')+"; no standalone group found",1,1],
+["selendy","Selendy Gay","pl","New York · plaintiff","ny","NY Lit (Highly Regarded) B2","hr",NC,1,1],
+["weil","Weil Gotshal","def","New York · litigation","ny","Appellate B4 · NY Lit B2","app",CA(4),1,1],
+["debevoise","Debevoise & Plimpton","def","New York · white collar","ny","NY Lit B2","ny",NC,1,1],
+["whitecase","White & Case","def","New York · litigation","ny","NY Lit B2","ny",NC,1,1],
+["mofo","Morrison Foerster","def","San Francisco","west","Appellate B3 · NY Lit B4","app","Yes: Chambers Band 3 nationwide "+L(CH.app,'table')+"; Legal 500 appellate tier 2 "+L5+" "+S('WEB'),1,1]
+].forEach(([id,name,side,hl,hk,ch,lk,ap,ny,dc])=>{
+ const o=()=>off(["Chambers 2026: "+ch+" "+L(CH[lk],'table')+" "+S('WEB')],Q1,[]);
+ FIRMS.push({id,name,side,home:[hl,hk],facts:{us:"—",lit:null,corp:null,cls:"—",program:"—",assign:"—"},buzz:[],programs:[],timing:T0,lb:null,std:{ch,notes:[["Appellate group",ap]]},offices:{ny:ny?o():null,dc:dc?o():null}});});
+GET('selendy').offices.dc.pts=["D.C. office not confirmed in my sources; check the firm site"];
+GET('hsg').timing={hires:"Yes: 1L Summer Associate program "+S('WEB'),app:"1L Summer Associate",window:"Application opens 30 Nov 2026 "+CD("2026-11-30")+" "+L('https://www.hsgllp.com/careers-summer','page')+" "+S('WEB'),money:"—"};
+
+[["milbank","Milbank","def","New York · litigation","ny","NY Lit B3","ny",NC],
+["wachtell","Wachtell Lipton","def","New York · litigation","ny","NY Lit B2","ny",NC],
+["ph","Paul Hastings","def","Global · litigation","other","NY Lit B3","ny",NC],
+["cahill","Cahill Gordon","def","New York · litigation","ny","NY Lit B3","ny",NC],
+["omelveny","O'Melveny","def","Los Angeles","west","NY Lit B4","ny",NC],
+["goodwin","Goodwin","def","Boston","other","Appellate B3 · NY Lit (HR) B3","app",CA(3)],
+["akin","Akin","def","Washington, DC","dc","Appellate B4 · NY Lit (HR) B3","app",CA(4)],
+["cooley","Cooley","def","Palo Alto","west","NY Lit (HR) B2","hr",NC],
+["dechert","Dechert","def","Philadelphia","other","NY Lit (HR) B2","hr",NC],
+["ropes","Ropes & Gray","def","Boston","other","NY Lit (HR) B1","hr","Yes (partner-level): Douglas Hallward-Driemeier is ranked Chambers Band 2 in appellate "+L(CH.app,'table')+" "+S('WEB')]
+].forEach(([id,name,side,hl,hk,ch,lk,ap])=>{
+ const o=()=>off(["Chambers 2026: "+ch+" "+L(CH[lk],'table')+" "+S('WEB')],Q1,[]);
+ FIRMS.push({id,name,side,home:[hl,hk],facts:{us:"—",lit:null,corp:null,cls:"—",program:"—",assign:"—"},buzz:[],programs:[],timing:{...T0},lb:null,std:{ch,notes:[["Appellate group",ap]]},offices:{ny:o(),dc:id==='wachtell'?null:o()}});});
+OTHERS.length=0;
+OTHERS.push(["Covington","Strong D.C.; Chambers rank not checked"],["Willkie","NY Lit (HR) B2; summer pay listed as Market"],["Proskauer","NY Lit (HR) B1; no 1L hiring"],["Boies Schiller","NY Lit (HR) B3; boutique"],["Jones Day","Not found on Cravath-scale lists"],["Clement & Murphy","Not found on Cravath-scale lists"],["Munger Tolles","No NYC/DC hiring in the Look Book"]);
+
+const WWW={"gibson": [10, 1], "latham": [14, 2], "wilmer": [5, 1], "pw": [18, 1], "skadden": [22, 1], "sc": [20, 2], "jenner": [2, 0], "wc": [null, 3], "cravath": [14, 0], "davis": [21, 0], "sidley": [7, 0], "quinn": [5, 1], "susman": [2, 0], "kellogg": [0, 0], "molo": [0, 0], "hsg": [1, 0], "kirkland": [18, 1], "mayer": [0, 0], "hogan": [2, 0], "orrick": [0, 0], "arnold": [1, 1], "cleary": [18, 0], "simpson": [22, 0], "selendy": [4, 0], "weil": [0, 0], "debevoise": [12, 0], "whitecase": [4, 1], "mofo": [5, 0], "milbank": [6, 0], "wachtell": [3, 0], "ph": [2, 0], "cahill": [2, 0], "omelveny": [2, 0], "goodwin": [0, 0], "akin": [1, 1], "cooley": [4, 0], "dechert": [0, 0], "ropes": [5, 0]};
+FIRMS.forEach(f=>{const w=WWW[f.id]; if(!w) return; ['ny','dc'].forEach((k,i)=>{const o=f.offices[k]; if(o&&w[i]!=null) o.pa='CLS 2Ls who summered here in 2025: '+w[i]+' '+S('WWW');});});
+const GLOSSARY = [
+  ["Sources on this page", CONFIG.sources.map(s=>[s[0], s[1]])],
+  ["Firm data", [
+    ["P / C / A","Partners / counsel / associates"],
+    ["Lit : Corp","Litigation vs corporate practice tags; a lawyer can carry several tags"],
+    ["PPP","Profits per equity partner"],
+    ["AmLaw","The American Lawyer's revenue ranking of US firms"],
+    ["Two-tier","Partnership with both equity and non-equity partners; single-tier has equity partners only"],
+    ["Vault","Vault Law 100 prestige rank"],
+    ["B1–B4","Chambers USA band; Band 1 is the top"],
+    ["2020+","Graduated from law school in 2020 or later"],
+    ["2d Cir. / D.C. Cir.","Second Circuit / D.C. Circuit Court of Appeals"],
+    ["SCOTUS","Supreme Court of the United States"]
+  ]],
+  ["Recruiting", [
+    ["1L / 2L / 3L","First-, second-, third-year law student"],
+    ["SA","Summer associate"],
+    ["PI","Public interest"],
+    ["TBD","Firm hasn't decided or published"],
+    ["n/p","Not published"]
+  ]]
+];
+
+/* Footer: methodology and sources, as HTML strings. Name every source and date. */
+const FOOTER = [
+"Checked 6 Oct 2026. Chambers USA 2026 tables: "+L(CH.app,'Appellate Law, Nationwide')+", "+L(CH.ny,'Litigation: General Commercial, Elite, New York')+", "+L(CH.hr,'Highly Regarded, New York')+".",
+"No Look Book, Firm Prospects or Vault data was available, so hires-by-office, headcounts, lit:corp bars and Vault ranks show —. Alumni lists come from firm bio pages and may be out of date; class years are law school graduation years. Contact details are omitted.",
+"Who Worked Where (summer 2025, class of 2026 2Ls) is used only for counts of Columbia students per office; names and emails are not on this page. It covers the class hired a year before yours, not your 2L 2027 hires.",
+"WilmerHale, Paul Weiss, Jenner and Williams &amp; Connolly recruiting dates are not yet verified. Gibson Dunn NY/DC pages still show the previous cycle. 'Your people' lists are empty until you add contacts."
+];
+
+FOOTER.push("Pass 2 firms: pay confirmed on ATL's 2022 scorecard or LawFuel's 2024 table for Cleary, Debevoise, Hogan Lovells, Kirkland, Morrison Foerster, Orrick, Simpson Thacher, Weil, White &amp; Case, Arnold &amp; Porter; earlier lists for others. MoloLamken, Kellogg Hansen and Jenner pay not confirmed for 2026. Recruiting dates for pass 2 are not yet verified except Holwell Shuster.","Appellate flags: Chambers USA 2026 nationwide appellate table, Legal 500 appellate rankings, or the firm's own page; 'Not confirmed' means I found none. 2026 partner moves (Bloomberg Law, 5 Oct 2026) postdate Chambers 2026, so individual rankings may name lawyers who changed firms.");
+const LBD={"gibson": {"lb": {"total": 144, "ny": 47, "dc": 31}, "size": "2,200+", "len": "10 weeks", "split": "Case-by-case", "assign": "The work allocation for the Gibson Dunn summer program is a structured introduction to our free market system. Summer coordinators, mid-level associates who are given billable credit to\u2026", "h1": "TBD", "sal": "$4,326/wk", "ret": "Summer associates receive an offer to join Gibson rather than an offer tied to a specific practice group. Before they start as associates, they are asked to select a\u2026", "ny28": true, "dc28": true, "tbd28": false}, "latham": {"lb": {"total": 426, "ny": 172, "dc": 75}, "size": "3,500+", "len": "10 weeks", "split": "Yes", "assign": "Our summer program uses a hybrid assignment system: summer associates receive work through both a free-market model and an assignment coordinator to ensure meaningful opportunities and\u2026", "h1": "TBD", "sal": "$9,375/semi-monthly", "ret": "Latham\u2019s Unassigned Program lets U.S. associates explore multiple practice areas before choosing a specialty aligned with their interests and firm needs. In NY,\u2026", "ny28": true, "dc28": true, "tbd28": false}, "wilmer": {"lb": {"total": 52, "ny": 12, "dc": 13}, "size": "1,100+", "len": "10 weeks", "split": "Yes; NY &amp; DC will\u2026", "assign": "WilmerHale's 2L summer program exposes you to the breadth of the firm\u2019s practice and the range of talents among its lawyers. By providing a view of the firm through challenging work,\u2026", "h1": "No", "sal": "$4,327/wk", "ret": "WilmerHale gives general return offers and then, after arrival to the firm, makes practice group assignments based on expressed interests and firm needs.", "ny28": true, "dc28": true, "tbd28": false}, "pw": {"lb": {"total": 103, "ny": 82, "dc": 8}, "size": "1,500+", "len": "10 weeks", "split": "Yes", "assign": "Summer associates at our firm work directly on high-profile, transformative deals, industry-shaping litigations, and one-of-a-kind restructurings \u2014 the same matters our attorneys handle for\u2026", "h1": "TBD", "sal": "$4,327/wk", "ret": "Upon completion of the 2L summer, we expect to extend return offers to join specific departments (e.g. Corporate, Litigation, Restructuring).", "ny28": true, "dc28": true, "tbd28": false}, "skadden": {"lb": {"total": 124, "ny": 80, "dc": 24}, "size": "1300.0", "len": "10 weeks", "split": "No", "assign": "Skadden's Summer Associate program is a ten-week program structured to expose summers to a mixture of client work, training, knowledge management, and networking activities so that they may\u2026", "h1": "TBD", "sal": "$4,327/wk", "ret": "We ask Summers to rank their top four groups before leaving the program. They receive an offer at the end of the summer to join the firm generally, and then are placed\u2026", "ny28": false, "dc28": false, "tbd28": true}, "sc": {"lb": {"total": 246, "ny": 211, "dc": 9}, "size": "1035.0", "len": "10 weeks/8 week\u2026", "split": "Yes; may split with other\u2026", "assign": "Summer associates receive assignments through advisors, the Firm\u2019s formal staffing system, and by seeking work across practice areas. Since there is no rotation program, the Firm promotes\u2026", "h1": "No", "sal": "$9,791.67 payable semi-monthly", "ret": "Those who receive and accept a return offer generally receive a broad offer rather than one tied to a specific practice area. Associates interested in either Litigation\u2026", "ny28": false, "dc28": false, "tbd28": true}, "wc": {"lb": {"total": 30, "ny": 0, "dc": 30}, "size": "400.0", "len": "12 weeks", "split": "Yes; 8 weeks with firm first", "assign": "Our free market system exposes summers to a range of work and provides opportunities to work with multiple case teams. Summer projects are assigned across all subject areas, and summers can\u2026", "h1": "No", "sal": "$5,000/wk", "ret": "Because many of Williams &amp; Connolly\u2019s summer associates obtain judicial clerkships, formal offers are extended only after the clerks receive permission from judges\u2026", "ny28": false, "dc28": true, "tbd28": false}, "cravath": {"lb": {"total": 101, "ny": 101, "dc": 0}, "size": "500+", "len": "10 weeks", "split": "Yes", "assign": "Summer associates can choose to spend their summer in one department or split their summer between two departments. Whether you choose to work in the Corporate, Litigation, Tax, Executive\u2026", "h1": "No", "sal": "$4,327/wk", "ret": "At the conclusion of the summer program, individuals receive an offer to join the Firm. In advance of associates starting at the Firm, they indicate their practice\u2026", "ny28": true, "dc28": false, "tbd28": false}, "davis": {"lb": {"total": 210, "ny": 174, "dc": 17}, "size": "1000+", "len": "11 weeks", "split": "Yes", "assign": "The firm has select junior associates working full-time as the Summer Program Coordinators to staff summer associates on matters. Summer associates attend practice group overviews for all\u2026", "h1": "TBD", "sal": "$4,327/wk", "ret": "Students are given a return offer to join a specific department (i.e., corporate, litigation, or tax).", "ny28": true, "dc28": true, "tbd28": false}, "sidley": {"lb": {"total": 166, "ny": 55, "dc": 15}, "size": "2300.0", "len": "10 weeks", "split": "Varies by office", "assign": "Assignment systems vary by office. In Texas and Miami, work coordinators assign projects based on summer associates\u2019 practice-area interests. In other offices, summer associates receive an\u2026", "h1": "As of now we anticipate our Texas offices will continue to recruit for joint 2027 1L and 2028 2L summer programs while select other offices will\u2026", "sal": "$4,327/wk", "ret": "This varies by office. In California, Houston, NY, Miami, and DC offers are general and students are asked to rank preferences. In Boston, Chicago, and Dallas offers are\u2026", "ny28": true, "dc28": true, "tbd28": false}, "quinn": {"lb": {"total": 69, "ny": 25, "dc": 10}, "size": "1300.0", "len": "10 weeks", "split": "No", "assign": "Our summer program offers a personalized experience for a select group of litigation-focused students. Summer associates are integrated into case teams, receive mentorship from partners and\u2026", "h1": "Yes - for the full summer. The 1L &amp; 2L applications are separate.", "sal": "$4,520/wk", "ret": "Quinn Emanuel is a free market system. We do not assign practice groups to incoming attorneys. All associates are encouraged to take on matters in any practice area\u2026", "ny28": true, "dc28": true, "tbd28": false}, "kirkland": {"lb": {"total": 564, "ny": 157, "dc": 41}, "size": "4000.0", "len": "10 weeks", "split": "No", "assign": "The 1L Summer Experience introduces Kirkland and life as an associate. The program is intentionally exploratory. 1Ls shape their experience through trainings, shadowing and conversations\u2026", "h1": "Yes - there is no 1L application. Students will have the option to opt in to the 1L summer experience once they receive a 2L offer", "sal": "$4,327/wk", "ret": "2L summer associates receive return offers to join a specific practice group. Corporate general associates have approximately two years to select a specialization.\u2026", "ny28": true, "dc28": true, "tbd28": false}, "mayer": {"lb": {"total": 92, "ny": 20, "dc": 4}, "size": "1.5K - 2K", "len": "10 weeks", "split": "Varies by office", "assign": "Our summer associate program is specially designed to aid summer associates in shaping the future direction of their careers in the practice of law by exposing them to day-to-day activities\u2026", "h1": "Yes - for the full summer. The 1L &amp; 2L applications are separate.", "sal": "$4,327/wk", "ret": "Upon completion of the 2L summer, students are given a return offer to join a specific practice group directly.", "ny28": true, "dc28": true, "tbd28": false}, "hogan": {"lb": {"total": 75, "ny": 19, "dc": 30}, "size": "3100 globally", "len": "10 weeks", "split": "No", "assign": "In all offices, summer associates receive assignments through a centralized assignment board managed by associates who match work with interests and availability. In NY and DC, summers\u2026", "h1": "Yes - for the full summer. There is one application for both 1L and 2L positions.", "sal": "$4,326/wk", "ret": "Return offers vary by office. In our smaller offices, summer associates receive offers to return to the specific practice group in which they summered. In NY and DC,\u2026", "ny28": false, "dc28": false, "tbd28": false}, "orrick": {"lb": {"total": 0, "ny": 0, "dc": 0}, "size": "1075.0", "len": "10 weeks", "split": "Varies by office; Case-by-case", "assign": "Summer associates will work with a central assignment coordinator to request and receive assignments. That coordinator works with group-specific workflow coordinators who are responsible\u2026", "h1": "Yes - for the full summer. There is one application for both 1L and 2L positions. Our offer structure is flexible - we pride ourselves on meeting\u2026", "sal": "$4,327/wk", "ret": "Yes, first-year associate offers are group-specific.", "ny28": false, "dc28": false, "tbd28": false}, "arnold": {"lb": {"total": 36, "ny": 8, "dc": 13}, "size": "1112.0", "len": "10 weeks", "split": "Yes", "assign": "Arnold &amp; Porter\u2019s ten-week summer program, offered across all U.S. offices, provides a comprehensive introduction to life as an associate at the Firm. Assignments are centrally managed\u2026", "h1": "TBD", "sal": "$4,327/wk", "ret": "Upon successful completion of the program, summer associates receive general return offers to rejoin the Firm without indicating a specific practice area. Firm\u2026", "ny28": true, "dc28": true, "tbd28": false}, "cleary": {"lb": {"total": 157, "ny": 125, "dc": 10}, "size": "1200+", "len": "10 weeks", "split": "Yes", "assign": "We have a centralized staffing system, and assignments are coordinated through our attorney development team. You pick the practice areas you want to explore, request assignments that match\u2026", "h1": "Yes - for the full summer.", "sal": "$4,327/wk", "ret": "Upon completion of the 2L summer program, students receive an offer to join the firm. In the spring of the 3L year, students are asked to indicate their practice area\u2026", "ny28": true, "dc28": true, "tbd28": false}, "simpson": {"lb": {"total": 312, "ny": 206, "dc": 32}, "size": "2000.0", "len": "10 weeks", "split": "Varies by office; In NY,\u2026", "assign": "Summer associates are assigned to active matters and work alongside partners and associates to obtain meaningful exposure to the Firm\u2019s work and clients. Each summer associate is part of an\u2026", "h1": "No", "sal": "4326.92 (Semi Monthly)", "ret": "2L summer associates are given a direct offer to join a specific practice group. In NY, our corporate associates can elect to join our corporate rotation program.", "ny28": true, "dc28": true, "tbd28": false}, "selendy": {"lb": {"total": 13, "ny": 13, "dc": 0}, "size": "80-100", "len": "10 weeks", "split": "Yes", "assign": "We are litigation only. Our summer associates are initially assigned cases by the recruiting team, but participate in a modified Free Market system throughout the summer and as associates.", "h1": "No", "sal": "$4,327/wk", "ret": "We are a litigation only firm.", "ny28": true, "dc28": false, "tbd28": false}, "weil": {"lb": {"total": 77, "ny": 77, "dc": 0}, "size": "1200.0", "len": "10 weeks", "split": "No", "assign": "In NY, students spend 10 weeks working directly with partners, counsel and associates as they rotate through either two or three of the Firm\u2019s four departments: Corporate, Litigation,\u2026", "h1": "Yes - with a partial summer/optional stipend. There is no 1L application - students are only considered for a 1L offer once they receive a 2L offer.", "sal": "$4,327/wk", "ret": "In NY, offers are given to a specific practice group.", "ny28": true, "dc28": false, "tbd28": false}, "debevoise": {"lb": {"total": 121, "ny": 112, "dc": 4}, "size": "973.0", "len": "TBD", "split": "No", "assign": "We have a hybrid staffing model for our summer associates. There is centralized staffing with personnel dedicated to ensure summer associates get the work they want and are busy enough.\u2026", "h1": "No", "sal": "$4,330/wk", "ret": "At the end of the 2L summer, students are given a general offer to join the firm. Practice area preference and placements are determined later in the process.", "ny28": true, "dc28": true, "tbd28": false}, "whitecase": {"lb": {"total": 80, "ny": 38, "dc": 8}, "size": "2800.0", "len": "10 weeks", "split": "Varies by office", "assign": "Summer associates have the opportunity to spend time in both our Corporate and Litigation groups, and receive assignments across a variety of practice areas to enhance their skill set.\u2026", "h1": "Yes - for the full summer. There is one application for both 1L and 2L positions.", "sal": "$4,330/wk", "ret": "Throughout the Summer Program, you will work on matters in various practice areas and later rank your preferences. After you receive a full-time offer, the Firm will\u2026", "ny28": true, "dc28": true, "tbd28": false}, "mofo": {"lb": {"total": 73, "ny": 16, "dc": 12}, "size": "1074.0", "len": "10 weeks", "split": "Yes", "assign": "The firm distributes student work using a central assignment system, taking into account each student\u2019s area of interest. Each summer associate is assigned a senior associate as a work\u2026", "h1": "Yes - for the full summer. There is one application for both 1L and 2L positions.", "sal": "Approx, $4,369 per week", "ret": "They are given offers into a Specific Department/Practice Group.", "ny28": true, "dc28": true, "tbd28": false}, "milbank": {"lb": {"total": 103, "ny": 81, "dc": 13}, "size": "1000.0", "len": "10 weeks", "split": "No", "assign": "In our NY office, each summer associate rotates through three practice groups, through which they receive assignments directly from attorneys. In advance of the summer program, summer\u2026", "h1": "No", "sal": "$4,519/wk", "ret": "In the NY office, summer associates receive first year offers that place them in either our transactional rotation program, or a specific direct placement group\u2026", "ny28": true, "dc28": true, "tbd28": false}, "wachtell": {"lb": {"total": 32, "ny": 32, "dc": 0}, "size": "247.0", "len": "10 weeks", "split": "No", "assign": "Summer associates rotate through three or four of the Firm\u2019s practice areas based on their expressed interest(s). This system allows them to try different types of assignments while giving\u2026", "h1": "No", "sal": "$4,425/wk", "ret": "At the end of the summer, offers are extended to summer associates to join the Firm. They may accept in corporate or litigation and the smaller practice areas subject to\u2026", "ny28": true, "dc28": false, "tbd28": false}, "ph": {"lb": {"total": 116, "ny": 50, "dc": 15}, "size": "1,400+", "len": "10 weeks", "split": "Yes", "assign": "Summer Associates in each of our U.S. offices will work on projects with different lawyers in a variety of practice areas. Summer Associates also observe and, when possible, assist in\u2026", "h1": "Yes - for the full summer.", "sal": "$4,326/wk", "ret": "Upon completion of the 2L summer, Summer Associates are given a general firm offer to join Paul Hastings. Practice Group placements are based on Summer Associate\u2026", "ny28": true, "dc28": true, "tbd28": false}, "cahill": {"lb": {"total": 29, "ny": 27, "dc": 2}, "size": "345.0", "len": "10 weeks", "split": "No", "assign": "Each summer associate is assigned both a partner mentor and an associate mentor. Cahill utilizes a free-market assignment system rather than formal practice group rotations, allowing\u2026", "h1": "TBD", "sal": "$4,327/wk", "ret": "At the conclusion of the program, summer associates are asked to indicate their departmental preference. Following the program, offers are extended to join the firm, and\u2026", "ny28": true, "dc28": true, "tbd28": false}, "omelveny": {"lb": {"total": 55, "ny": 13, "dc": 10}, "size": "876.0", "len": "10 weeks", "split": "We do not allow splits;\u2026", "assign": "Summer associates undertake hands-on, substantive work in connection with active litigation, corporate, and pro bono matters. Summer associates are paired with an attorney to facilitate\u2026", "h1": "TBD", "sal": "$4,688/wk", "ret": "New associates are not required to join a practice group upon joining the firm. During their first two years, they may work with a variety of practice groups within the\u2026", "ny28": true, "dc28": true, "tbd28": false}, "goodwin": {"lb": {"total": 67, "ny": 12, "dc": 9}, "size": "1800.0", "len": "10 weeks", "split": "No", "assign": "Summer associates in all offices receive assignments in various practice areas through a central assignment system where attorneys from all offices can submit assignments. They are then\u2026", "h1": "TBD", "sal": "$4,327/wk", "ret": "Summer associates are given an offer in a particular group - Corporate or Litigation. Then they have two years before they have to specialize. This is the same across\u2026", "ny28": false, "dc28": false, "tbd28": false}, "akin": {"lb": {"total": 71, "ny": 25, "dc": 18}, "size": "1000+", "len": "10 weeks", "split": "No", "assign": "Akin\u2019s Summer Associate Program uses an open assignment system that allows summer associates to work with any practice group in their office. Work Assignment Teams help associates select\u2026", "h1": "TBD", "sal": "$4,327/wk", "ret": "2L summer associates who receive offers are extended a general offer to join the Firm. Practice group placements are determined closer to their start date based on the\u2026", "ny28": true, "dc28": true, "tbd28": false}, "cooley": {"lb": {"total": 71, "ny": 16, "dc": 9}, "size": "3000+ (lawyers 1300+)", "len": "10 weeks", "split": "Yes; Minimum 8 weeks with\u2026", "assign": "Summer associates are assigned to a specific practice area and receive work through Assignment Coordinators, typically midlevel attorneys. Through meaningful assignments, skills training,\u2026", "h1": "Yes - for the full summer. The 1L &amp; 2L applications are separate.", "sal": "$4,327/wk", "ret": "Summer associates receive return offers directly to a specific practice group rather than a general firm offer. Because summers are hired into and spend their summer\u2026", "ny28": true, "dc28": true, "tbd28": false}, "dechert": {"lb": {"total": 88, "ny": 21, "dc": 10}, "size": "1000.0", "len": "10 weeks", "split": "No", "assign": "Our summer associates get to choose and explore those areas that interest them most. Rather than rotate through predetermined practice groups, you have the option to focus on projects from\u2026", "h1": "TBD", "sal": "$4,327/wk", "ret": "Upon successful completion of the summer program, candidates receive offers to join our two-year rotational program in either the Transactional or Litigation cohort.\u2026", "ny28": true, "dc28": true, "tbd28": false}, "ropes": {"lb": {"total": 137, "ny": 46, "dc": 8}, "size": "1500+", "len": "10 weeks", "split": "Varies by office", "assign": "During the summer program, summer associates work within one of the firm\u2019s departments\u2014Corporate; Litigation; Tax, Employment &amp; Benefits; or Business Restructuring\u2014with the opportunity\u2026", "h1": "TBD", "sal": "$4,326.92 (pre-tax)", "ret": "At the program\u2019s conclusion, 2L summer associates receive an offer to join a specific department. Prior to joining the firm as a full-time associate, you will be\u2026", "ny28": true, "dc28": true, "tbd28": false}};
+FIRMS.forEach(f=>{const d=LBD[f.id]; if(!d) return; if(d.lb)['ny','dc'].forEach(k=>{if(!f.offices[k]) delete d.lb[k];}); f.lb=d.lb; f.facts.us=d.size+" "+S('LB');
+ f.facts.program=d.len+" summer; split summer: "+d.split+" "+S('LB'); f.facts.assign=d.assign+" "+S('LB');
+ f.timing.hires="1L summer 2027: "+d.h1+" "+S('LB'); f.timing.money=d.sal+" summer pay "+S('LB');
+ f.std.notes=(f.std.notes||[]).concat([["Return offers",d.ret+" "+S('LB')]]);
+ ['ny','dc'].forEach(k=>{const o=f.offices[k]; if(!o) return; const y=d[k+'28']; o.pa=(o.pa&&o.pa!=="—"?o.pa+" · ":"")+"Hiring 2Ls for summer 2028 here: "+(y?"Yes":d.tbd28?"TBD":"Not listed")+" "+S('LB');});});
+FIRMS.filter(f=>!LBD[f.id]).forEach(f=>{f.std.notes=(f.std.notes||[]).concat([["Look Book","Not in the Look Book"]]);});
+FOOTER[1]="Columbia OPSC Look Book (2L 2027 hires by office, 1L hiring, firm size, summer pay, assignment system, return offers). Firm Prospects and Vault ranks were not available, so lit:corp bars and Vault show —. Alumni lists come from firm bio pages and may be out of date; contact details are omitted.";
+FOOTER.push("Summer pay of $4,326–$4,327 a week equals $225K annualized (Cravath scale); Milbank's $4,519 equals the new $235K scale. Firms absent from the Look Book (Jenner, Kellogg Hansen, MoloLamken, Susman, Holwell Shuster) show —. No firm was removed for weak litigation: every firm here holds a Chambers litigation or appellate ranking.");
+(()=>{const o=FIRMS.find(f=>f.id==='orrick'); o.lb={total:50};
+ o.std.notes=(o.std.notes||[]).concat([["Hires","50 summer associates nationally, 1L and 2L combined; office split not reported "+S('LB')]]);})();
+const SPOT={"gibson": "In Vault's 2026\u20132027 rankings, Gibson Dunn was recognized as both a Top 10 firm for Prestige and a Top 5 Best Law Firm to Work For and the firm was the only one in the nation to place in the Top 10 for both. It's a rare combination that reflects who Gibson Dunn is: a firm doing elite, high-stakes work while genuinely investing in the people who do it.", "latham": "In 2025, the firm delivered record-breaking global revenue of $8.3 billion, reflecting sustained investment in our people, practices, and fully integrated global platform. For summer associates, that means exposure to the market\u2019s most complex, high-profile matters, working alongside leading lawyers across offices and disciplines from day one.", "wilmer": "Our $25,000 1L Fellowship is designed to help students fund their 1L summer experiences working in a nonprofit public interest organization, judicial chambers, government position, and/or academia. The Fellowship will allow you to gain invaluable experience during the summer between your 1L and 2L year while exploring additional interests, building professional networks, and laying a strong foundation for an impactful and broad legal career.", "pw": "Our 2026 class of summer associates is putting that philosophy into practice. AI is integrated into our day-to-day practice and is part of all our substantive legal trainings.", "skadden": "Our summer associates gain experience comparable to that of our junior associates, including assisting senior attorneys on matters, attending client meetings, and traveling to client locations. Summer associates also participate in the Summer Program Associates\u2019 Comprehensive Education program which is designed to give summer associates a practical foundation in the skills that successful Skadden lawyers use every day, including legal writing, contract\u2026", "sc": "Sullivan &amp; Cromwell LLP is a global law firm recognized for delivering exceptional legal counsel and representation for more than 140 years. With more than 900 lawyers across 13 offices in Asia, Australia, Europe, and the United States, the Firm offers seamless cross-border service.", "wc": "Williams &amp; Connolly employs approximately 400 attorneys who focus almost exclusively on litigation from a single office in DC. One of the most selective law firms, Williams &amp; Connolly is a litigation standout known for handling complex, high-stakes matters.", "cravath": "Our lawyers come from a wide range of backgrounds and experiences, but they all share important qualities\u2014intelligence, creativity, a strong work ethic, and a desire to excel. The hallmark of our training program is our unique rotation system.", "davis": "In a unique approach, Davis Polk selects two or three outstanding associates to step away from their practices to serve as full-time Summer Program Coordinators. The Summer Coordinators meet with each summer associate throughout the program to discuss personal and professional goals and ensure each summer associate has a fulfilling and substantive experience.", "sidley": "Built to Lead\u00ae initiative is a groundbreaking associate leadership and executive development program uniquely designed to deepen associates\u2019 business acumen and leadership abilities. The program also includes title changes, to Managing Associates (4th-year associates) and Senior Managing Associates (7th-year associates), in recognition of the increased managerial responsibilities at those career stages.", "quinn": "Two cornerstones of our summer program are our Mock Trial program and the Hike. Summers spend a week working closely with partners to hone their trial skills through a series of plenary sessions and individual video review exercises.", "kirkland": "As a Kirkland lawyer, you\u2019ll launch and build an exceptional career by diving into real work of your choosing from day one. Our open assignment system empowers you to connect with partners and associates across the Firm on opportunities that align with your interests, giving you flexibility to discover the practices, industries and teams where you\u2019ll thrive.", "mayer": "Mayer Brown continues to be recognized for investing and delivering an exceptional associate experience and be a great place to work and build a legal career. Ranked \u201cThe Elite\u201d in every category for associate satisfaction \u2013 Chambers Associate Ranked in the Top 10 nationally across eight \u201cQuality of Life\u201d categories including seventh nationally for \u201cBest Law Firms to Work For\u201d \u2013 Vault Ranked in the Top 10 in nearly every US office for Mid-Level Associate\u2026", "hogan": "On July 1, 2026, Hogan Lovells and Cadwalader, Wickersham &amp; Taft combined to form Hogan Lovells Cadwalader, creating the largest law firm merger in history. The merger unites Hogan Lovells' strengths in corporate, M&amp;A, regulatory, intellectual property, and litigation matters with Cadwalader's market-leading finance, structured products, and capital markets practices.", "orrick": "We have an innovative client fellowship program open to our 2L Summer Associates, where you\u2019ll be able to spend part of your summer working with clients like Roblox, Capital One, Xcel Energy and Stripe. In 2026, Vault ranked Orrick #13 in \u201cBest Summer Associate Programs.\u201d", "arnold": "Arnold &amp; Porter's summer associate hiring process is highly intentional. The firmwide class has remained at approximately 35-40 students over the past two years, with the largest groups in New York and Washington, DC.", "cleary": "Cleary\u2019s summer associates get to work alongside teams handling some of the most innovative matters in the market. The firm recently advised on McCormick's $44.8 billion merger with Unilever's global food business, represented Tempur Sealy in its $5 billion acquisition of Mattress Firm after successfully defeating the FTC's challenge at trial, and represented Fidelity Digital Assets in a first-of-its-kind $188 million Bitcoin-backed securitized bond\u2026", "simpson": "The goal of the summer program is to introduce students to life at Simpson Thacher\u2014our practice, our people and our culture. Our summer program provides law students with a wide range of opportunities to experience the breadth of the Firm\u2019s practice, meet and engage with our attorneys, and experience the culture of the city.", "selendy": "Selendy Gay was founded in 2018 by top litigators dedicated to excellence and an inclusive culture. Associates gain meaningful experience across all facets of litigation, including client interaction, depositions, and trial work, and often have more courtroom experience than partners at big-name firms.", "weil": "When you join Weil, you are not just getting a job \u2013 you are launching a career. You will also have access to robust training and professional development programs.", "debevoise": "A hallmark of the firm is our commitment to pro bono legal services, to which we bring the same rigor and intensity as we do to our fee-earning work. Every year, the firm\u2019s lawyers work on pro bono matters that are fundamental to who we are as lawyers.", "whitecase": "Our people represent 124 nationalities and speak 95 languages. All US summer associates begin the program with the Launch Your Career (LYC) Program in New York City.", "mofo": "Morrison Foerster has been selected by the Asian American Bar Association of New York (AABANY) as the recipient of its Law Firm Leadership Award. This annual award recognizes a law firm that demonstrates exceptional leadership in cultivating legal talent, developing future leaders, and advancing equal opportunity within the legal profession.", "milbank": "Pro Bono is built into Milbank's lawyers' practices - this includes our summer associates. Here\u2019s just a sampling of pro bono work by our associates that our summers have gotten exposure to over the last few years; 1) Successfully arguing criminal appeals for wrongfully convicted individuals. 2) Advising non-profits on mergers and other corporate matters. 3) Assisting refugees and unaccompanied minor immigrants with asylum and legal status. 4) Securing\u2026", "wachtell": "Wachtell Lipton was founded on a handshake in 1965 as a small group of lawyers dedicated to providing advice and expertise at the highest levels. We have achieved extraordinary results following the distinctive vision of our founders \u2014 a cohesive team of lawyers intensely focused on solving our clients\u2019 most important problems.", "ph": "Paul Hastings is one of only three elite global firms with at least 10 Band 1 nationwide rankings in Chambers USA across its 17 core practice areas. A top law firm for associate quality of life, Paul Hastings prioritizes mentorship, training, and career development.", "cahill": "At Cahill, professional development is built on the belief that attorneys learn best through meaningful responsibility supported by exceptional training. That hands-on experience is complemented by Cahill Academy, our award-recognized professional development program, which offers comprehensive training in substantive legal skills, client service, leadership, and career development.", "omelveny": "For driven people, success is often its own reward. Recognized as a top firm for what we accomplish in the boardroom and courtroom for discerning clients the world over, we also enjoy a culture unlike any other.", "goodwin": "Lock In &amp; Go Big (Law) Podcast: We developed an external podcast for future and current law students, hosted by Legal Recruiting team members Jennifer Soltau and Genevieve Riccardelli. The series provides an inside look at what it really takes to get hired in Big Law.", "akin": "Akin\u2019s Summer Associate Program is designed to provide a well-rounded and highly personalized experience. Summer associates gain meaningful exposure through substantive client and pro bono assignments: hands-on training programs: and direct interaction with attorneys across practices and seniority levels.", "cooley": "Throughout the summer, associates take part in a condensed version of Cooley College, with courses tailored to business and litigation practices. Combined with hands-on assignments, practice group involvement, and regular feedback, the program provides a realistic and comprehensive view of practicing law at Cooley.", "dechert": "Our summer program begins with a three-day orientation in NYC, uniting firm-wide summers before the work even begins. Weekly Training Tuesdays deliver structured professional development throughout the summer, while social events such as sporting events, concerts, and cooking classes build genuine connections across offices.", "ropes": "We bring this vision to life by investing in your growth from day one, equipping you to take on the most complex legal challenges. Combined with hands-on experience and coaching from the most accomplished lawyers in the profession, this rigorous development will equip you for the demands of elite legal practice and empower you to find fulfillment in it."};
+FIRMS.forEach(f=>{const s=SPOT[f.id]; if(!s) return; ['ny','dc'].forEach(k=>{const o=f.offices[k]; if(o) o.pts.unshift('Firm spotlight (Look Book): '+s+' '+S('LB'));});});
+FIRMS.forEach(f=>{const n=f.offices.ny,d=f.offices.dc,a=(n&&n.pts)||[],b=(d&&d.pts)||[],both=n&&d,out=[],seen=new Set();
+ a.forEach(p=>{if(both&&b.includes(p)){out.push(p);seen.add(p);}else out.push(both?p+' (NYC)':p);});
+ b.forEach(p=>{if(!seen.has(p))out.push(both?p+' (D.C.)':p);});
+ f.pts=out;['ny','dc'].forEach(k=>{if(f.offices[k])f.offices[k].pts=[];});});
+const ASK={
+gibson:"Gibson Dunn just added several appellate stars from S&C, and it ranks near the top for both prestige and quality of life. How has that growth changed what junior associates get to write and argue, and what costs come with that pace?",
+latham:"Latham's Unassigned Program lets you try several groups before choosing. What did you try first, what changed your mind, and how did you decide litigation was the right fit?",
+wilmer:"WilmerHale funds 1Ls who clerk or do public interest work. How did your pre-firm experience shape your first year, and what would you do differently with a clerkship or fellowship summer?",
+pw:"Paul Weiss is weaving AI into training and just brought in a new Supreme Court practice leader. What does a junior litigator's week look like now, and what skills are partners asking for that they weren't three years ago?",
+skadden:"Skadden has summers rank their top four groups before leaving. How much did that ranking matter in practice, and how do litigation associates get from research assignments to drafting briefs?",
+sc:"S&C picks a new appellate leadership team this fall and staffs through formal advisors. How do associates get appellate or trial work under a generalist model, and what's your best advice for earning it as a summer?",
+jenner:"Jenner pairs a strong appellate bench with a big trial docket. Tell me about a matter where a junior associate's draft changed the outcome, and how soon after starting you got that chance.",
+wc:"Williams & Connolly is about 400 litigators in one office, with free-market staffing. How do you build your docket, and what separates summers who get the best trial work from those who don't?",
+cravath:"Cravath lets summers split time across departments. How did you decide where to spend your weeks, and what do you wish you had asked about litigation staffing before choosing?",
+davis:"Davis Polk has junior associates serve as full-time summer coordinators, and its Supreme Court and appellate practice just got a new leader. How do those choices show up in mentoring and in your own early responsibility?",
+sidley:"Sidley's Built to Lead program trains associates in business and leadership skills early. How does it play out for litigators, and how did you get your first real brief or argument?",
+quinn:"Quinn has summers do a mock-trial week with partners and then the Hike, and it moved to the newest pay scale. How did mock trial prepare you for real work, and how hands-on are first and second years in actual trials?",
+susman:"A federal judge recently praised Susman for letting a first-year argue. What did that associate's path look like, and how should a student without a clerkship yet think about getting here?",
+kellogg:"Most Kellogg Hansen attorneys have clerked on appeals courts. How does the firm train people for oral argument, and how do I plan my clerkship choice with the firm in mind?",
+molo:"MoloLamken requires a clerkship. How did yours shape your first brief or argument at the firm, and what do you look for in clerks you recruit?",
+hsg:"Holwell Shuster hires 1Ls and has associates lead drafting of pleadings and motions. What did you own in your first year, and how do partners decide how much to hand over?",
+kirkland:"Kirkland's open assignment system lets you choose work from day one, and the firm recently added a prominent appellate co-chair. How did you build your practice, and how do you avoid being stretched too thin?",
+mayer:"Mayer Brown gets top marks from associates on satisfaction. What specifically makes your litigation team a good place to learn, and where do associates still struggle?",
+hogan:"Hogan Lovells and Cadwalader merged on July 1, 2026 into the largest law firm merger in history. What has changed for litigators, and what has the merger meant for how junior associates get staffed?",
+orrick:"Orrick lets 2L summers spend part of the summer on a client fellowship with companies like Stripe and Capital One. How did that change how you think about litigating for clients?",
+arnold:"Arnold & Porter keeps its summer class small, around 35 to 40. How does that affect the work you got to do, and who ended up mentoring you most?",
+cleary:"Cleary's team recently beat the FTC's challenge at trial for Tempur Sealy. How did junior lawyers contribute to that kind of matter, and what does the four-week international placement add for a litigator?",
+simpson:"What does a junior litigator at Simpson Thacher actually do in year one, and how do associates get on the trial and appellate teams rather than discovery alone?",
+selendy:"Selendy Gay is litigation-only, with attorneys leading multiple trials a year on both sides. How soon were you taking depositions or arguing motions, and how do you choose between plaintiff and defense work?",
+weil:"In Weil's New York program, summers work directly with partners for ten weeks. What did that look like on a litigation team, and how does the firm's reputation for deal work affect litigation associates?",
+debevoise:"Debevoise treats pro bono with the same rigor as paid work and offers a one-year Impact Fellowship secondment. How have you used pro bono to get courtroom experience early?",
+whitecase:"White & Case starts every US summer with its Launch Your Career program in New York. How did you choose between litigation and corporate time, and what helped you get hands-on work early?",
+mofo:"Morrison Foerster just won a leadership award from the Asian American Bar Association of New York. What do you think makes the culture different on litigation teams, and where does the firm still have room to grow?",
+milbank:"Milbank moved first on the new $235K pay scale and rotates summers through three groups in New York. How do you think about total compensation versus training, and which rotation taught you the most?",
+wachtell:"Wachtell is small and rotates summers through three or four practice areas. How does that shape who gets litigation work, and what trait do partners notice first in summers they want to bring back?",
+ph:"Paul Hastings touts at least 10 Band 1 Chambers rankings. What makes the litigation group stand out inside the firm, and what was your most memorable early assignment?",
+cahill:"Cahill gives summers both a partner mentor and an associate mentor. How did each shape your work, and when did you first feel like your own matter was in your hands?",
+omelveny:"O'Melveny lets new associates start without committing to a practice group. How did you decide on litigation, and how did the firm help you test it before committing?",
+goodwin:"Goodwin's recruiting team runs a podcast for law students. What do you wish students asked about the litigation group, and what is the best question you were ever asked in an interview?",
+akin:"Akin's open assignment system lets summers choose their work. How did you find your partner mentors in litigation, and which assignment taught you the most?",
+cooley:"Cooley assigns summers to a specific practice area from the start. How did the firm decide where to place you, and what does a typical litigation week look like for juniors?",
+dechert:"Dechert starts its summer with a three-day NYC orientation and offers a one-year secondment through the Impact Fellowship. What did the secondment teach you that you couldn't get in the office?",
+ropes:"Ropes & Gray runs first-year training camps that now include AI skills. What did you actually learn in them, and how did they change your first litigation assignments?"
+};
+FIRMS.forEach(f=>['ny','dc'].forEach(k=>{if(f.offices[k]&&ASK[f.id])f.offices[k].ask=ASK[f.id];}));
+// ---- Brooke's own notes (source tag MY). Add new firms to NOTES as they arrive.
+const NOTES={
+ kirkland:["Open assignment system: partners compete for you, early assignments, trial experience fast","1L Summer Experience (4 weeks) offered to all 2L summers","Strong focus on training (KITA)"],
+ cooley:["Stay general for a long time instead of specializing in a practice group","Central assignment as a fallback, free market otherwise","Strong tech focus","Small clients mean a lot of diverse experience and jobs"]};
+FIRMS.forEach(f=>{const n=NOTES[f.id]; if(n) f.std.notes=(f.std.notes||[]).concat([["Your notes",n.join(" · ")+" "+S('MY')]]);});
+const KF=FIRMS.find(f=>f.id==='kirkland'), CF=FIRMS.find(f=>f.id==='cooley');
+KF.programs=["1L Summer Experience: 4 weeks per your notes; opt-in after a 2L offer, no 1L application "+S('MY')+" "+S('LB')];
+KF.pts.push("KITA (Kirkland Institute for Trial Advocacy): mock trials with professional actors as witnesses and partners as judges; first-years do direct and cross drills (ABA Journal, 2019) "+L('https://www.abajournal.com/magazine/article/trial-runs','ABA Journal')+" "+S('WEB'),"Third- through sixth-year associates try a case before a live jury (2019) "+L('https://legal500.com/fivehundred-magazine/?p=770','fivehundred')+" "+S('WEB'));
+CF.pts.push("To check: your notes say associates stay general for a long time, but the Look Book says summers join a specific practice group and get return offers to that group "+S('MY')+" "+S('LB'));
+const A2={kirkland:"KITA mock trials start in year one, and you choose your matters through open assignment. How did you win early assignments from partners competing for you, and when did you first take a deposition or argue before a judge?",
+ cooley:"I heard Cooley associates can stay general for a long time, but the Look Book says summers join a specific practice group. How does staying general work for litigators, and what would you tell someone choosing between Cooley's tech focus and a broader firm?"};
+FIRMS.forEach(f=>['ny','dc'].forEach(k=>{if(f.offices[k]&&A2[f.id])f.offices[k].ask=A2[f.id];}));
+// ---- Networking notes (event: Young Alumni Columbia Orientation). MY = Brooke ("Eli"), AN = Antoine only.
+const EV={
+ ropes:["MY","Culture ebbs and flows and you can work as much as you can handle; individuals make the firm"],
+ cooley:["MY","Firm gives support and responsibility; pro bono is genuinely valued and counts toward your hours"],
+ debevoise:["MY","Culture described as great, happier than many colleagues; work from home 2 days a week normally and always during busy times"],
+ jenner:["MY","Alum wanted students to reach out; conversation was cut short, so follow up"],
+ quinn:["AN","No traditional practice groups; fulfilling but incredibly intense; associates compete for partner assignments"],
+ skadden:["AN","Culture is social and professional; full service, so you can work with other practices"]};
+FIRMS.forEach(f=>{const e=EV[f.id]; if(e) f.std.notes=(f.std.notes||[]).concat([[e[0]==='MY'?"Event notes":"Antoine's notes",e[1]+" "+S(e[0])]]);});
+const EVT="Young Alumni Columbia Orientation. ";
+[["ropes","Chevaun Samuels","Practice: PE & M&A (office not noted)",EVT+"Met with Antoine. Talked about work-life balance, workload and culture."],
+ ["cooley","Ethan Mandelbaum","Practice: business litigation (office not noted)",EVT+"Hook: favorite professor or class and why litigation; loves his pro bono work and wants to be an AUSA."],
+ ["debevoise","Nicole Gany","Practice: M&A (office not noted)",EVT+"Talked about identifying practice areas and working from home."],
+ ["jenner","Molly Oberstein-Allen","Practice: litigation (office not noted)",EVT+"Follow-up: she wanted students to reach out and the conversation was cut short."]
+].forEach(([id,n,t,h])=>{const o=FIRMS.find(f=>f.id===id).offices.ny; o.you=(o.you||[]).concat([[n,"met",t,h]]);});
+const A3={quinn:"Quinn has no traditional practice groups, and I heard associates compete with each other for partner assignments. How do you win the work you want, how intense does it get, and what does it pay off in responsibility?",
+ ropes:"I heard Ropes associates can take on as much as they can handle while the workload ebbs and flows. How do litigators manage those swings, and how did you find the people you work best with?",
+ debevoise:"Debevoise associates I met said they are happier than peers elsewhere and can work from home two days a week. Does that hold during trial prep, and how did you identify your practice area?",
+ skadden:"A Skadden lawyer told a friend that being full service lets you work with other practices. How have litigators used that to build an appellate or trial docket, and how social is the culture outside the office?"};
+FIRMS.forEach(f=>['ny','dc'].forEach(k=>{if(f.offices[k]&&A3[f.id])f.offices[k].ask=A3[f.id];}));
+OTHERS.push(["Vinson & Elkins","Not added; you met an M&A alum: pro bono capped at 100 hours, workload ebbs and flows, culture 'a little shaky'"],["Herbert Smith Freehills Kramer","Not added; you met an employment/corporate alum (big law that feels like a boutique, no pro bono cap); Antoine met an arbitration alum (ebb and flow but predictable, high pressure)"],["A&O Shearman","Not added; you met a capital markets alum who explained the practice"]);
+
+
+// ---- Updates from Brooke's Thank-You Emails & Networking (Oct 2026) ----
+(function(){
+  const addNote = (id, label, text) => {
+    const f = GET(id);
+    if (!f) return;
+    f.std.notes = f.std.notes || [];
+    const existing = f.std.notes.find(n => n[0] === label);
+    if (existing) {
+      existing[1] = existing[1] + " · " + text;
+    } else {
+      f.std.notes.push([label, text]);
+    }
+  };
+  const addYou = (id, mkt, person) => {
+    const f = GET(id);
+    if (!f || !f.offices[mkt]) return;
+    f.offices[mkt].you = (f.offices[mkt].you || []).concat([person]);
+  };
+  const setAsk = (id, text) => {
+    const f = GET(id);
+    if (!f) return;
+    ['ny','dc'].forEach(k => { if (f.offices[k]) f.offices[k].ask = text; });
+  };
+
+  // 1. Mayer Brown (Jane Tullis)
+  addNote('mayer', 'Your notes', "Welcoming, collaborative community; flexible and encouraging lawyers focused on training junior associates and correcting work product kindly " + S('MY'));
+  addYou('mayer', 'ny', [
+    "Jane Tullis", "met", "Attorney (office/practice not noted)",
+    "Met at Young Alumni Columbia Orientation and ran into again at Columbia 1L Meet the Firms (spoke alongside a female colleague). Shared personal stories of support at Mayer Brown, junior associate training, and kind feedback on work product; invited to coffee / 20-min Zoom."
+  ]);
+  setAsk('mayer', "Mayer Brown gets top marks on associate satisfaction, and I heard from Jane Tullis how focused attorneys are on training juniors and correcting work product kindly. How does that feedback loop work on your litigation teams, and where do associates still face the steepest learning curve?");
+
+  // 2. Williams & Connolly (Liza Arias)
+  addNote('wc', 'Your notes', "Close-knit culture of clever litigators who have largely spent their whole career at the firm, remember what it's like to be a young lawyer there, and want to help juniors learn; firm has an on-site library " + S('MY'));
+  addYou('wc', 'dc', [
+    "Liza Arias", "met", "Attorney, Litigation (D.C. office)",
+    "Columbia 1L Meet the Firms. Talked about W&C's close-knit culture, homegrown attorneys who have been at the firm their whole career and mentor young lawyers, and the firm's library."
+  ]);
+  setAsk('wc', "Williams & Connolly has about 400 litigators in a single D.C. office, and I heard from Liza Arias how having so many career-long W&C attorneys creates a close-knit mentoring culture. How do you build your docket in the free-market system, and how do senior attorneys help juniors learn the ropes?");
+
+  // 3. Gibson Dunn (Liwei Chen & Pro Bono)
+  addNote('gibson', 'Your notes', "No cap on pro bono hours; actively encourages strong participation in pro bono work by giving unlimited billable-hour credit " + S('MY'));
+  addYou('gibson', 'ny', [
+    "Liwei Chen", "met", "Incoming 2L Summer Associate (CLS)",
+    "Noted that Gibson Dunn has no cap on pro bono hours and actively encourages strong participation by giving unlimited billable-hour credit for pro bono work."
+  ]);
+
+  // 4. Kirkland & Ellis (Pro Bono unlimited credit)
+  addNote('kirkland', 'Your notes', "No cap on pro bono hours and unlimited billable-hour credit for pro bono work " + S('MY'));
+
+  // 5. Sidley Austin (Nicolette Gelnak, Ayo Abadejo, Juan Arteago)
+  addNote('sidley', 'Your notes', "Several attorneys have spent their whole career at Sidley; strong antitrust practice including representing universities in antitrust proceedings; frank perspectives contrasting litigation (deep case research) with transactional/M&A work (creative phrasing, connotations, and subjective negotiations like preemptive rights) " + S('MY'));
+  addYou('sidley', 'ny', [
+    "Nicolette Gelnak", "met", "Attorney, Transactional (Century City office)",
+    "Sidley Austin Columbia 1L event. Vividly contrasted why she chose transactional law over litigation—creative phrasing and connotations vs. researching for hours to find the right case."
+  ]);
+  addYou('sidley', 'ny', [
+    "Ayo Abadejo", "met", "Attorney, M&A",
+    "Sidley Austin Columbia 1L event. Walked you and your friends through preemptive rights to illustrate the subjective nature of M&A negotiations; has sons in school."
+  ]);
+  addYou('sidley', 'ny', [
+    "Juan Arteago", "met", "Attorney, Antitrust & Litigation",
+    "Sidley Austin Columbia 1L event. Discussed Sidley's retention culture (many lawyers stay their whole career) and his antitrust practice representing universities in antitrust proceedings and trials."
+  ]);
+  setAsk('sidley', "Attorneys I met at the Sidley event highlighted how many lawyers stay at Sidley for their whole career and shared fascinating work like representing universities in antitrust proceedings. How does Sidley's Built to Lead program play out for litigators, and how did you get your first real brief or trial role?");
+
+  // 6. Cooley (Alyssa Wright, Will Donaldson, Avraham Tsikhanovski)
+  addNote('cooley', 'Your notes', "Regulatory & white collar litigation is highly collaborative and conversational (e.g. deposition drafting process); staffing model balances autonomy with a central staffing fallback so you can always find work; servicing small clients has pros and cons, pushing juniors to take on heavy responsibility early and get good at it fast " + S('MY'));
+  addYou('cooley', 'ny', [
+    "Alyssa Wright", "met", "Attorney, Regulatory & White Collar Litigation",
+    "Cooley Columbia 1L event. Walked through her previous day's workflow to show the specifics of regulatory & white collar litigation, highlighting how collaborative and conversational litigation is (such as drafting deposition outlines)."
+  ]);
+  addYou('cooley', 'ny', [
+    "Will Donaldson", "met", "Attorney",
+    "Cooley Columbia 1L event (met early on; gave his business card). Broke down the pros of Cooley's staffing model—balancing between a no-autonomy central staffing model and making sure you have a fallback to find work."
+  ]);
+  addYou('cooley', 'ny', [
+    "Avraham Tsikhanovski", "met", "Attorney",
+    "Cooley Columbia 1L event. Shared frank insights on the pros and cons of servicing small clients and how Cooley's model pushes juniors to take on a lot of responsibility early on."
+  ]);
+
+  // 7. New Full Firm Card: Irell & Manella
+  FIRMS.push({
+    id: "irell",
+    name: "Irell & Manella",
+    side: "both",
+    home: ["Los Angeles · IP & trial litigation", "west"],
+    added: "16 Oct",
+    facts: {
+      us: "75 US lawyers (23 P / 41 A across LA, Newport Beach & DC) " + S('WEB'),
+      lit: null, corp: null, cls: "—",
+      program: "10-week summer program (~26 summers firmwide); annual mock trial prosecuting Wyatt Earp presided over by a judge " + S('WEB'),
+      assign: "Work coordinator plus optional free-market system; very lean teams where juniors iterate directly with team attorneys " + S('MY') + " " + S('WEB')
+    },
+    buzz: ["leanly staffed trial teams", "hands-on iteration"],
+    programs: [],
+    timing: {
+      hires: "Check firm page / recruiting@irell.com " + S('WEB'),
+      app: "Direct via recruiting@irell.com",
+      window: "Check firm page",
+      money: "$4,519.23/wk ($235k scale) " + S('WEB')
+    },
+    lb: null,
+    std: {
+      ch: "IP / Patent Litigation B1 (CA & Nationwide)",
+      notes: [
+        ["Your notes", "Working on very small teams improves both training and opportunities; best way to build skills is trying things directly and iterating with team attorneys to refine work product " + S('MY')],
+        ["Junior experience", "Chambers Associate 2026 'Excellent Performer' for Junior Satisfaction; roughly half of first-years argue in court or take depositions " + S('WEB')]
+      ]
+    },
+    pts: [
+      "Opened its Washington, D.C. office in 2021 (750 17th St NW) to anchor Federal Circuit appeals, USPTO/PTAB inter partes reviews, and ITC litigation " + S('WEB'),
+      "Lean team staffing gives first-years substantive oral argument, deposition, and brief-drafting opportunities early, iterating directly with partners and senior associates " + S('MY') + " " + S('WEB')
+    ],
+    offices: {
+      ny: null,
+      dc: {
+        hc: "D.C. appellate, PTAB & ITC hub",
+        pa: "Federal Circuit appeals · ITC · Patent/IP & complex litigation",
+        rec: "recruiting@irell.com",
+        pts: [],
+        ask: "Irell's D.C. office focuses heavily on Federal Circuit appeals and ITC/PTAB litigation, and I heard from Matt Corey how working on very small teams lets juniors learn by trying things and iterating closely with the team. What does that iteration look like on a brief or motion, and how much cross-office work do D.C. lawyers do with L.A.?",
+        you: [
+          [
+            "Matt Corey", "met", "Associate, Litigation/IP (California / Los Angeles office)",
+            "Columbia 1L Meet the Firms. Discussed how working as a member of a very small team improves both training and opportunities, learning by trying things directly and iterating with other attorneys on the team to improve work product."
+          ]
+        ],
+        alum: []
+      }
+    }
+  });
+
+  // 8. New Full Firm Card: Herbert Smith Freehills Kramer (HSF Kramer) — promoted from OTHERS
+  const hsfIdx = OTHERS.findIndex(o => o[0].includes("Herbert Smith Freehills Kramer"));
+  if (hsfIdx !== -1) OTHERS.splice(hsfIdx, 1);
+  FIRMS.push({
+    id: "hsfk",
+    name: "Herbert Smith Freehills Kramer",
+    side: "def",
+    home: ["New York · Global · litigation", "ny"],
+    added: "16 Oct",
+    facts: {
+      us: "Global platform (HSF + Kramer Levin merger) " + S('WEB'),
+      lit: null, corp: null, cls: "—",
+      program: "10-week summer program (~14 summers in NY); structured mentorship melded with organic mentorship " + S('MY') + " " + S('WEB'),
+      assign: "Unassigned summer program with assignment coordinator; department overview breakfasts share anticipated openings before first-year placement " + S('WEB')
+    },
+    buzz: ["structured mentorship melds with organic mentorship", "big law that feels like a boutique"],
+    programs: [],
+    timing: {
+      hires: "Check firm careers page " + S('WEB'),
+      app: "Summer Associate Program",
+      window: "Check firm page",
+      money: "$4,327/wk ($225k scale) " + S('WEB')
+    },
+    lb: null,
+    std: {
+      ch: "NY Lit (Highly Regarded) B1",
+      notes: [
+        ["Your notes", "Structured mentorship program melds with organic mentorship, and the team is actively leveraging the HSF–Kramer Levin merger to further improve the summer program; BigLaw that feels like a boutique with no pro bono cap " + S('MY')],
+        ["Antoine's notes", "Arbitration alum noted workload ebbs and flows—predictable, though high pressure " + S('AN')],
+        ["Clerkships", "Over 40% of NY litigation and bankruptcy attorneys are former judicial clerks " + S('WEB')]
+      ]
+    },
+    pts: [
+      "Chambers USA 2026: Band 1 in NY Commercial Litigation: Highly Regarded " + L(CH.hr, 'table') + " " + S('WEB'),
+      "Recruiting and program leaders are actively using the HSF–Kramer Levin merger to enhance the Summer Associate program while blending structured partner/associate mentorship with organic mentorship " + S('MY')
+    ],
+    offices: {
+      ny: {
+        hc: "—",
+        pa: "Complex commercial litigation · White collar · Restructuring · Arbitration",
+        rec: "Erica Mastromarino, Legal Recruiting (non-attorney)",
+        pts: [],
+        ask: "HSF Kramer combines a boutique-style New York litigation culture with a global post-merger platform, and Erica Mastromarino shared how your structured mentorship melds with organic mentorship as the team builds on the merger. How has the merger shaped the complex litigation and appellate work juniors get staffed on?",
+        you: [
+          [
+            "Erica Mastromarino", "met", "Legal Recruiter (non-attorney)",
+            "Columbia 1L Meet the Firms. Discussed HSF Kramer's Summer Associate program, how structured mentorship blends with organic mentorship, and how the team is working to take advantage of the merger to further improve the summer program."
+          ]
+        ],
+        alum: []
+      },
+      dc: {
+        hc: "—",
+        pa: "Appellate · Regulatory · White collar · Complex litigation",
+        rec: "Erica Mastromarino, Legal Recruiting (non-attorney)",
+        pts: [],
+        ask: "HSF Kramer combines a boutique-style litigation culture with a global post-merger platform, and I heard from Erica Mastromarino how structured mentorship melds with organic mentorship. How do D.C. and New York litigators collaborate across offices on appellate and regulatory matters?",
+        you: [],
+        alum: []
+      }
+    }
+  });
+
+  // 9. New Full Firm Card: Sheppard Mullin
+  FIRMS.push({
+    id: "shem",
+    name: "Sheppard Mullin",
+    side: "def",
+    home: ["Los Angeles · Global · litigation & corporate", "west"],
+    added: "16 Oct",
+    facts: {
+      us: "1,100+ attorneys firmwide (~65 summers: ~56 2Ls, ~9 1Ls) " + S('WEB'),
+      lit: null, corp: null, cls: "—",
+      program: "10-week summer program tailored to the distinct cultures of each office; structured mentorship melded with organic mentorship " + S('MY') + " " + S('WEB'),
+      assign: "Flexible staffing with structured and organic mentorship tailored to local office culture " + S('MY')
+    },
+    buzz: ["structured mentorship melds with organic mentorship", "sensitivity to office culture"],
+    programs: [],
+    timing: {
+      hires: "Yes (select offices hire 1Ls) " + S('WEB'),
+      app: "Summer Associate Program",
+      window: "Check firm page",
+      money: "$4,327/wk ($225k scale) " + S('WEB')
+    },
+    lb: null,
+    std: {
+      ch: "Recognized in CA & NY practice tables",
+      notes: [
+        ["Your notes", "Structured mentorship program melds with organic mentorship; recruiting team works to ensure the summer program fits the distinct cultures of all offices; informative contrast between New York (commuter office) and Orange County (strong in-office culture) " + S('MY')],
+        ["Quality of life", "Vault Top 10 'Best Law Firms to Work For' (#7) and Top 20 'Best Summer Associate Programs' (#18) " + S('WEB')]
+      ]
+    },
+    pts: [
+      "Recruiting team actively tailors the summer program so that structured and organic mentorship work seamlessly across the distinct local cultures of each office " + S('MY'),
+      "Helpful comparison from attorneys on how commuter-office dynamics (like New York) differ from tight in-office cultures (like Orange County) " + S('MY')
+    ],
+    offices: {
+      ny: {
+        hc: "—",
+        pa: "Commercial litigation · White collar · Corporate",
+        rec: "Caroline Menes, Legal Recruiter (non-attorney)",
+        pts: [],
+        ask: "I heard from Caroline Menes how Sheppard Mullin blends structured and organic mentorship while adapting the summer program to each office's culture, and Lisa Harris walked me through the contrast between a commuter office like New York and an in-office hub like Orange County. How does that local culture shape how junior litigators get mentored and staffed in New York?",
+        you: [
+          [
+            "Caroline Menes", "met", "Legal Recruiter (non-attorney)",
+            "Columbia 1L Meet the Firms. Discussed how Sheppard Mullin's structured mentorship program melds with organic mentorship and how her team works to make sure the summer program fits the distinct cultures of all firm offices."
+          ],
+          [
+            "Lisa Harris", "met", "Attorney (Orange County office)",
+            "Columbia 1L Meet the Firms. Talked through the benefits of both the New York office and the Orange County office, contrasting a commuter office with a strong in-office culture."
+          ]
+        ],
+        alum: []
+      },
+      dc: {
+        hc: "—",
+        pa: "Antitrust · Government contracts · Regulatory & litigation",
+        rec: "Caroline Menes, Legal Recruiter (non-attorney)",
+        pts: [],
+        ask: "I heard from Caroline Menes how Sheppard Mullin blends structured and organic mentorship while tailoring the summer program to each office's local culture. What defines the D.C. office culture for junior litigators, and how do mentorship pairings work in practice?",
+        you: [],
+        alum: []
+      }
+    }
+  });
+
+  // 10. New Full Firm Card: Covington & Burling — promoted from OTHERS
+  const covIdx = OTHERS.findIndex(o => o[0].includes("Covington"));
+  if (covIdx !== -1) OTHERS.splice(covIdx, 1);
+  FIRMS.push({
+    id: "covington",
+    name: "Covington & Burling",
+    side: "def",
+    home: ["Washington, DC · appellate, regulatory & litigation", "dc"],
+    added: "16 Oct",
+    facts: {
+      us: "1,300+ lawyers worldwide " + S('WEB'),
+      lit: null, corp: null, cls: "—",
+      program: "10-week summer program; consistent central staffing system " + S('MY') + " " + S('WEB'),
+      assign: "Central staffing program that provides consistency and exposure to a wide range of attorneys across practices " + S('MY')
+    },
+    buzz: ["consistent central staffing", "unlimited pro bono"],
+    programs: [],
+    timing: {
+      hires: "Check firm careers page " + S('WEB'),
+      app: "Summer Associate Program",
+      window: "Check firm page",
+      money: "$4,327/wk ($225k scale) " + S('WEB')
+    },
+    lb: null,
+    std: {
+      ch: "Appellate B2 · D.C. & NY Litigation",
+      notes: [
+        ["Your notes", "Consistent central staffing program that lets you work with a wide range of people; no cap on pro bono hours and firm actively encourages strong participation in pro bono " + S('MY')],
+        ["Appellate group", CA(2)]
+      ]
+    },
+    pts: [
+      "Chambers 2026: Band 2 nationwide in Appellate Law " + L(CH.app, 'table') + " " + S('WEB'),
+      "Central staffing system gives summers and juniors consistent workflows and exposure to a wide range of attorneys, paired with uncapped, actively encouraged pro bono work " + S('MY')
+    ],
+    offices: {
+      ny: {
+        hc: "—",
+        pa: "Commercial litigation · White collar · Regulatory",
+        rec: "—",
+        pts: [],
+        ask: "Shekinah Hall highlighted the consistency of Covington's central staffing system and how the firm actively encourages uncapped pro bono work. How has central staffing helped you work with a wide range of litigators, and what pro bono matters have given you the most responsibility early on?",
+        you: [
+          [
+            "Shekinah Hall", "met", "Incoming 2L Summer Associate (CLS)",
+            "Emphasized the consistency of Covington's central staffing program, the value of getting to work with a range of people through that system, and that Covington has no cap on pro bono hours and actively encourages strong participation."
+          ]
+        ],
+        alum: []
+      },
+      dc: {
+        hc: "—",
+        pa: "Supreme Court & Appellate · Regulatory · Complex litigation",
+        rec: "—",
+        pts: [],
+        ask: "Shekinah Hall highlighted the consistency of Covington's central staffing system and how the firm actively encourages uncapped pro bono work. How do junior associates use central staffing and pro bono to get onto appellate briefs and oral arguments in D.C.?",
+        you: [],
+        alum: []
+      }
+    }
+  });
+})();
+
+/* ============================ ENGINE ============================
+   No edits needed below this line.
+   ================================================================ */
+const MK = Object.fromEntries(CONFIG.markets);
+const MKEYS = CONFIG.markets.map(m=>m[0]);
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sum = a => Array.isArray(a) ? a.reduce((x,y)=>x+y,0) : a;
+const yr = n => { const m=String(n).match(/'(\d\d)\b/); return m? 2000+parseInt(m[1]) - (parseInt(m[1])>40?100:0) : null; };
+const mine = f => MKEYS.reduce((n,k)=>n+((f.offices[k]&&f.offices[k].you)?f.offices[k].you.length:0),0);
+FIRMS.forEach(f=>{ f.offices=f.offices||{}; f.facts=f.facts||{}; f.buzz=f.buzz||[]; f.programs=f.programs||[]; f.home=f.home||['','']; f.std=f.std||{}; });
+
+/* header */
+document.title = CONFIG.title;
+document.getElementById('eyebrow').innerHTML = CONFIG.eyebrow;
+document.getElementById('ttl').textContent = CONFIG.title;
+document.getElementById('lede').textContent = `${CONFIG.owner}’s 1L fall application database`;
+document.getElementById('legSrc').innerHTML = CONFIG.sources.map(s=>`<span>${S(s[0])} ${s[1]}</span>`).join('');
+document.getElementById('legRel').innerHTML = Object.entries(CONFIG.rel).map(([k,v])=>`<span><span class="rel ${k}">${v[0]}</span> ${v[1]}</span>`).join('')
+  + `<span><span class="cd">27d</span> days to a firm-published date</span><span><span class="key" style="background:var(--lit)"></span>litigation <span class="key" style="background:var(--tx);margin-left:6px"></span>corporate/transactional</span><button type="button" class="gbtn" data-gloss>Glossary</button>`;
+document.getElementById('timingH').textContent = `${CONFIG.classLabel} doors · who hires 1Ls, and when to apply${CONFIG.checked?' · firm pages checked '+CONFIG.checked:''}`;
+document.getElementById('sizeH').innerHTML = `Size at a glance · ${CONFIG.lbYear} hires by office ${S('LB')} and office headcount ${S('FP')}`;
+
+/* filter buttons */
+const segBtns = (id, items) => document.getElementById(id).insertAdjacentHTML('beforeend',
+  [['all','All'],...items].map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${v==='all'}">${l}</button>`).join(''));
+segBtns('mkt', CONFIG.markets.map(([k,l])=>[k, l.replace('Washington, DC','DC')]));
+segBtns('heartf', CONFIG.homes);
+if(!CONFIG.showSide) document.getElementById('sidef').hidden = true;
+
+/* tables */
+document.querySelector('#size thead tr').innerHTML = ['Firm · home', CONFIG.vaultLabel, 'Your people', CONFIG.lbYear+' total', ...CONFIG.markets.map(m=>m[1].replace('Washington, DC','DC')), 'Lit : Corp (US)', CONFIG.school.short+' alumni'].map(h=>`<th>${h}</th>`).join('');
+const bar = (lit,corp,cls) => { const lp=Math.round(100*lit/((lit+corp)||1)); return `<div class="split ${cls||''}" title="${lp}% litigation"><i style="width:${lp}%"></i><em style="width:${100-lp}%"></em></div>`; };
+document.querySelector('#timing tbody').innerHTML = FIRMS.map(f=>{ const t=f.timing||{};
+  return `<tr data-id="${f.id}"><td class="firm"><a class="flink" href="#${f.id}">${f.name}</a></td><td>${t.hires||'—'}</td><td>${t.app||'—'}</td><td>${t.window||'—'}</td><td>${t.money||'—'}</td></tr>`; }).join('');
+document.querySelector('#size tbody').innerHTML = FIRMS.map(f=>{
+  const lb=f.lb, sd=f.std, m=mine(f);
+  const ratio = f.facts.lit==null ? '—' : (f.facts.corp ? `${f.facts.lit} : ${f.facts.corp}` : `${f.facts.lit} : 0 (litigation only)`) + bar(f.facts.lit, f.facts.corp||0, 'sm');
+  const mk = MKEYS.map(k=>`<td class="mono">${lb&&lb[k]!=null?lb[k]:(f.offices[k]?'n/p':'no office')}</td>`).join('');
+  return `<tr data-id="${f.id}"><td class="firm"><a class="flink" href="#${f.id}">${f.name}</a><div class="heart-s">Home: ${f.home[0]}</div></td><td class="mono">${sd.v?'#'+sd.v:'—'}</td><td class="mono">${m||''}</td><td class="mono">${lb&&lb.total!=null?sum(lb.total):'—'}</td>${mk}<td class="mono">${ratio}</td><td>${f.facts.cls||'—'}</td></tr>`;}).join('');
+document.querySelector('#others tbody').innerHTML = OTHERS.map(r=>`<tr><td class="firm">${r[0]}</td><td>${r[1]}</td></tr>`).join('');
+document.getElementById('othersBox').hidden = !OTHERS.length;
+document.getElementById('jump').innerHTML = FIRMS.map(f=>`<a href="#${f.id}">${f.name}</a>`).join('');
+document.getElementById('foot').innerHTML = FOOTER.map(p=>`<div>${p}</div>`).join('');
+document.getElementById('glossBody').innerHTML = GLOSSARY.map(([h,items])=>`<h3>${esc(h)}</h3><dl>${items.map(([t,d])=>`<div class="gi" style="display:contents"><dt>${esc(t)}</dt><dd>${esc(d)}</dd></div>`).join('')}</dl>`).join('');
+
+/* firm cards */
+function alumRow(a){ const y=yr(a[0]); const recent = y && y>=2020;
+  return `<div data-recent="${recent?1:0}"><span class="n">${a[0]}</span>${recent?'<span class="recent">2020+</span>':''}<span class="t">${a[1]} · ${a[2]}</span></div>`; }
+function youHTML(o){ if(!o.you||!o.you.length) return '';
+  return `<div><div class="lbl">Your people</div><div class="you">${o.you.map(p=>`<div><div class="row1"><span class="n">${p[0]}</span><span class="rel ${p[1]}">${(CONFIG.rel[p[1]]||[p[1]])[0]}</span></div><span class="t">${p[2]||''}</span><span class="h">${p[3]||''}</span></div>`).join('')}</div></div>`; }
+function officeHTML(f,k){
+  const o=f.offices[k];
+  if(!o) return `<div class="office none" data-m="${k}"><h4>${MK[k]}</h4><div>No office in this market.</div></div>`;
+  const lbn = f.lb && f.lb[k]!=null ? `<span class="mono">${CONFIG.lbYear}: ${f.lb[k]} ${S('LB')}</span>` : '';
+  const alum=o.alum||[], pts=o.pts||[];
+  const alumBlock = alum.length ? `<div class="alum">${alum.map(alumRow).join('')}<div class="none-recent" hidden>No 2020+ grads in this list.</div></div>`
+    : `<div class="alum t" style="color:var(--muted)">None found in a relevant practice.</div>`;
+  return `<div class="office" data-m="${k}">
+    <h4>${MK[k]} ${lbn}</h4>
+    <div class="kv"><b>Size</b><span class="mono">${o.hc||'—'} ${o.hc?S('FP'):''}</span><b>Mix</b><span>${o.pa||'—'}</span><b>Recruiter</b><span>${o.rec||'—'}</span></div>
+    ${o.ask?`<div class="ask">${o.ask}</div>`:''}
+    ${youHTML(o)}
+    <div><div class="lbl">${CONFIG.school.name} alumni here ${S('FP')}</div>${alumBlock}</div>
+  </div>`;
+}
+document.getElementById('firms').innerHTML = FIRMS.length ? FIRMS.map(f=>{
+  const sideTxt = f.side==='pl'?'Plaintiff':f.side==='both'?'Both sides':'Defense';
+  const known = f.facts.lit!=null;
+  const tot = known ? f.facts.lit+(f.facts.corp||0) : 0; const lp = tot ? Math.round(100*f.facts.lit/tot) : 100;
+  const head = known ? `<dd>${f.facts.us}${bar(f.facts.lit,f.facts.corp||0)}<span class="mono" style="font-size:12px;color:var(--muted)">${lp}% lit of lit+corp tags</span></dd>` : `<dd>${f.facts.us||'—'}</dd>`;
+  const sd=f.std;
+  const stand = [
+    `<span><b>${CONFIG.vaultLabel}</b>${sd.v?'#'+sd.v:'—'}${sd.vp?' · '+sd.vp:''}</span>`,
+    `<span><b>Chambers</b>${sd.ch||'Not ranked in the tables checked'}</span>`,
+    ...(sd.notes||[]).map(([l,t])=>`<span><b>${l}</b>${t}</span>`),
+    sd.fp?`<span><b>Firm shape ${S('FP')}</b>${sd.fp}</span>`:''
+  ].join('');
+  return `<article class="firm" id="${f.id}">
+   <div class="fhead">
+    <div class="ftitle"><h3>${f.name}</h3><span class="heart">Home: ${f.home[0]}</span>${CONFIG.showSide?`<span class="side ${f.side==='pl'?'pl':f.side==='both'?'both':''}">${sideTxt}</span>`:''}${f.added?`<span class="src">Added ${f.added}</span>`:''}</div>
+    <dl class="facts">
+      <div class="fact"><dt>Headcount ${known?S('FP'):''}</dt>${head}</div>
+      <div class="fact"><dt>Summer program</dt><dd>${f.facts.program||'—'}</dd></div>
+      <div class="fact"><dt>Assignments</dt><dd>${f.facts.assign||'—'}</dd></div>
+      <div class="fact"><dt>${CONFIG.school.name} alumni ${S('FP')}</dt><dd>${f.facts.cls||'—'}</dd></div>
+    </dl>
+    ${f.buzz.length?`<div class="buzz" aria-label="Phrases the firm uses">${f.buzz.map(b=>`<q>${b}</q>`).join('')}</div>`:''}
+    <div class="standing">${stand}</div>
+    ${f.programs.length?`<div class="programs"><b>${CONFIG.classLabel}</b><ul>${f.programs.map(p=>`<li>${p}</li>`).join('')}</ul></div>`:''}
+   </div>
+   ${f.pts&&f.pts.length?`<div style="padding:12px 18px;border-top:1px solid var(--rule)"><div class="lbl">Talking points</div><ul class="pts">${f.pts.map(p=>`<li>${p}</li>`).join('')}</ul></div>`:''}
+   <div class="offices" style="grid-template-columns:repeat(${MKEYS.length},minmax(0,1fr))">${MKEYS.map(k=>officeHTML(f,k)).join('')}</div>
+  </article>`;}).join('') : `<p class="empty">No firms yet. Add them to <code>FIRMS</code> in the page's data section.</p>`;
+
+/* state, sorting, filtering */
+const STORE = 'dossier-filters-'+CONFIG.title.toLowerCase().replace(/\W+/g,'-');
+let state={m:'all',s:'all',h:'all',r:false,p:false,sort:'default',rev:false,tbl:{},open:{}};
+try{const saved=JSON.parse(localStorage.getItem(STORE)||'null'); if(saved) state=Object.assign(state,saved);}catch(e){}
+if(state.m!=='all' && !MK[state.m]) state.m='all';
+if(state.h!=='all' && !CONFIG.homes.some(h=>h[0]===state.h)) state.h='all';
+const FBY = Object.fromEntries(FIRMS.map((f,i)=>[f.id,Object.assign(f,{_i:i})]));
+const leadNum = v => { if(v==null) return null; if(typeof v==='number') return v; const m=String(v).replace(/,/g,'').match(/^\s*(?:About\s+)?(\d+)/i); return m?+m[1]:null; };
+const usSize = f => /worldwide/.test(f.facts.us||'') ? null : leadNum(f.facts.us);
+function officeSize(o){ if(!o||!o.hc) return null; const hc=o.hc.replace(/,/g,''); if(/^\d/.test(hc)) return parseInt(hc,10);
+  let t=0, found=false; for(const m of hc.matchAll(/(?:^|·\s*)([A-Za-z][A-Za-z ]*?)\s(\d+)/g)){ t+=+m[2]; found=true; } return found?t:null; }
+const SORTS = {
+  default:{f:f=>f._i, asc:true, lab:['First → last','Last → first']},
+  az:{f:f=>f.name.toLowerCase(), asc:true, lab:['A → Z','Z → A']},
+  vault:{f:f=>f.std.v||null, asc:true, lab:['Best → worst','Worst → best']},
+  size:{f:f=>state.m==='all'?usSize(f):officeSize(f.offices[state.m]), asc:false, lab:['Biggest → smallest','Smallest → biggest']},
+  class:{f:f=>!f.lb?null:(state.m==='all'?leadNum(sum(f.lb.total)):leadNum(f.lb[state.m])), asc:false, lab:['Biggest → smallest','Smallest → biggest']},
+  cls:{f:f=>leadNum(f.facts.cls), asc:false, lab:['Most → fewest','Fewest → most']},
+  lit:{f:f=>f.facts.lit==null?null:(f.facts.corp?f.facts.lit/(f.facts.lit+f.facts.corp):1), asc:false, lab:['Highest → lowest','Lowest → highest']},
+  mine:{f:f=>mine(f), asc:false, lab:['Most → fewest','Fewest → most']}
+};
+function fits(f){
+  const showSide = !CONFIG.showSide || state.s==='all' || f.side===state.s || f.side==='both';
+  const showHome = state.h==='all' || f.home[1]===state.h;
+  const showMkt = state.m==='all' || !!f.offices[state.m];
+  return showSide && showHome && showMkt && (!state.p || mine(f)>0);
+}
+const save = () => { try{localStorage.setItem(STORE,JSON.stringify(state));}catch(e){} };
+const cellVal = td => { const t=td.textContent.replace(/\s+/g,' ').trim(); const m=t.replace(/,/g,'').match(/^#?\s*(\d+(?:\.\d+)?)/); return m?+m[1]:(t===''||t==='—'?null:t.toLowerCase()); };
+function tstate(t){ return state.tbl[t] || (state.tbl[t]={col:null,dir:1,f:[]}); }
+function renderTable(t, globalOrder){
+  const st=tstate(t), table=document.getElementById(t), tb=table.tBodies[0];
+  const rows=[...tb.rows]; const byId=Object.fromEntries(rows.map(r=>[r.dataset.id,r]));
+  let list = globalOrder.map(f=>byId[f.id]).filter(Boolean);
+  if(st.col!=null){ const c=st.col; list = list.map((r,i)=>({r,i,k:cellVal(r.cells[c])})).sort((a,b)=>{
+      if(a.k==null&&b.k==null) return a.i-b.i; if(a.k==null) return 1; if(b.k==null) return -1;
+      const x = (typeof a.k===typeof b.k) ? (typeof a.k==='number'? a.k-b.k : a.k.localeCompare(b.k)) : (typeof a.k==='number'?-1:1);
+      return x? x*st.dir : a.i-b.i; }).map(o=>o.r); }
+  let n=0;
+  list.forEach(r=>{ tb.appendChild(r);
+    const okGlobal = fits(FBY[r.dataset.id]);
+    const okCols = st.f.every((q,c)=>!q || r.cells[c].textContent.toLowerCase().includes(q.toLowerCase()));
+    r.hidden = !(okGlobal && okCols); if(!r.hidden) n++; });
+  table.querySelectorAll('thead tr:first-child th').forEach((th,c)=>{ th.querySelector('.arr').textContent = st.col===c ? (st.dir>0?'▲':'▼') : '';
+    th.setAttribute('aria-sort', st.col===c ? (st.dir>0?'ascending':'descending') : 'none'); });
+  table.querySelectorAll('tr.filters input').forEach((inp,c)=>{ if(document.activeElement!==inp) inp.value=st.f[c]||''; });
+  document.querySelector(`.tcount[data-for="${t}"]`).textContent = `${n} of ${rows.length} firms`;
+  document.querySelector(`.tclear[data-for="${t}"]`).hidden = st.col==null && !st.f.some(Boolean);
+}
+['timing','size'].forEach(t=>{
+  const table=document.getElementById(t), head=table.tHead.rows[0];
+  const fr=document.createElement('tr'); fr.className='filters';
+  [...head.cells].forEach((th,c)=>{
+    th.classList.add('sortable'); th.tabIndex=0; th.insertAdjacentHTML('beforeend','<span class="arr" aria-hidden="true"></span>');
+    th.title='Click to sort: ascending, descending, then back to the page order';
+    const go=()=>{ const st=tstate(t); if(st.col!==c){st.col=c;st.dir=1;} else if(st.dir===1){st.dir=-1;} else {st.col=null;st.dir=1;} apply(); };
+    th.addEventListener('click',go); th.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();go();} });
+    const cell=document.createElement('th'); const inp=document.createElement('input'); inp.type='search';
+    inp.placeholder='Filter'; inp.setAttribute('aria-label','Filter '+th.textContent.trim());
+    inp.addEventListener('input',()=>{ tstate(t).f[c]=inp.value; apply(); });
+    cell.appendChild(inp); fr.appendChild(cell);
+  });
+  table.tHead.appendChild(fr);
+  const box=document.getElementById(t+'Box');
+  if(state.open && state.open[t]===false) box.open=false;
+  box.addEventListener('toggle',()=>{ state.open[t]=box.open; save(); });
+  document.querySelector(`.tclear[data-for="${t}"]`).addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation(); state.tbl[t]={col:null,dir:1,f:[]}; apply(); });
+});
+function apply(){
+  if(!SORTS[state.sort]) state.sort='default';
+  document.querySelectorAll('#mkt button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===state.m)));
+  document.querySelectorAll('#sidef button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===state.s)));
+  document.querySelectorAll('#heartf button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===state.h)));
+  document.getElementById('recentBtn').setAttribute('aria-pressed',String(!!state.r));
+  document.getElementById('mineBtn').setAttribute('aria-pressed',String(!!state.p));
+  const so=SORTS[state.sort]; document.getElementById('sortSel').value=state.sort;
+  document.getElementById('dirBtn').textContent=so.lab[state.rev?1:0];
+  const asc = so.asc !== !!state.rev;
+  const order = FIRMS.map(f=>({f,k:so.f(f)})).sort((a,b)=>{
+    if(a.k==null && b.k==null) return a.f._i-b.f._i; if(a.k==null) return 1; if(b.k==null) return -1;
+    const c = typeof a.k==='string' ? a.k.localeCompare(b.k) : a.k-b.k;
+    return c ? (asc?c:-c) : a.f._i-b.f._i; }).map(x=>x.f);
+  const firmsEl=document.getElementById('firms'), jump=document.getElementById('jump');
+  let n=0;
+  order.forEach(f=>{
+    const ok=fits(f); if(ok) n++;
+    const a=document.getElementById(f.id); firmsEl.appendChild(a); a.hidden=!ok;
+    const offs=a.querySelector('.offices');
+    offs.style.gridTemplateColumns = state.m==='all' ? `repeat(${MKEYS.length},minmax(0,1fr))` : '1fr';
+    a.querySelectorAll('.office').forEach(o=>{ o.hidden = !(state.m==='all' || o.dataset.m===state.m); });
+    const j=jump.querySelector(`a[href="#${f.id}"]`); jump.appendChild(j); j.hidden=!ok;
+  });
+  document.getElementById('fitCount').textContent = `${n} of ${FIRMS.length} firms`;
+  ['timing','size'].forEach(t=>renderTable(t, order));
+  document.querySelectorAll('.alum').forEach(al=>{
+    let shown=0; al.querySelectorAll('[data-recent]').forEach(r=>{ const hide = state.r && r.dataset.recent!=='1'; r.hidden=hide; if(!hide) shown++; });
+    const nr=al.querySelector('.none-recent'); if(nr) nr.hidden = !(state.r && shown===0);
+  });
+  save();
+}
+document.getElementById('sortSel').addEventListener('change',e=>{state.sort=e.target.value;state.rev=false;apply();});
+document.getElementById('dirBtn').addEventListener('click',()=>{state.rev=!state.rev;apply();});
+document.querySelectorAll('#mkt button').forEach(b=>b.addEventListener('click',()=>{state.m=b.dataset.v;apply();}));
+document.querySelectorAll('#sidef button').forEach(b=>b.addEventListener('click',()=>{state.s=b.dataset.v;apply();}));
+document.querySelectorAll('#heartf button').forEach(b=>b.addEventListener('click',()=>{state.h=b.dataset.v;apply();}));
+document.getElementById('recentBtn').addEventListener('click',()=>{state.r=!state.r;apply();});
+document.getElementById('mineBtn').addEventListener('click',()=>{state.p=!state.p;apply();});
+(function(){ const now=new Date(); now.setHours(0,0,0,0);
+  document.querySelectorAll('.cd[data-d]').forEach(el=>{ const p=el.dataset.d.split('-'); const t=new Date(+p[0],+p[1]-1,+p[2]);
+    const n=Math.round((t-now)/86400000); el.textContent = n>0 ? `in ${n}d` : (n===0?'today':''); el.title=el.dataset.d; }); })();
+apply();
+document.addEventListener('click',e=>{ const a=e.target.closest('a.flink, #jump a'); if(!a) return;
+  const el=document.getElementById(a.getAttribute('href').slice(1)); if(!el||el.hidden) return; e.preventDefault();
+  const off=document.querySelector('.controls').getBoundingClientRect().height+12;
+  window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-off,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+  history.replaceState(null,'','#'+el.id); });
+(function(){ const d=document.getElementById('gloss'), q=document.getElementById('glossQ');
+  document.querySelectorAll('[data-gloss]').forEach(b=>b.addEventListener('click',()=>{ q.value=''; filt(); d.showModal(); }));
+  document.getElementById('glossClose').addEventListener('click',()=>d.close());
+  d.addEventListener('click',e=>{ if(e.target===d) d.close(); });
+  function filt(){ const t=q.value.trim().toLowerCase();
+    d.querySelectorAll('.gi').forEach(g=>{ g.hidden = !!t && !g.textContent.toLowerCase().includes(t); });
+    d.querySelectorAll('.gbody dl').forEach(dl=>{ const any=[...dl.querySelectorAll('.gi')].some(g=>!g.hidden); dl.hidden=!any; dl.previousElementSibling.hidden=!any; }); }
+  q.addEventListener('input',filt); q.addEventListener('keydown',e=>{ if(e.key==='Escape'){ e.preventDefault(); d.close(); } }); })();
+</script>
