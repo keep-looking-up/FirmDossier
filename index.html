@@ -1,3 +1,8 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Firm Dossier</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -139,6 +144,8 @@ footer{margin-top:40px;font-size:13px;color:var(--muted);display:grid;gap:8px;ma
 @media (max-width:860px){.offices{grid-template-columns:1fr!important}.office{border-right:0;border-bottom:1px solid var(--rule)}.office:last-child{border-bottom:0}}
 @media (prefers-reduced-motion:no-preference){article.firm{transition:opacity .15s}}
 </style>
+</head>
+<body>
 
 <div class="wrap">
 <header class="top">
@@ -151,7 +158,7 @@ footer{margin-top:40px;font-size:13px;color:var(--muted);display:grid;gap:8px;ma
 
 <details class="block" id="timingBox" open>
   <summary><h2 id="timingH"></h2><span class="tcount" data-for="timing"></span><button type="button" class="tclear" data-for="timing" hidden>Clear sort &amp; filters</button></summary>
-  <div class="scroll"><table id="timing"><thead><tr><th>Firm</th><th>Hires 1Ls?</th><th>Application</th><th>Anticipated window</th><th>1L money tied to 2L</th></tr></thead><tbody></tbody></table></div>
+  <div class="scroll"><table id="timing"><thead><tr><th>Firm</th><th>Hires 1Ls?</th><th>Application</th><th>Anticipated window</th></tr></thead><tbody></tbody></table></div>
 </details>
 
 <details class="block" id="sizeBox" open>
@@ -893,7 +900,7 @@ if(!CONFIG.showSide) document.getElementById('sidef').hidden = true;
 document.querySelector('#size thead tr').innerHTML = ['Firm · home', CONFIG.vaultLabel, 'Your people', CONFIG.lbYear+' total', ...CONFIG.markets.map(m=>m[1].replace('Washington, DC','DC')), 'Lit : Corp (US)', CONFIG.school.short+' alumni'].map(h=>`<th>${h}</th>`).join('');
 const bar = (lit,corp,cls) => { const lp=Math.round(100*lit/((lit+corp)||1)); return `<div class="split ${cls||''}" title="${lp}% litigation"><i style="width:${lp}%"></i><em style="width:${100-lp}%"></em></div>`; };
 document.querySelector('#timing tbody').innerHTML = FIRMS.map(f=>{ const t=f.timing||{};
-  return `<tr data-id="${f.id}"><td class="firm"><a class="flink" href="#${f.id}">${f.name}</a></td><td>${t.hires||'—'}</td><td>${t.app||'—'}</td><td>${t.window||'—'}</td><td>${t.money||'—'}</td></tr>`; }).join('');
+  return `<tr data-id="${f.id}"><td class="firm"><a class="flink" href="#${f.id}">${f.name}</a></td><td>${t.hires||'—'}</td><td>${t.app||'—'}</td><td>${t.window||'—'}</td></tr>`; }).join('');
 document.querySelector('#size tbody').innerHTML = FIRMS.map(f=>{
   const lb=f.lb, sd=f.std, m=mine(f);
   const ratio = f.facts.lit==null ? '—' : (f.facts.corp ? `${f.facts.lit} : ${f.facts.corp}` : `${f.facts.lit} : 0 (litigation only)`) + bar(f.facts.lit, f.facts.corp||0, 'sm');
@@ -1079,3 +1086,5 @@ document.addEventListener('click',e=>{ const a=e.target.closest('a.flink, #jump 
     d.querySelectorAll('.gbody dl').forEach(dl=>{ const any=[...dl.querySelectorAll('.gi')].some(g=>!g.hidden); dl.hidden=!any; dl.previousElementSibling.hidden=!any; }); }
   q.addEventListener('input',filt); q.addEventListener('keydown',e=>{ if(e.key==='Escape'){ e.preventDefault(); d.close(); } }); })();
 </script>
+</body>
+</html>
