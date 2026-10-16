@@ -232,7 +232,7 @@ const S  = t => `<span class="src ${t==='LB'?'lb':t==='FP'?'fp':t==='INF'?'inf':
 
 /* ======================= DATA: CONFIG ======================= */
 const CONFIG = {
-  owner: "Brooke Eli J Ferrell",                          // shown in the lede
+  owner: "Keep Looking Up",                          // shown in the lede
   title: "Firm Dossier",                        // h1 and <title>
   eyebrow: "Class of 2029 · Litigation &amp; appellate · NYC + D.C.",   // small line above the title
   classLabel: "Class of 2029",                  // heading of each firm's program box and the timing table
@@ -249,7 +249,7 @@ const CONFIG = {
     ["LB","Columbia OPSC Look Book"],
     ["WEB","firm site or press, linked"],
     ["MY","Your own notes"],
-    ["AN","Antoine's notes (conversations he had, not your contacts)"],
+    ["AN","AN's notes (conversations he had, not your contacts)"],
     ["WWW","Columbia Who Worked Where: class of 2026 2Ls, summer 2025 (counts only)"],
     ["3P","third-party only, confirm"],
     ["INF","inferred from last cycle"]
@@ -512,7 +512,7 @@ dechert:"Dechert starts its summer with a three-day NYC orientation and offers a
 ropes:"Ropes & Gray runs first-year training camps that now include AI skills. What did you actually learn in them, and how did they change your first litigation assignments?"
 };
 FIRMS.forEach(f=>['ny','dc'].forEach(k=>{if(f.offices[k]&&ASK[f.id])f.offices[k].ask=ASK[f.id];}));
-// ---- Brooke's own notes (source tag MY). Add new firms to NOTES as they arrive.
+// ---- Looking's own notes (source tag MY). Add new firms to NOTES as they arrive.
 const NOTES={
  kirkland:["Open assignment system: partners compete for you, early assignments, trial experience fast","1L Summer Experience (4 weeks) offered to all 2L summers","Strong focus on training (KITA)"],
  cooley:["Stay general for a long time instead of specializing in a practice group","Central assignment as a fallback, free market otherwise","Strong tech focus","Small clients mean a lot of diverse experience and jobs"]};
@@ -524,7 +524,7 @@ CF.pts.push("To check: your notes say associates stay general for a long time, b
 const A2={kirkland:"KITA mock trials start in year one, and you choose your matters through open assignment. How did you win early assignments from partners competing for you, and when did you first take a deposition or argue before a judge?",
  cooley:"I heard Cooley associates can stay general for a long time, but the Look Book says summers join a specific practice group. How does staying general work for litigators, and what would you tell someone choosing between Cooley's tech focus and a broader firm?"};
 FIRMS.forEach(f=>['ny','dc'].forEach(k=>{if(f.offices[k]&&A2[f.id])f.offices[k].ask=A2[f.id];}));
-// ---- Networking notes (event: Young Alumni Columbia Orientation). MY = Brooke ("Eli"), AN = Antoine only.
+// ---- Networking notes (event: Young Alumni Columbia Orientation). MY = Looking ("Looking"), AN = Other only.
 const EV={
  ropes:["MY","Culture ebbs and flows and you can work as much as you can handle; individuals make the firm"],
  cooley:["MY","Firm gives support and responsibility; pro bono is genuinely valued and counts toward your hours"],
@@ -532,9 +532,9 @@ const EV={
  jenner:["MY","Alum wanted students to reach out; conversation was cut short, so follow up"],
  quinn:["AN","No traditional practice groups; fulfilling but incredibly intense; associates compete for partner assignments"],
  skadden:["AN","Culture is social and professional; full service, so you can work with other practices"]};
-FIRMS.forEach(f=>{const e=EV[f.id]; if(e) f.std.notes=(f.std.notes||[]).concat([[e[0]==='MY'?"Event notes":"Antoine's notes",e[1]+" "+S(e[0])]]);});
+FIRMS.forEach(f=>{const e=EV[f.id]; if(e) f.std.notes=(f.std.notes||[]).concat([[e[0]==='MY'?"Event notes":"AN's notes",e[1]+" "+S(e[0])]]);});
 const EVT="Young Alumni Columbia Orientation. ";
-[["ropes","Chevaun Samuels","Practice: PE & M&A (office not noted)",EVT+"Met with Antoine. Talked about work-life balance, workload and culture."],
+[["ropes","Chevaun Samuels","Practice: PE & M&A (office not noted)",EVT+"Met with AN. Talked about work-life balance, workload and culture."],
  ["cooley","Ethan Mandelbaum","Practice: business litigation (office not noted)",EVT+"Hook: favorite professor or class and why litigation; loves his pro bono work and wants to be an AUSA."],
  ["debevoise","Nicole Gany","Practice: M&A (office not noted)",EVT+"Talked about identifying practice areas and working from home."],
  ["jenner","Molly Oberstein-Allen","Practice: litigation (office not noted)",EVT+"Follow-up: she wanted students to reach out and the conversation was cut short."]
@@ -544,10 +544,10 @@ const A3={quinn:"Quinn has no traditional practice groups, and I heard associate
  debevoise:"Debevoise associates I met said they are happier than peers elsewhere and can work from home two days a week. Does that hold during trial prep, and how did you identify your practice area?",
  skadden:"A Skadden lawyer told a friend that being full service lets you work with other practices. How have litigators used that to build an appellate or trial docket, and how social is the culture outside the office?"};
 FIRMS.forEach(f=>['ny','dc'].forEach(k=>{if(f.offices[k]&&A3[f.id])f.offices[k].ask=A3[f.id];}));
-OTHERS.push(["Vinson & Elkins","Not added; you met an M&A alum: pro bono capped at 100 hours, workload ebbs and flows, culture 'a little shaky'"],["Herbert Smith Freehills Kramer","Not added; you met an employment/corporate alum (big law that feels like a boutique, no pro bono cap); Antoine met an arbitration alum (ebb and flow but predictable, high pressure)"],["A&O Shearman","Not added; you met a capital markets alum who explained the practice"]);
+OTHERS.push(["Vinson & Elkins","Not added; you met an M&A alum: pro bono capped at 100 hours, workload ebbs and flows, culture 'a little shaky'"],["Herbert Smith Freehills Kramer","Not added; you met an employment/corporate alum (big law that feels like a boutique, no pro bono cap); AN met an arbitration alum (ebb and flow but predictable, high pressure)"],["A&O Shearman","Not added; you met a capital markets alum who explained the practice"]);
 
 
-// ---- Updates from Brooke's Thank-You Emails & Networking (Oct 2026) ----
+// ---- Updates from Looking's Thank-You Emails & Networking (Oct 2026) ----
 (function(){
   const addNote = (id, label, text) => {
     const f = GET(id);
@@ -708,7 +708,7 @@ OTHERS.push(["Vinson & Elkins","Not added; you met an M&A alum: pro bono capped 
       ch: "NY Lit (Highly Regarded) B1",
       notes: [
         ["Your notes", "Structured mentorship program melds with organic mentorship, and the team is actively leveraging the HSF–Kramer Levin merger to further improve the summer program; BigLaw that feels like a boutique with no pro bono cap " + S('MY')],
-        ["Antoine's notes", "Arbitration alum noted workload ebbs and flows—predictable, though high pressure " + S('AN')],
+        ["AN's notes", "Arbitration alum noted workload ebbs and flows—predictable, though high pressure " + S('AN')],
         ["Clerkships", "Over 40% of NY litigation and bankruptcy attorneys are former judicial clerks " + S('WEB')]
       ]
     },
