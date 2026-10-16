@@ -121,6 +121,8 @@ dialog#gloss::backdrop{background:rgba(10,16,14,.45)}
 .pts{margin:0;padding-left:17px;font-size:14px;display:grid;gap:5px}
 .ask{background:var(--accent-soft);border-radius:4px;padding:8px 10px;font-size:14px}
 .ask::before{content:"Ask · ";font-family:var(--f-data);font-size:11px;text-transform:uppercase;color:var(--accent);letter-spacing:.06em}
+.sample-sec{padding:12px 18px;border-top:1px solid var(--rule);background:var(--paper)}
+.sample-p{margin:4px 0 0;font-size:14px;line-height:1.55;color:var(--ink)}
 .alum{font-size:13px;display:grid;gap:3px}
 .alum div{display:flex;gap:6px;flex-wrap:wrap}
 .alum .n{font-family:var(--f-display);font-weight:600}
@@ -1442,6 +1444,102 @@ OTHERS.push(["Vinson & Elkins","Not added; you met an M&A alum: pro bono capped 
   addProg('wilmer', "$25,000 1L Public Interest / Judicial Fellowship (funds 1L summer in PI, chambers, government, or academia) " + S('LB'));
 })();
 
+
+// ---- Pass 4: Davis Polk (Matthew Hanner), Coffee Chats (Sidley, Latham, Covington), & Cover Letter Sample Paragraphs ----
+(function(){
+  const addNote = (id, label, text) => {
+    const f = GET(id);
+    if (!f) return;
+    f.std.notes = f.std.notes || [];
+    const existing = f.std.notes.find(n => n[0] === label);
+    if (existing) {
+      existing[1] = existing[1] + " · " + text;
+    } else {
+      f.std.notes.push([label, text]);
+    }
+  };
+  const addYou = (id, mkt, person) => {
+    const f = GET(id);
+    if (!f || !f.offices[mkt]) return;
+    f.offices[mkt].you = (f.offices[mkt].you || []).concat([person]);
+  };
+  const addAlum = (id, mkt, alumEntry) => {
+    const f = GET(id);
+    if (!f || !f.offices[mkt]) return;
+    f.offices[mkt].alum = (f.offices[mkt].alum || []).concat([alumEntry]);
+  };
+
+  // 1. Davis Polk — Matthew Hanner (Thank-You Email)
+  addNote('davis', 'Your notes', "White collar practice centers on open-ended problem-solving where there aren't hard-and-fast rules on how to solve problems, contrasting with the more directly adversarial posture of general civil litigation " + S('MY'));
+  addYou('davis', 'ny', [
+    "Matthew Hanner", "met", "Associate, White Collar Defense & Investigations (NY · CLS alum)",
+    "Davis Polk Columbia 1L event (met early on). Discussed the differences between white collar and civil litigation, what drew him to white collar, and how white collar is driven by open-ended problem-solving without hard-and-fast rules rather than purely adversarial civil litigation."
+  ]);
+  addAlum('davis', 'ny', ["Matthew Hanner", "Associate", "White Collar Defense & Investigations"]);
+  ['ny','dc'].forEach(k => {
+    const f = GET('davis');
+    if (f && f.offices[k]) {
+      f.offices[k].ask = "Matthew Hanner described white collar at Davis Polk as open-ended problem-solving where there aren't hard-and-fast rules, and the firm also has junior associates serve as full-time Summer Program Coordinators. How do those mentorship structures help juniors learn to navigate unstructured white collar and litigation problems?";
+    }
+  });
+
+  // 2. Sidley Austin — Gwen Ellis-Joyce (Coffee Chat)
+  addNote('sidley', 'Your notes', "D.C. Customs & International Trade Compliance (~5-lawyer team; lawsuits are handed off to regulatory litigation): fast-changing statutes allow young associates to become substantive legal experts early (rather than only fact experts) and offer a steadier lifestyle; day-to-day spans customs/import compliance, tariffs (voluntary government disclosures & duty payments to avoid penalties), forced labor compliance, data-heavy anti-dumping/countervailing duty (AD/CVD) investigations, and export controls " + S('MY'));
+  addYou('sidley', 'dc', [
+    "Gwen Ellis-Joyce", "met", "Associate, Global Arbitration, Trade & Advocacy / Customs (D.C. · CLS '23)",
+    "Coffee chat. Transitioned to customs & trade compliance (~5-person team) for stronger end-to-end ownership and lifestyle stability; fast-changing trade laws let juniors become legal experts early across tariffs (voluntary disclosures), forced labor compliance, data-heavy AD/CVD investigations, and export controls (litigation is passed to regulatory litigators)."
+  ]);
+  addAlum('sidley', 'dc', ["Gwen Ellis-Joyce '23", "Associate", "Global Arbitration, Trade & Advocacy (Customs)"]);
+  if (GET('sidley') && GET('sidley').offices.dc) {
+    GET('sidley').offices.dc.ask = "Gwen Ellis-Joyce shared how fast-changing trade laws let junior associates become substantive legal experts early on a small D.C. team and how disputes get handed off to regulatory litigation, while Juan Arteago highlighted Sidley's career-long retention and university antitrust trials. How do D.C. regulatory litigators and appellate lawyers collaborate with compliance teams when trade or regulatory matters go to court?";
+  }
+
+  // 3. Latham & Watkins — Eric Konopka (Coffee Chat)
+  addNote('latham', 'Your notes', "D.C. Appellate, Tax Controversy, Energy Regulatory & Bankruptcy: appellate associates carry high responsibility and develop the core legal arguments starting in their first year; writing-driven practice geared toward quickly mastering new fact patterns and applying rules to them; statutory interpretation has shifted away from pure ambiguity arguments post-Chevron; combines well with Energy Regulatory (admin-law heavy), Bankruptcy (interlocking rules across deals and court litigation), and Tax (diligent reasoning at the intersection of complex statutes and facts) " + S('MY'));
+  addYou('latham', 'dc', [
+    "Eric Konopka", "met", "Partner, Supreme Court & Appellate / Tax Controversy / Energy Regulatory (D.C. · CLS '15)",
+    "Coffee chat. Clerked three consecutive years after CLS before joining Latham D.C. in tax appellate, bankruptcy, and energy regulatory litigation; emphasized that first-year appellate associates develop the legal arguments in a writing-driven practice focused on applying statutory and post-Chevron administrative law to new fact patterns."
+  ]);
+  addAlum('latham', 'dc', ["Eric Konopka '15", "Partner", "Supreme Court & Appellate; Tax; Energy Regulatory"]);
+  if (GET('latham') && GET('latham').offices.dc) {
+    GET('latham').offices.dc.ask = "Eric Konopka highlighted how first-year appellate associates at Latham develop core legal arguments from day one and how writing-driven appellate work intersects with tax, energy regulatory, and bankruptcy matters post-Chevron. How can summers use the Unassigned Program in D.C. to experience that intersection firsthand?";
+  }
+
+  // 4. Covington & Burling — Josh Tupler (Coffee Chat)
+  addNote('covington', 'Your notes', "D.C. International Trade Controls practice (~80% corporate trade controls & sanctions / ~20% pro bono): advises on economic sanctions compliance and M&A sanctions risk, preps tech clients for congressional investigations, and devotes ~20% of time to policy/research pro bono (such as analyzing lifting Cuba sanctions and Clooney Foundation media censorship questions) " + S('MY'));
+  addYou('covington', 'dc', [
+    "Josh Tupler", "met", "Associate, International Trade Controls (D.C. · CLS '23)",
+    "Coffee chat. Built D.C. Hill relationships (Senate Foreign Relations Committee) before joining Covington; practice is ~80% trade controls/sanctions advisory and prepping tech clients for congressional investigations, and ~20% policy/research pro bono (e.g., Cuba sanctions analysis, Clooney Foundation media censorship project). Also recommended connecting with CLS Prof. Matthew Waxman, CLS adjunct/Steptoe partner Michel Paradis, and OGP's Alex Hogan."
+  ]);
+  addAlum('covington', 'dc', ["Josh Tupler '23", "Associate", "International Trade Controls"]);
+  if (GET('covington') && GET('covington').offices.dc) {
+    GET('covington').offices.dc.ask = "Josh Tupler shared how his D.C. practice blends prepping tech clients for congressional investigations and sanctions work with 20% policy pro bono, and Shekinah Hall highlighted the consistency of Covington's central staffing system. How do junior litigators in D.C. combine congressional investigations, appellate/litigation work, and pro bono through central staffing?";
+  }
+
+  // 5. Cover Letter Sample Paragraphs (modeled on Eli Ferrell's Covington draft; litigation-focused; excludes Mayer Brown & purely transactional notes)
+  const SAMPLE_PARAS = {
+    covington: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position with Covington & Burling's Washington, DC office. I have family roots in the DC area and am excited to work on congressional investigation matters. When speaking with Josh Tupler, a junior associate in the DC office, he emphasized the intellectually stimulating and collaborative environment at Covington—and Shekinah Hall likewise highlighted the consistency of the firm's central staffing system and commitment to uncapped pro bono—which motivated me to apply. I am particularly interested in Covington's litigation practice.",
+    davis: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position with Davis Polk's New York office. When speaking with Matthew Hanner at the Columbia 1L event, he emphasized the open-ended, problem-solving nature of the firm's white collar practice, where attorneys navigate complex issues without rigid, hard-and-fast rules, which motivated me to apply. I am particularly interested in Davis Polk's litigation practice.",
+    latham: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position with Latham & Watkins's Washington, DC office. I have family roots in the DC area and am excited to work on writing-driven appellate and regulatory matters involving complex statutory interpretation. When speaking with Eric Konopka, he emphasized the high level of responsibility given to junior associates to develop core legal arguments from their first year, which motivated me to apply. I am particularly interested in Latham & Watkins's litigation practice.",
+    sidley: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position with Sidley Austin's [New York / Washington, DC] office. When speaking with Juan Arteago and Gwen Ellis-Joyce, they emphasized the firm's strong retention culture where attorneys build their entire careers at Sidley, as well as the opportunity for young lawyers to take real ownership over dynamic regulatory and antitrust matters, which motivated me to apply. I am particularly interested in Sidley Austin's litigation practice.",
+    gibson: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position with Gibson Dunn's [New York / Washington, DC] office. When speaking with Liwei Chen, he emphasized the firm's deep commitment to pro bono work and how Gibson Dunn actively encourages strong participation through unlimited billable-hour credit, which motivated me to apply. I am particularly interested in Gibson Dunn's litigation practice.",
+    wc: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position with Williams & Connolly's Washington, DC office. I have family roots in the DC area and am excited to build trial and appellate advocacy skills early in my career. When speaking with Liza Arias at Columbia's Meet the Firms, she emphasized the close-knit culture of homegrown litigators who have spent their entire careers at the firm and are deeply invested in helping junior associates learn, which motivated me to apply. I am particularly interested in Williams & Connolly's litigation practice.",
+    kirkland: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position with Kirkland & Ellis's [New York / Washington, DC] office. In my conversations with Kirkland attorneys, they emphasized how the open assignment system empowers junior associates to take on substantive trial responsibility early, supported by hands-on advocacy training through KITA and uncapped billable credit for pro bono work, which motivated me to apply. I am particularly interested in Kirkland & Ellis's litigation practice.",
+    cooley: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position with Cooley's [New York / Washington, DC] office. When speaking with Alyssa Wright, Ethan Mandelbaum, Will Donaldson, and Avraham Tsikhanovski, they emphasized how collaborative the regulatory and white collar teams are, how the staffing model balances autonomy with a central fallback, and how working with smaller clients gives junior associates substantial early responsibility alongside genuinely valued pro bono work, which motivated me to apply. I am particularly interested in Cooley's litigation practice.",
+    ropes: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position with Ropes & Gray's [New York / Washington, DC] office. When speaking with Chevaun Samuels at the Young Alumni Orientation, she emphasized the supportive people who define the firm's culture and the ability for associates to take on as much responsibility as they can handle, which motivated me to apply. I am particularly interested in Ropes & Gray's litigation practice.",
+    debevoise: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position with Debevoise & Plimpton's [New York / Washington, DC] office. When speaking with Nicole Gany at the Young Alumni Orientation, she emphasized the collegial, supportive culture at Debevoise and the thoughtful guidance associates receive when exploring and identifying their practice areas, which motivated me to apply. I am particularly interested in Debevoise & Plimpton's litigation practice.",
+    jenner: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position with Jenner & Block's [New York / Washington, DC] office. When speaking with Molly Oberstein-Allen at the Young Alumni Orientation, she emphasized the welcoming, mentorship-oriented culture in the firm's litigation practice and how eager attorneys are to engage with junior colleagues, which motivated me to apply. I am particularly interested in Jenner & Block's litigation practice.",
+    irell: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position with Irell & Manella's Washington, DC office. I have family roots in the DC area and am excited to work on appellate and complex litigation matters. When speaking with Matt Corey at Columbia's Meet the Firms, he emphasized how working on leanly staffed teams improves both training and early opportunities by allowing junior associates to try things directly and iterate closely with team attorneys, which motivated me to apply. I am particularly interested in Irell & Manella's litigation practice.",
+    hsfk: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position with Herbert Smith Freehills Kramer's [New York / Washington, DC] office. When speaking with Erica Mastromarino and a Columbia alum at the firm, they emphasized how the firm pairs a close-knit, boutique-style feel and uncapped pro bono commitment with a global platform, melding structured and organic mentorship, which motivated me to apply. I am particularly interested in Herbert Smith Freehills Kramer's litigation practice.",
+    shem: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position with Sheppard Mullin's [New York / Washington, DC] office. When speaking with Caroline Menes and Lisa Harris at Columbia's Meet the Firms, they emphasized how the firm blends structured and organic mentorship while thoughtfully tailoring the summer program to each office's distinct culture, which motivated me to apply. I am particularly interested in Sheppard Mullin's litigation practice."
+  };
+
+  Object.entries(SAMPLE_PARAS).forEach(([id, text]) => {
+    const f = GET(id);
+    if (f) f.samplePara = text;
+  });
+})();
+
 /* ============================ ENGINE ============================
    No edits needed below this line.
    ================================================================ */
@@ -1540,6 +1638,7 @@ document.getElementById('firms').innerHTML = FIRMS.length ? FIRMS.map(f=>{
     ${f.programs.length?`<div class="programs"><b>${CONFIG.classLabel}</b><ul>${f.programs.map(p=>`<li>${p}</li>`).join('')}</ul></div>`:''}
    </div>
    ${f.pts&&f.pts.length?`<div style="padding:12px 18px;border-top:1px solid var(--rule)"><div class="lbl">Talking points</div><ul class="pts">${f.pts.map(p=>`<li>${p}</li>`).join('')}</ul></div>`:''}
+   ${f.samplePara?`<div class="sample-sec"><div class="lbl">Sample Paragraph</div><p class="sample-p">${f.samplePara}</p></div>`:''}
    <div class="offices" style="grid-template-columns:repeat(${MKEYS.length},minmax(0,1fr))">${MKEYS.map(k=>officeHTML(f,k)).join('')}</div>
   </article>`;}).join('') : `<p class="empty">No firms yet. Add them to <code>FIRMS</code> in the page's data section.</p>`;
 
