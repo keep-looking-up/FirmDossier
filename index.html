@@ -1,3 +1,6 @@
+The updated HTML file is below, incorporating the 8 expanded firm cards (clearing the "Other" table), the updated 2027 1L / 2028 2L application timelines and compensation scales, and the 3-way **People** filter (`All`, `With your people`, and `No personal contacts`).
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -178,8 +181,10 @@ footer{margin-top:40px;font-size:13px;color:var(--muted);display:grid;gap:8px;ma
   <div class="seg"><span>Alumni</span>
     <button type="button" id="recentBtn" aria-pressed="false">2020+ grads only</button>
   </div>
-  <div class="seg"><span>People</span>
-    <button type="button" id="mineBtn" aria-pressed="false">Firms with your people</button>
+  <div class="seg" id="peoplef"><span>People</span>
+    <button type="button" data-v="all" aria-pressed="true">All</button>
+    <button type="button" data-v="mine" aria-pressed="false">With your people</button>
+    <button type="button" data-v="nomet" aria-pressed="false" title="Only firms where you have not personally met or worked with a contact (includes firms with no contacts, cold/internet contacts, or contacts via a friend)">No personal contacts</button>
   </div>
   <div class="seg"><span>Sort</span>
     <select id="sortSel" aria-label="Sort firms">
@@ -867,6 +872,578 @@ OTHERS.push(["Vinson & Elkins","Not added; you met an M&A alum: pro bono capped 
   });
 })();
 
+// ---- Pass 3: Expand all remaining OTHERS firms into full Firm Cards & update 2026–2027 Application Timelines ----
+(function(){
+  // Clear all remaining items in OTHERS since every one is promoted to a full card below
+  OTHERS.length = 0;
+
+  // 1. Willkie Farr & Gallagher
+  FIRMS.push({
+    id: "willkie",
+    name: "Willkie Farr & Gallagher",
+    side: "def",
+    home: ["New York · litigation & corporate", "ny"],
+    added: "16 Oct",
+    facts: {
+      us: "1,200+ lawyers worldwide " + S('WEB'),
+      lit: null, corp: null, cls: "—",
+      program: "10-week summer program; open assignment system across Litigation, Corporate, and Regulatory " + S('WEB'),
+      assign: "Summer associates choose assignments across practice groups with guidance from assignment coordinators and mentors " + S('WEB')
+    },
+    buzz: ["collaborative culture", "hands-on litigation"],
+    programs: [],
+    timing: {
+      hires: "1L: limited / diversity & fellowship tracks; NY & DC primarily 2L " + S('WEB'),
+      app: "2L Summer Associate (2028)",
+      window: "Opens 1 Nov 2026 (rolling) " + CD("2026-11-01") + " " + L('https://www.willkie.com/careers/law-students', 'page') + " " + S('WEB'),
+      money: "$4,327/wk ($225k Market scale) " + S('WEB')
+    },
+    lb: null,
+    std: {
+      ch: "NY Lit (Highly Regarded) B2",
+      notes: [
+        ["Appellate group", "Supreme Court & Appellate practice representing clients in federal circuits and SCOTUS " + S('WEB')]
+      ]
+    },
+    pts: [
+      "Chambers USA 2026: Band 2 in NY Commercial Litigation (Highly Regarded) " + L(CH.hr, 'table') + " " + S('WEB'),
+      "High-profile white-collar, securities, and regulatory litigation across the New York and Washington, D.C. offices " + S('WEB')
+    ],
+    offices: {
+      ny: {
+        hc: "—",
+        pa: "Commercial litigation · Securities · White collar · Restructuring",
+        rec: "Law Student Recruiting (willkie.com)",
+        pts: [],
+        ask: "Willkie's New York litigation practice spans securities, white-collar, and restructuring disputes. How do junior associates navigate assignments across those areas, and how early do you get to draft briefs or take depositions?",
+        you: [],
+        alum: []
+      },
+      dc: {
+        hc: "—",
+        pa: "Appellate · White collar · Regulatory · Enforcement",
+        rec: "Law Student Recruiting (willkie.com)",
+        pts: [],
+        ask: "Willkie's D.C. office pairs government enforcement and regulatory work with appellate litigation. How often do D.C. associates team up with New York litigators on major trials and appeals?",
+        you: [],
+        alum: []
+      }
+    }
+  });
+
+  // 2. Proskauer Rose
+  FIRMS.push({
+    id: "proskauer",
+    name: "Proskauer Rose",
+    side: "def",
+    home: ["New York · litigation, sports & labor", "ny"],
+    added: "16 Oct",
+    facts: {
+      us: "800+ lawyers worldwide " + S('WEB'),
+      lit: null, corp: null, cls: "—",
+      program: "10-week summer program; rotations and open assignment opportunities " + S('WEB'),
+      assign: "Dedicated mentors and assignment coordinators help summers sample commercial, appellate, and sports/antitrust litigation " + S('WEB')
+    },
+    buzz: ["Silver Scholar Program", "premier sports & commercial litigation"],
+    programs: [
+      "2L Silver Scholar Program: $50,000 award paid in installments across 2L summer and joining the firm " + L('https://www.proskauer.com/careers/law-student-recruiting', 'page') + " " + S('WEB')
+    ],
+    timing: {
+      hires: "No 1L hiring; 2L only " + S('WEB'),
+      app: "2L Summer Associate (2028)",
+      window: "Opens 1 Nov 2026 (rolling) " + CD("2026-11-01") + " " + L('https://www.proskauer.com/careers/law-student-recruiting', 'page') + " " + S('WEB'),
+      money: "$4,327/wk ($225k scale) " + S('WEB')
+    },
+    lb: null,
+    std: {
+      ch: "NY Lit (Highly Regarded) B1",
+      notes: [
+        ["Appellate group", "Appellate practice within the Litigation Department handling federal and state appeals " + S('WEB')]
+      ]
+    },
+    pts: [
+      "Chambers USA 2026: Band 1 in NY Commercial Litigation (Highly Regarded) " + L(CH.hr, 'table') + " " + S('WEB'),
+      "Market-leading trial and appellate representations for major sports leagues, financial institutions, and entertainment clients " + S('WEB')
+    ],
+    offices: {
+      ny: {
+        hc: "—",
+        pa: "Commercial litigation · Sports & antitrust · Labor & employment · Appellate",
+        rec: "Law Student Recruiting (proskauer.com)",
+        pts: [],
+        ask: "Proskauer is Band 1 in New York Highly Regarded Commercial Litigation and represents major sports leagues in high-profile antitrust and appellate disputes. How do junior litigators get staffed on those matters?",
+        you: [],
+        alum: []
+      },
+      dc: {
+        hc: "—",
+        pa: "Appellate · Antitrust · Government enforcement · Labor",
+        rec: "Law Student Recruiting (proskauer.com)",
+        pts: [],
+        ask: "How does Proskauer's D.C. litigation and regulatory team collaborate with New York on nationwide antitrust and appellate matters, and what does a first-year's docket look like?",
+        you: [],
+        alum: []
+      }
+    }
+  });
+
+  // 3. Boies Schiller Flexner
+  FIRMS.push({
+    id: "bsf",
+    name: "Boies Schiller Flexner",
+    side: "both",
+    home: ["New York · high-stakes trial boutique", "ny"],
+    added: "16 Oct",
+    facts: {
+      us: "200+ litigators across US & UK offices " + S('WEB'),
+      lit: null, corp: null, cls: "—",
+      program: "Minimum 10-week summer program; litigation-only immersion " + S('WEB'),
+      assign: "Free-market / leanly staffed case teams where summers work directly with partners on active trials and appeals " + S('WEB')
+    },
+    buzz: ["high-stakes boutique", "formula-based compensation", "plaintiff & defense"],
+    programs: [],
+    timing: {
+      hires: "Primarily 2L; 2028 Summer interest form open " + S('WEB'),
+      app: "Direct via website / attorneyrecruiting@bsfllp.com",
+      window: "2028 Summer interest form live; rolling review " + L('https://www.bsfllp.com/careers/law-students.html', 'page') + " " + S('WEB'),
+      money: "$4,327/wk base + unique revenue-share bonus model for associates " + S('WEB')
+    },
+    lb: null,
+    std: {
+      ch: "NY Lit (Highly Regarded) B3",
+      notes: [
+        ["Appellate group", "Appellate & Supreme Court practice integrated across high-stakes plaintiff and defense litigation " + S('WEB')],
+        ["Compensation", "Associates earn a percentage of revenue originated and matters worked on, frequently exceeding standard market bonuses " + S('WEB')]
+      ]
+    },
+    pts: [
+      "Chambers USA 2026: Band 3 in NY Commercial Litigation (Highly Regarded) " + L(CH.hr, 'table') + " " + S('WEB'),
+      "Boutique-style lean staffing gives junior associates early brief-drafting, deposition, and courtroom opportunities on both plaintiff- and defense-side cases " + S('WEB')
+    ],
+    offices: {
+      ny: {
+        hc: "—",
+        pa: "Complex commercial · Antitrust · Plaintiff & defense trials · Appeals",
+        rec: "Erin Levin, Director of Legal Recruiting (attorneyrecruiting@bsfllp.com)",
+        pts: [],
+        ask: "BSF staffs high-stakes plaintiff and defense cases leanly and uses a distinctive revenue-based compensation model. How does that shape firm culture and the responsibility first- and second-year associates get in court?",
+        you: [],
+        alum: []
+      },
+      dc: {
+        hc: "—",
+        pa: "Appellate · Antitrust · Crisis management & government investigations",
+        rec: "Erin Levin, Director of Legal Recruiting (attorneyrecruiting@bsfllp.com)",
+        pts: [],
+        ask: "What does the mix of appellate, antitrust, and government-facing litigation look like in BSF's D.C. office, and how do juniors get staffed across offices?",
+        you: [],
+        alum: []
+      }
+    }
+  });
+
+  // 4. Jones Day
+  FIRMS.push({
+    id: "jonesday",
+    name: "Jones Day",
+    side: "def",
+    home: ["Global · appellate & trial", "other"],
+    added: "16 Oct",
+    facts: {
+      us: "2,400+ lawyers worldwide " + S('WEB'),
+      lit: null, corp: null, cls: "—",
+      program: "10-week summer program; immersion assignment system " + S('WEB'),
+      assign: "No rigid departmental silos for summers; assignment coordinators help summers sample litigation, issues & appeals, and transactional work " + S('WEB')
+    },
+    buzz: ["One Firm Worldwide", "Issues & Appeals", "SCOTUS clerk recruiting"],
+    programs: [
+      "1L Diversity / LCLD Scholars & direct 1L summer positions in select offices (often paired with 2028 2L return offers) " + L('https://www.jonesday.com/en/careers/law-students', 'page') + " " + S('WEB')
+    ],
+    timing: {
+      hires: "Yes: hires 1Ls in select offices (incl. LCLD Scholars) & 2Ls " + S('WEB'),
+      app: "Direct portal (1L 2027 & 2L 2028)",
+      window: "1L & 2L applications open fall 2026 on a rolling basis " + L('https://www.jonesday.com/en/careers/law-students', 'page') + " " + S('WEB'),
+      money: "$4,327/wk ($225k–$240k scale reported across major markets; black-box associate pay) " + S('3P')
+    },
+    lb: null,
+    std: {
+      ch: "Appellate B2 · NY Lit B3",
+      notes: [
+        ["Appellate group", CA(2) + " (Issues & Appeals group is one of the largest SCOTUS practices and clerk employers in the country)"],
+        ["Compensation", "Individualized 'black-box' associate compensation with no public lockstep bonus grid " + S('3P')]
+      ]
+    },
+    pts: [
+      "Chambers USA 2026: Band 2 nationwide in Appellate Law (Issues & Appeals practice) " + L(CH.app, 'table') + " " + S('WEB'),
+      "Issues & Appeals group regularly argues before the U.S. Supreme Court and federal circuits, integrating trial-level strategy with appellate briefing " + S('WEB')
+    ],
+    offices: {
+      ny: {
+        hc: "—",
+        pa: "Commercial & securities litigation · Trial practice · Issues & Appeals",
+        rec: "NY Recruiting (jonesday.com)",
+        pts: [],
+        ask: "Jones Day's Issues & Appeals group is embedded in major trials from the start. How do New York litigation associates collaborate with Issues & Appeals lawyers on dispositive motions and appeals?",
+        you: [],
+        alum: []
+      },
+      dc: {
+        hc: "—",
+        pa: "Issues & Appeals (SCOTUS & federal circuits) · Government regulation · Antitrust",
+        rec: "DC Recruiting (jonesday.com)",
+        pts: [],
+        ask: "Jones Day's D.C. office houses one of the country's largest Supreme Court and appellate practices. How can a summer or junior associate without a clerkship yet get involved in Issues & Appeals briefing?",
+        you: [],
+        alum: []
+      }
+    }
+  });
+
+  // 5. Clement & Murphy
+  FIRMS.push({
+    id: "clement",
+    name: "Clement & Murphy",
+    side: "both",
+    home: ["Washington, DC · SCOTUS & appellate boutique", "dc"],
+    added: "16 Oct",
+    facts: {
+      us: "~20 attorneys (all focused on SCOTUS, appellate & constitutional litigation) " + S('WEB'),
+      lit: 20, corp: 0, cls: "—",
+      program: "Appellate boutique model; hires primarily post-clerkship associates rather than traditional 1L/2L summer classes " + S('WEB'),
+      assign: "Lean appellate teams working directly with Paul Clement, Erin Murphy, and partners on SCOTUS and federal circuit briefs " + S('WEB')
+    },
+    buzz: ["#1 Best Midsize Firm in DC (Vault)", "over 100 SCOTUS arguments"],
+    programs: [],
+    timing: {
+      hires: "No traditional 1L/2L summer program; post-clerkship hiring " + S('WEB'),
+      app: "Direct / Post-Clerkship",
+      window: "Clerkship-driven hiring; inquire directly at clementmurphy.com " + L('https://www.clementmurphy.com/', 'site') + " " + S('WEB'),
+      money: "Above-market boutique compensation + clerkship bonuses " + S('3P')
+    },
+    lb: null,
+    std: {
+      vp: "#1 Best Midsize Law Firm in D.C. · #5 Appellate Litigation (Vault 2026–2027)",
+      ch: "Appellate B1 (Paul Clement Star Individual; Erin Murphy B1)",
+      notes: [
+        ["Appellate group", CA(1) + " — dedicated Supreme Court and appellate boutique founded by former U.S. Solicitor General Paul Clement and Erin Murphy"]
+      ]
+    },
+    pts: [
+      "Founded in 2022 by Paul Clement and Erin Murphy; partners have argued roughly 150 cases before the U.S. Supreme Court " + L('https://www.clementmurphy.com/', 'firm site') + " " + S('WEB'),
+      "Ranked #1 Best Midsize Law Firm in Washington, D.C. and #5 Best Law Firm for Appellate Litigation in Vault's 2026–2027 rankings " + S('WEB')
+    ],
+    offices: {
+      ny: null,
+      dc: {
+        hc: "~20 litigators (706 Duke St, Alexandria / D.C. metro)",
+        pa: "100% Supreme Court, Federal Circuit & complex constitutional/commercial appeals",
+        rec: "Direct outreach (clementmurphy.com)",
+        pts: [],
+        ask: "Because Clement & Murphy staffs Supreme Court and circuit appeals with small teams of former clerks, what experiences in law school and during a clerkship best prepare a young lawyer for your briefing style?",
+        you: [],
+        alum: []
+      }
+    }
+  });
+
+  // 6. Munger, Tolles & Olson
+  FIRMS.push({
+    id: "mto",
+    name: "Munger, Tolles & Olson",
+    side: "both",
+    home: ["Los Angeles · elite litigation & appellate", "west"],
+    added: "16 Oct",
+    facts: {
+      us: "~200 lawyers across LA, SF & Washington, D.C. (~80% clerked) " + S('WEB'),
+      lit: null, corp: null, cls: "—",
+      program: "Summer program with Work Coordinators; 1Ls who accept offers receive automatic invitations to return for the second half of 2L summer " + S('WEB'),
+      assign: "Free-market system supported by Work Coordinators; roughly 1:1 partner-to-associate ratio with early stand-up courtroom opportunities " + S('WEB')
+    },
+    buzz: ["~80% former judicial clerks", "democratically run", "early stand-up experience"],
+    programs: [
+      "1L Summer Associate Program (2027) & 2027 Pre-Clerkship Summer Associate Program (for 3Ls clerking after graduation) " + L('https://www.mto.com/careers/law-students/', 'page') + " " + S('WEB')
+    ],
+    timing: {
+      hires: "Yes: hires 1Ls (automatic 2L second-half return invite) and 2Ls " + S('WEB'),
+      app: "Direct portal (1L 2027 & 2L 2028)",
+      window: "1L & 2L applications open 1 Jan 2027 " + CD("2027-01-01") + " " + L('https://www.mto.com/careers/law-students/', 'page') + " " + S('WEB'),
+      money: "$4,519/wk ($235k scale) " + L('https://www.mto.com/careers/law-students/', 'page') + " " + S('WEB')
+    },
+    lb: null,
+    std: {
+      ch: "Appellate B2 · CA Lit B1",
+      notes: [
+        ["Appellate group", CA(2) + " — D.C. office led by former DOJ/SG appellate litigators including Donald Verrilli"],
+        ["Look Book", "Did not participate in CLS NYC/DC Look Book table, but operates a powerhouse D.C. appellate & litigation office " + S('WEB')]
+      ]
+    },
+    pts: [
+      "Washington, D.C. office (601 Massachusetts Ave NW) is a premier appellate and regulatory litigation hub anchored by former U.S. Solicitor General Donald Verrilli " + L('https://www.mto.com/locations/washington-d-c/', 'DC office') + " " + S('WEB'),
+      "Summer compensation matches the $235,000 scale ($4,519/wk), and 1L and 2L applications open January 1, 2027 " + L('https://www.mto.com/careers/law-students/', 'page') + " " + S('WEB')
+    ],
+    offices: {
+      ny: null,
+      dc: {
+        hc: "D.C. appellate & complex litigation hub",
+        pa: "Supreme Court & Appellate · Regulatory · Complex commercial litigation",
+        rec: "Lila Mendoza, Firmwide Legal Recruiting Manager (lila.mendoza@mto.com)",
+        pts: [],
+        ask: "Around 80% of Munger Tolles lawyers have clerked, and the D.C. office handles major Supreme Court and appellate matters alongside California trial teams. How do summers and junior associates get integrated into those cross-office teams?",
+        you: [],
+        alum: []
+      }
+    }
+  });
+
+  // 7. Vinson & Elkins
+  FIRMS.push({
+    id: "ve",
+    name: "Vinson & Elkins",
+    side: "def",
+    home: ["Houston · litigation, appellate & energy", "other"],
+    added: "16 Oct",
+    facts: {
+      us: "700+ lawyers worldwide " + S('WEB'),
+      lit: null, corp: null, cls: "—",
+      program: "10-week summer program; unassigned or rotational options depending on office " + S('WEB'),
+      assign: "Dedicated summer coordinators pair summers with commercial, appellate, and government investigations matters " + S('WEB')
+    },
+    buzz: ["20 Chambers Band 1 practices", "appellate & trial integration"],
+    programs: [
+      "1L Summer Associate positions & 1L Diversity Fellowship opportunities " + L('https://www.velaw.com/careers/law-students/', 'page') + " " + S('WEB')
+    ],
+    timing: {
+      hires: "Yes: hires 1Ls and 2Ls (applications open 1 Nov 2026) " + S('WEB'),
+      app: "Direct portal (1L 2027 & 2L 2028)",
+      window: "1L & 2L applications open 1 Nov 2026 " + CD("2026-11-01") + " " + L('https://www.velaw.com/careers/law-students/', 'page') + " " + S('WEB'),
+      money: "$4,327/wk ($225k scale) " + S('WEB')
+    },
+    lb: null,
+    std: {
+      ch: "Appellate (Texas/National) · 20 Band 1 practices firmwide",
+      notes: [
+        ["Event notes", "Met an M&A alum: pro bono capped at 100 hours, workload ebbs and flows, culture described as 'a little shaky' " + S('MY')],
+        ["Appellate group", "Recognized Appellate practice handling federal circuit and state supreme court appeals " + S('WEB')]
+      ]
+    },
+    pts: [
+      "Earned 20 Band 1 practice rankings in Chambers USA 2026, with growing New York commercial litigation and D.C. appellate/regulatory practices " + S('WEB'),
+      "Applications for both 2027 1L and 2028 2L Summer Associate positions open November 1, 2026 " + L('https://www.velaw.com/careers/law-students/', 'page') + " " + S('WEB')
+    ],
+    offices: {
+      ny: {
+        hc: "—",
+        pa: "Commercial litigation · White collar · Restructuring · Corporate",
+        rec: "Law Student Recruiting (velaw.com)",
+        pts: [],
+        ask: "How does V&E's New York litigation team collaborate with the D.C. and Texas offices on complex commercial and appellate disputes, and what does junior associate training look like?",
+        you: [],
+        alum: []
+      },
+      dc: {
+        hc: "—",
+        pa: "Appellate · Government investigations · Antitrust · Environmental & energy litigation",
+        rec: "Law Student Recruiting (velaw.com)",
+        pts: [],
+        ask: "V&E's D.C. office handles regulatory, antitrust, and appellate litigation. How early do junior associates get brief-writing and oral argument opportunities?",
+        you: [],
+        alum: []
+      }
+    }
+  });
+
+  // 8. A&O Shearman
+  FIRMS.push({
+    id: "aoshearman",
+    name: "A&O Shearman",
+    side: "def",
+    home: ["New York · Global · litigation & arbitration", "ny"],
+    added: "16 Oct",
+    facts: {
+      us: "4,000+ lawyers globally (~800 in the US following Allen & Overy + Shearman & Sterling merger) " + S('WEB'),
+      lit: null, corp: null, cls: "—",
+      program: "10-week summer program featuring Summer Associate University (SAU) training series " + S('WEB'),
+      assign: "RotationPlus in NY: two 5-week practice group rotations paired with a partner and associate mentor, plus a centralized assignment database to take work outside rotations " + S('WEB')
+    },
+    buzz: ["RotationPlus", "Summer Associate University", "cross-border disputes"],
+    programs: [
+      "1L Summer Associate opportunities alongside 2L Summer Program " + L('https://www.aoshearman.com/en/careers/us-law-students', 'page') + " " + S('WEB')
+    ],
+    timing: {
+      hires: "Yes: hires both 1L and 2L summer associates " + S('WEB'),
+      app: "Direct portal (1L 2027 & 2L 2028)",
+      window: "Rolling fall/winter window (expected Nov 2026 opening) " + L('https://www.aoshearman.com/en/careers/us-law-students', 'page') + " " + S('WEB'),
+      money: "$4,327/wk ($225k scale) " + S('WEB')
+    },
+    lb: null,
+    std: {
+      ch: "NY Lit (Highly Regarded) · International Arbitration B1",
+      notes: [
+        ["Event notes", "Met a capital markets alum who explained the practice and post-merger platform " + S('MY')],
+        ["Appellate group", "Handles federal appeals, securities litigation, and international arbitration across NY and D.C. " + S('WEB')]
+      ]
+    },
+    pts: [
+      "Earned 128 practice and lawyer rankings in Chambers USA 2026 following the Allen & Overy and Shearman & Sterling combination " + S('WEB'),
+      "New York's RotationPlus system gives summers two 5-week rotations with dedicated partner/associate mentors while still allowing free-market assignments across the firm " + L('https://www.aoshearman.com/en/careers/us-law-students', 'page') + " " + S('WEB')
+    ],
+    offices: {
+      ny: {
+        hc: "—",
+        pa: "Commercial & securities litigation · International arbitration · White collar · Antitrust",
+        rec: "US Law Student Recruiting (aoshearman.com)",
+        pts: [],
+        ask: "A&O Shearman's RotationPlus system pairs two five-week rotations with an open assignment database. How do litigation summers use that setup to get substantive brief-writing and trial-prep work?",
+        you: [],
+        alum: []
+      },
+      dc: {
+        hc: "—",
+        pa: "Antitrust · White collar & regulatory enforcement · International disputes",
+        rec: "US Law Student Recruiting (aoshearman.com)",
+        pts: [],
+        ask: "How has the A&O Shearman merger expanded the cross-border enforcement, antitrust, and appellate docket for junior litigators in D.C.?",
+        you: [],
+        alum: []
+      }
+    }
+  });
+
+  // ---- Timeline & Program Updates across Existing Firms (Checked 16 Oct 2026) ----
+  const upT = (id, patch) => {
+    const f = GET(id);
+    if (f) Object.assign(f.timing, patch);
+  };
+  const addProg = (id, prog) => {
+    const f = GET(id);
+    if (f) f.programs = (f.programs || []).concat([prog]);
+  };
+
+  // Already Open (Oct 2026)
+  upT('davis', {
+    app: "2L Summer 2028 (Flo Forward)",
+    window: "Open now (opened 1 Oct 2026; rolling) " + L('https://www.davispolk.com/careers/law-students', 'page') + " " + S('WEB')
+  });
+  upT('sidley', {
+    app: "1L 2027 / 2L 2028 (Suited required)",
+    window: "2028 2L IP Lit opened 1 Oct 2026; general 2L & select 1L open 1 Nov 2026 " + CD("2026-11-01") + " " + L('https://www.sidley.com/en/us/careers/law-students/', 'page') + " " + S('WEB')
+  });
+  upT('cahill', {
+    app: "2L Summer 2028",
+    window: "Open now (official 2028 2L applications opened 15 Oct 2026) " + L('https://www.cahill.com/careers/law-students', 'page') + " " + S('WEB')
+  });
+  upT('omelveny', {
+    app: "2L Summer 2028",
+    window: "2028 2L IP Lit open now; general 2L opens fall 2026 (accepts pre-grade submission) " + L('https://www.omm.com/careers/law-students/', 'page') + " " + S('WEB')
+  });
+  upT('weil', {
+    app: "1L LASER Program / 2L 2028",
+    window: "1L LASER open now (NY); 2028 2L opens Nov 2026 " + L('https://careers.weil.com/students', 'page') + " " + S('WEB')
+  });
+  addProg('weil', "1L LASER Program (NY): 1L summer building legal AI software & academic research + 2028 2L Summer Associate position (open now) " + L('https://careers.weil.com/students', 'page') + " " + S('WEB'));
+
+  // Opening Early November 2026
+  upT('kirkland', {
+    app: "2L Summer 2028 (1L opt-in upon 2L offer)",
+    window: "Opens 1 Nov 2026 (rolling) " + CD("2026-11-01") + " " + L('https://careers.kirkland.com/', 'page') + " " + S('WEB')
+  });
+  upT('milbank', {
+    app: "2L Summer 2028",
+    window: "Opens 1 Nov 2026 (rolling) " + CD("2026-11-01") + " " + L('https://www.milbank.com/en/careers/law-students.html', 'page') + " " + S('WEB')
+  });
+  upT('whitecase', {
+    app: "1L Workshops & 2L Summer 2028",
+    window: "2028 2L opens 1 Nov 2026 " + CD("2026-11-01") + "; 1L Jan 2027 workshop apps close 1 Nov 2026 " + L('https://www.whitecase.com/careers/locations/united-states/law-students', 'page') + " " + S('WEB')
+  });
+  addProg('whitecase', "1L Two-Day Workshops (Jan 2027): Discover White & Case (NYC) and IP Litigation Workshop (Silicon Valley); apply Sept 15–Nov 1, 2026 " + S('WEB'));
+  upT('shem', {
+    app: "1L Halgren Fellowship & 2L 2028 (Suited required)",
+    window: "1L & 2L applications open 1 Nov 2026 " + CD("2026-11-01") + " " + L('https://www.sheppardmullin.com/careers-law-students', 'page') + " " + S('WEB')
+  });
+  addProg('shem', "2027 Guy N. Halgren 1L Fellowship: paid 1L & 2L summers + up to $50,000 tuition grant; opens 1 Nov 2026 " + S('WEB'));
+  upT('goodwin', {
+    app: "2028 Summer Program (Suited required)",
+    window: "Opens 2 Nov 2026 " + CD("2026-11-02") + " " + L('https://www.goodwinlaw.com/en/careers/students', 'page') + " " + S('WEB')
+  });
+  upT('selendy', {
+    app: "2L Summer Associate (2028)",
+    window: "Opens 2 Nov 2026 " + CD("2026-11-02") + " " + L('https://www.selendygay.com/careers/law-students', 'page') + " " + S('WEB')
+  });
+  upT('sc', {
+    app: "2L Summer 2028",
+    window: "Expected early Nov 2026 (opened 1 Nov last cycle) " + S('INF'),
+    money: "$4,519+/wk ($235k+ scale announced Oct 2026) " + S('WEB')
+  });
+  upT('quinn', {
+    app: "Separate 1L (2027) and 2L (2028) applications",
+    window: "1L & 2L applications open fall 2026 (rolling) " + L('https://www.quinnemanuel.com/careers/law-students/', 'page') + " " + S('WEB'),
+    money: "$4,520/wk ($235k scale) " + S('LB')
+  });
+  upT('jenner', {
+    hires: "1L (select/fellowship) & 2L Summer Program " + S('WEB'),
+    app: "2L Summer 2028 (mailing list live)",
+    window: "Expected mid-Nov 2026 (opened 14 Nov last cycle; apply by 30 Jan) " + L('https://www.jenner.com/en/careers/law-students', 'page') + " " + S('INF'),
+    money: "$4,327/wk ($225k scale) " + S('WEB')
+  });
+  upT('pw', {
+    app: "2L Summer 2028 & Pauli Murray Fellowship",
+    window: "Posting fall 2026 (expected Nov opening) " + L('https://www.paulweiss.com/careers/law-students', 'page') + " " + S('WEB')
+  });
+  addProg('pw', "2L Pauli Murray Fellowship: $50,000 award ($25k upon 2L summer acceptance + $25k upon full-time associate acceptance) " + S('WEB'));
+  upT('cooley', {
+    app: "Separate 1L (2027) & 2L (2028) applications",
+    window: "Expected Nov 2026 (rolling) " + L('https://www.cooley.com/careers/us-law-students', 'page') + " " + S('WEB'),
+    money: "$4,327/wk summer; raised first-year scale to $255k+ " + S('WEB')
+  });
+
+  // Opening December 2026 / January 2027 / June 2027
+  upT('wachtell', {
+    app: "2L Summer 2028",
+    window: "Opens 1 Dec 2026, closes 6 Feb 2027 (reviewed after 1L fall grades) " + CD("2026-12-01") + " " + L('https://www.wlrk.com/careers/', 'page') + " " + S('WEB')
+  });
+  upT('akin', {
+    hires: "Yes: 1L IP (NY/DC) & General (TX/LA/BOS); 2L all offices " + S('WEB'),
+    app: "1L 2027 & 2L 2028 (Suited required)",
+    window: "NY & DC open 15 Dec 2026 " + CD("2026-12-15") + " (TX opened 15 Oct 2026) " + L('https://www.akingump.com/en/careers/students', 'page') + " " + S('WEB')
+  });
+  upT('cravath', {
+    app: "2L Summer 2028",
+    window: "Opens 4 Jan 2027 (apply once 1L fall grades are available) " + CD("2027-01-04") + " " + L('https://www.cravath.com/careers/law-students/', 'page') + " " + S('WEB')
+  });
+  upT('wc', {
+    app: "2L Summer Associate",
+    window: "Recruiting schedule updates late fall; 2L apps expected early Jan 2027 " + L('https://www.wc.com/Careers/Law-Students', 'page') + " " + S('WEB')
+  });
+  upT('kellogg', {
+    hires: "No 1L hiring; 2L only (clerkship required for full-time) " + S('WEB'),
+    app: "2L Summer 2028",
+    window: "2028 2L application window opens June 2027 " + CD("2027-06-01") + " " + L('https://www.kellogghansen.com/careers/summer-associates/', 'page') + " " + S('WEB'),
+    money: "$255k+ first-year scale; $5,000/wk summer " + S('WEB')
+  });
+  upT('susman', {
+    hires: "No 1L hiring; 2L Summer Associate (clerkship required for full-time) " + S('WEB'),
+    app: "2L Summer 2028",
+    window: "Rolling winter/spring window after 1L fall grades " + L('https://www.susmangodfrey.com/careers/Legal-Recruiting/', 'page') + " " + S('WEB'),
+    money: "$4,327+/wk + elite trial-bonus structure " + S('WEB')
+  });
+  upT('molo', {
+    hires: "Summer Associate & Post-Clerkship Associate " + S('WEB'),
+    app: "Direct via mololamken.com",
+    window: "Rolling; accepts applications after 1L fall grades " + L('https://www.mololamken.com/careers', 'page') + " " + S('WEB'),
+    money: "Above-market boutique scale + generous clerkship bonuses " + S('WEB')
+  });
+
+  // Update remaining Fall/Nov rolling firms with links
+  ['wilmer','mayer','hogan','orrick','arnold','cleary','simpson','debevoise','mofo','ph','dechert','ropes'].forEach(id => {
+    const f = GET(id);
+    if (f && (f.timing.window === NOCK || !f.timing.window)) {
+      f.timing.app = "1L 2027 / 2L 2028 Summer Program";
+      f.timing.window = "Expected Nov 2026 rolling window (confirm on firm portal) " + S('INF');
+    }
+  });
+  addProg('wilmer', "$25,000 1L Public Interest / Judicial Fellowship (funds 1L summer in PI, chambers, government, or academia) " + S('LB'));
+})();
+
 /* ============================ ENGINE ============================
    No edits needed below this line.
    ================================================================ */
@@ -876,6 +1453,13 @@ const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 const sum = a => Array.isArray(a) ? a.reduce((x,y)=>x+y,0) : a;
 const yr = n => { const m=String(n).match(/'(\d\d)\b/); return m? 2000+parseInt(m[1]) - (parseInt(m[1])>40?100:0) : null; };
 const mine = f => MKEYS.reduce((n,k)=>n+((f.offices[k]&&f.offices[k].you)?f.offices[k].you.length:0),0);
+const hasPersonal = (f, mkt) => {
+  const keys = (!mkt || mkt==='all') ? MKEYS : [mkt];
+  return keys.some(k => {
+    const o = f.offices[k];
+    return o && o.you && o.you.some(p => p[1]==='met' || p[1]==='worked');
+  });
+};
 FIRMS.forEach(f=>{ f.offices=f.offices||{}; f.facts=f.facts||{}; f.buzz=f.buzz||[]; f.programs=f.programs||[]; f.home=f.home||['','']; f.std=f.std||{}; });
 
 /* header */
@@ -963,8 +1547,9 @@ document.getElementById('firms').innerHTML = FIRMS.length ? FIRMS.map(f=>{
 
 /* state, sorting, filtering */
 const STORE = 'dossier-filters-'+CONFIG.title.toLowerCase().replace(/\W+/g,'-');
-let state={m:'all',s:'all',h:'all',r:false,p:false,sort:'default',rev:false,tbl:{},open:{}};
+let state={m:'all',s:'all',h:'all',r:false,p:'all',sort:'default',rev:false,tbl:{},open:{}};
 try{const saved=JSON.parse(localStorage.getItem(STORE)||'null'); if(saved) state=Object.assign(state,saved);}catch(e){}
+if(state.p===true) state.p='mine'; else if(state.p===false || !['all','mine','nomet'].includes(state.p)) state.p='all';
 if(state.m!=='all' && !MK[state.m]) state.m='all';
 if(state.h!=='all' && !CONFIG.homes.some(h=>h[0]===state.h)) state.h='all';
 const FBY = Object.fromEntries(FIRMS.map((f,i)=>[f.id,Object.assign(f,{_i:i})]));
@@ -986,7 +1571,8 @@ function fits(f){
   const showSide = !CONFIG.showSide || state.s==='all' || f.side===state.s || f.side==='both';
   const showHome = state.h==='all' || f.home[1]===state.h;
   const showMkt = state.m==='all' || !!f.offices[state.m];
-  return showSide && showHome && showMkt && (!state.p || mine(f)>0);
+  const showPeople = state.p==='all' || (state.p==='mine' ? mine(f)>0 : !hasPersonal(f, state.m));
+  return showSide && showHome && showMkt && showPeople;
 }
 const save = () => { try{localStorage.setItem(STORE,JSON.stringify(state));}catch(e){} };
 const cellVal = td => { const t=td.textContent.replace(/\s+/g,' ').trim(); const m=t.replace(/,/g,'').match(/^#?\s*(\d+(?:\.\d+)?)/); return m?+m[1]:(t===''||t==='—'?null:t.toLowerCase()); };
@@ -1035,7 +1621,7 @@ function apply(){
   document.querySelectorAll('#sidef button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===state.s)));
   document.querySelectorAll('#heartf button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===state.h)));
   document.getElementById('recentBtn').setAttribute('aria-pressed',String(!!state.r));
-  document.getElementById('mineBtn').setAttribute('aria-pressed',String(!!state.p));
+  document.querySelectorAll('#peoplef button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===state.p)));
   const so=SORTS[state.sort]; document.getElementById('sortSel').value=state.sort;
   document.getElementById('dirBtn').textContent=so.lab[state.rev?1:0];
   const asc = so.asc !== !!state.rev;
@@ -1067,7 +1653,7 @@ document.querySelectorAll('#mkt button').forEach(b=>b.addEventListener('click',(
 document.querySelectorAll('#sidef button').forEach(b=>b.addEventListener('click',()=>{state.s=b.dataset.v;apply();}));
 document.querySelectorAll('#heartf button').forEach(b=>b.addEventListener('click',()=>{state.h=b.dataset.v;apply();}));
 document.getElementById('recentBtn').addEventListener('click',()=>{state.r=!state.r;apply();});
-document.getElementById('mineBtn').addEventListener('click',()=>{state.p=!state.p;apply();});
+document.querySelectorAll('#peoplef button').forEach(b=>b.addEventListener('click',()=>{state.p=b.dataset.v;apply();}));
 (function(){ const now=new Date(); now.setHours(0,0,0,0);
   document.querySelectorAll('.cd[data-d]').forEach(el=>{ const p=el.dataset.d.split('-'); const t=new Date(+p[0],+p[1]-1,+p[2]);
     const n=Math.round((t-now)/86400000); el.textContent = n>0 ? `in ${n}d` : (n===0?'today':''); el.title=el.dataset.d; }); })();
@@ -1088,3 +1674,5 @@ document.addEventListener('click',e=>{ const a=e.target.closest('a.flink, #jump 
 </script>
 </body>
 </html>
+
+```
