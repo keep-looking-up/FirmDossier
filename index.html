@@ -1540,6 +1540,319 @@ OTHERS.push(["Vinson & Elkins","Not added; you met an M&A alum: pro bono capped 
   });
 })();
 
+
+// ---- Pass 5: Willkie Thank-You Emails & Sample Paragraph, Debevoise M&A Sample Paragraph, 2026-2027 Vault & News Updates, and New Firm Profiles (DLA Piper, Wilson Sonsini, Wilkinson Stekloff) ----
+(function(){
+  CONFIG.checked = "20 Oct 2026";
+  if (!CONFIG.sources.some(s => s[0] === 'FP')) {
+    // keep existing sources clean
+  }
+
+  const addNote = (id, label, text) => {
+    const f = GET(id);
+    if (!f) return;
+    f.std.notes = f.std.notes || [];
+    const existing = f.std.notes.find(n => n[0] === label);
+    if (existing) {
+      existing[1] = existing[1] + " · " + text;
+    } else {
+      f.std.notes.push([label, text]);
+    }
+  };
+  const addYou = (id, mkt, person) => {
+    const f = GET(id);
+    if (!f || !f.offices[mkt]) return;
+    f.offices[mkt].you = (f.offices[mkt].you || []).concat([person]);
+  };
+  const addPt = (id, pt) => {
+    const f = GET(id);
+    if (!f) return;
+    f.pts = (f.pts || []).concat([pt]);
+  };
+
+  // 1. Willkie Farr & Gallagher — 4 Thank-You Emails, Notes, Ask, and Shortened 2-Partner Sample Paragraph
+  const wil = GET('willkie');
+  if (wil) {
+    wil.buzz = ["master of facts", "non-hierarchical culture", "early responsibility", "strong pro bono allowance"];
+    addNote('willkie', 'Your notes', "Junior associates serve as the 'master of facts,' managing the transition between facts and the client while shading legal strategy and fact mastery across each project team · Day-to-day litigation frequently centers on contract ambiguities and hammering out phrases · Flat, non-hierarchical culture encourages juniors to speak up confidently and take on early responsibility (including early deposition experience, negotiations, and engaging document review) · Strong pro bono allowance with a wide breadth of matters spanning family court to impact litigation (such as L.T. v. ICE) " + S('MY'));
+    addYou('willkie', 'ny', [
+      "Shaimaa Hussein", "met", "Partner, Litigation (NY)",
+      "Met early on at the Willkie NY 1L Reception. Framed the role of junior associates as the 'master of facts' and described Willkie's practice of shading legal strategy and fact mastery through each project team to train young litigators."
+    ]);
+    addYou('willkie', 'ny', [
+      "Patricia (Tracie) Haynes", "met", "Partner, Litigation (NY)",
+      "Met at the Willkie NY 1L Reception. Discussed how contract ambiguities and hammering out phrases control day-to-day litigation, how pro bono assignments and casework function practically, and her ongoing pro bono lawsuit L.T. v. ICE."
+    ]);
+    addYou('willkie', 'ny', [
+      "Vanessa Richardson", "met", "Partner, Litigation (NY)",
+      "Met at the Willkie NY 1L Reception. Discussed Willkie's culture of encouraging junior associates to speak up and be confident, early responsibility, and de-emphasizing hierarchy in favor of learning."
+    ]);
+    addYou('willkie', 'ny', [
+      "Matt Makover", "met", "Partner, IP Transactions (NY)",
+      "Met at the Willkie NY 1L Reception. Discussed Willkie's culture of trusting junior associates, encouraging early responsibility in negotiations, and de-emphasizing hierarchy in favor of constructive learning."
+    ]);
+    const wilAsk = "At the New York 1L Reception, Shaimaa Hussein described junior associates as the 'master of facts' who help shade legal strategy across the team, and Vanessa Richardson and Tracie Haynes highlighted Willkie's non-hierarchical culture and contract-ambiguity disputes. How do juniors transition from mastering the factual record to taking early depositions and arguing motions?";
+    if (wil.offices.ny) wil.offices.ny.ask = wilAsk;
+    if (wil.offices.dc) wil.offices.dc.ask = wilAsk;
+    wil.samplePara = "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in Willkie Farr & Gallagher's New York office. I am particularly interested in Willkie's litigation practice. When speaking with Litigation Partners Shaimaa Hussein and Tracie Haynes at the New York 1L Reception, they emphasized how Willkie trains junior associates as the \"master of facts\" and encourages young litigators to take on early responsibility in a non-hierarchical environment, which motivated me to apply. I would love to work in Willkie's New York office as I am excited to get exposure to complex disputes involving contract ambiguity and the firm's impactful pro bono practice.";
+  }
+
+  // 2. Debevoise & Plimpton — Specialty Transactional M&A Cover Letter Paragraph
+  const deb = GET('debevoise');
+  if (deb) {
+    deb.samplePara = "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in Debevoise & Plimpton's New York office. I am particularly interested in Debevoise's M&A and corporate practice. When speaking with M&A associate Nicole Gany at the Young Alumni Orientation, she emphasized the supportive, collegial culture at Debevoise and how the firm's hybrid staffing model helps junior associates explore and identify their practice areas, which motivated me to apply. I would love to work in Debevoise's New York office as I am excited to get exposure to complex transactional M&A matters—where precision in drafting and resolving contractual ambiguity is critical—as well as the firm's rigorous pro bono practice.";
+  }
+
+  // 3. 2026–2027 Vault Law 100 Prestige & Practice Rankings across all firms
+  const VAULT = {
+    cravath:   [1, "#1 Securities Litigation · #2 General Commercial Lit"],
+    wachtell:  [2, "#1 NYC Regional · #1 M&A"],
+    skadden:   [3, "#3 General Commercial Litigation"],
+    latham:    [4, "#1 SoCal Regional · Top 3 Antitrust & Appellate"],
+    sc:        [5, "Up from #6 · Elite Financial & Commercial Lit"],
+    kirkland:  [6, "#1 Commercial Lit, Products Liability & Restructuring · #1 Chicago"],
+    davis:     [7, "Top 5 White Collar & Securities Lit"],
+    gibson:    [8, "Up from #11 · #2 Appellate · Top 5 Best Firm to Work For"],
+    milbank:   [9, "Market leader on 2026 $235k pay scale"],
+    simpson:   [10, "Top 10 Prestige · Elite Antitrust & Securities Lit"],
+    sidley:    [11, "Up from #12 · Top 5 Appellate Litigation"],
+    covington: [12, "Up from #13 · #1 Washington, D.C. Regional · Top 5 Appellate"],
+    pw:        [13, "Moved from #8 · #1 Trial & White Collar Defense"],
+    quinn:     [14, "#1 General Commercial Litigation (pure litigation)"],
+    weil:      [15, "#2 Bankruptcy/Restructuring · Elite Complex Lit"],
+    cleary:    [16, "Top 10 Antitrust & International Disputes"],
+    wc:        [17, "Up from #18 · #1 Appellate Litigation · #2 D.C. Regional"],
+    whitecase: [18, "#1 International Arbitration & Cross-Border Disputes"],
+    susman:    [19, "Up from #23 · #1 Plaintiff & Commercial Trial Boutique"],
+    ropes:     [20, "#1 Boston Regional · #1 Health Care & PE"],
+    ph:        [21, "10+ Chambers Band 1 practices"],
+    cooley:    [22, "#1 NorCal Regional · #1 Tech & Life Sciences"],
+    debevoise: [23, "Top 5 White Collar Defense & International Arbitration"],
+    wilmer:    [25, "Up from #27 · Top 3 Appellate & IP Litigation"],
+    jonesday:  [26, "Top 5 Appellate (Issues & Appeals) · #1 Midwest/South"],
+    mofo:      [27, "Top 5 IP & Patent Litigation · NorCal Powerhouse"],
+    omelveny:  [28, "Top 5 Labor/Employment & Entertainment Lit"],
+    mto:       [29, "Up 7 spots from #36 · Elite Appellate & Trial"],
+    hogan:     [30, "Combined Hogan Lovells Cadwalader (July 2026 merger)"],
+    goodwin:   [31, "Top 10 Life Sciences & Tech Litigation"],
+    arnold:    [32, "Top 10 Antitrust & Environmental/Regulatory"],
+    proskauer: [33, "#1 Sports Law & Labor/Employment"],
+    willkie:   [35, "Elite White Collar, Securities & Restructuring Lit"],
+    akin:      [38, "Top 5 Government Relations, Trade & Appellate"],
+    orrick:    [41, "Up from #42 · Top 10 Appellate & Tech Lit · #13 Summer Program"],
+    jenner:    [43, "Surged 17 spots from #60 (largest jump in Vault 100)"],
+    mayer:     [44, "#7 Best Law Firm to Work For · Top 10 Supreme Court/Appellate"],
+    dechert:   [51, "Top 15 Antitrust, White Collar & Product Liability"],
+    ve:        [53, "#1 Texas Regional · Energy & Complex Commercial Lit"],
+    aoshearman:[56, "Up 6 spots from #62 post-merger · International Disputes"],
+    bsf:       [61, "High-Stakes Trial & Plaintiff/Defense Boutique"],
+    shem:      [63, "Up from #69 · #7 Best Firm to Work For · #18 Summer Program"],
+    cahill:    [71, "#1 Media/First Amendment & Financial Lit"],
+    irell:     [91, "Top 5 IP & Patent Trial Boutique"]
+  };
+  Object.entries(VAULT).forEach(([id, [v, vp]]) => {
+    const f = GET(id);
+    if (!f) return;
+    f.std.v = v;
+    if (!f.std.vp) f.std.vp = vp;
+  });
+
+  // 4. Major 2026 Firm News (Compensation Split, Revenue Records, Executive Order Litigation & Mergers)
+  addNote('milbank', '2026 news', "Led the market on June 2, 2026 by raising associate base salaries $10k–$20k across class years ($235k for 1st-years up to $455k for 8th-years, effective July 1, 2026) " + S('WEB'));
+  addNote('kirkland', '2026 news', "Became the first law firm in history to surpass $10 billion in annual revenue ($10.55B in 2026 reporting); hired appellate co-chair Christopher Michel from Quinn Emanuel in June 2026 " + S('WEB'));
+  addNote('latham', '2026 news', "Posted record $8.3B global revenue; expanded D.C. appellate and regulatory bench " + S('WEB'));
+  addNote('jenner', '2026 news', "Jumped 17 spots in the 2026–2027 Vault 100 (#60 to #43, the biggest rise of any firm) after successfully challenging a federal executive order in court, earning widespread praise from law students and peers " + S('WEB'));
+  addNote('wilmer', '2026 news', "Rose to #25 in the 2026–2027 Vault 100 after challenging a federal executive order in court alongside Jenner & Block " + S('WEB'));
+  addNote('pw', '2026 news', "Moved from #8 to #13 in Vault 2026–2027 following its March 2025 executive order settlement; hired William Jay (ex-Goodwin) in Aug 2026 to lead the Supreme Court & Appellate practice after Kannon Shanmugam moved to Davis Polk " + S('WEB'));
+  addNote('davis', '2026 news', "Recruited star Supreme Court litigator Kannon Shanmugam from Paul, Weiss in 2026 to lead its Supreme Court & Appellate practice from D.C. " + S('WEB'));
+  addNote('gibson', '2026 news', "Climbed 3 spots to #8 in Vault 2026–2027 (#1 only firm in Top 10 for both Prestige and Quality of Life) and added former Acting SG Jeffrey Wall, Yaira Dubin, and two appellate partners from S&C in April 2026 " + S('WEB'));
+  addNote('sc', '2026 news', "Climbed to #5 in Vault 2026–2027; matched the $235k+ associate scale and hired Jonathan Ellis and Michael Huston in Oct 2026 to co-lead its Supreme Court & Appellate practice " + S('WEB'));
+  addNote('kellogg', '2026 news', "Raised associate base pay on June 10, 2026 to $240,000 straight out of law school and $275,000 for post-clerkship first-year associates " + S('WEB'));
+  addNote('quinn', '2026 news', "Matched the new $235k first-year ($4,520/wk summer) scale in June 2026; remains #1 in Vault General Commercial Litigation among pure litigation firms " + S('WEB'));
+  addNote('omelveny', '2026 news', "Early mover on the $235k+ salary scale ($4,688/wk summer pay reported in Look Book) " + S('LB') + " " + S('WEB'));
+  addNote('cravath', '2026 news', "Retained #1 overall Vault prestige rank for 2026–2027 following relocation to Two Manhattan West; remains on the $225k first-year base scale ($4,327/wk) alongside special/year-end bonuses " + S('WEB'));
+  addNote('aoshearman', '2026 news', "Climbed 6 spots to #56 in Vault 2026–2027 following the completion of the Allen & Overy and Shearman & Sterling merger, earning 128 Chambers USA 2026 rankings " + S('WEB'));
+
+  // 5. Three New Full Firm Profiles: DLA Piper, Wilson Sonsini (WSGR), and Wilkinson Stekloff
+  FIRMS.push({
+    id: "dlapiper",
+    name: "DLA Piper",
+    side: "def",
+    home: ["Global · litigation, regulatory & corporate", "other"],
+    added: "20 Oct",
+    facts: {
+      us: "1,600+ US lawyers (4,500+ globally; AmLaw #3 by revenue, PPP ~$4.1M) " + S('WEB'),
+      lit: null, corp: null, cls: "—",
+      program: "10-week summer program (~131 summers nationally: 97 2Ls, 34 1Ls; 96.9% offer rate) " + S('WEB'),
+      assign: "Practice-specific hiring tracks (including a dedicated Litigation Summer Program track) with dedicated assignment coordinators and formal partner/associate mentors " + S('WEB')
+    },
+    buzz: ["The Elite for AI Integration (Chambers)", "practice-specific summer tracks", "global disputes platform"],
+    programs: [
+      "1L Summer Associate Program (~34 1Ls hired nationally across offices) & 2L Litigation Summer Associate Track " + L('https://www.dlapiper.com/en-us/careers/law-students', 'page') + " " + S('WEB')
+    ],
+    timing: {
+      hires: "Yes: hires ~34 1Ls and ~97 2Ls nationally " + S('WEB'),
+      app: "Direct portal (separate Litigation & Corporate tracks)",
+      window: "JD 2029 (Class of 2029) Litigation Summer Program postings open Oct/Nov 2026 through Jan 2027 " + L('https://www.dlapiper.com/en-us/careers/law-students', 'page') + " " + S('WEB'),
+      money: "$4,326/wk ($225k scale) " + S('WEB')
+    },
+    lb: null,
+    std: {
+      v: 42,
+      vp: "#7 Government Relations · Chambers Associate 'The Elite' for AI Integration",
+      ch: "Product Liability, Franchising, IP, Real Estate & Commercial Lit",
+      notes: [
+        ["Appellate group", "Supreme Court & Appellate practice integrated across D.C. and NY litigation teams " + S('WEB')],
+        ["Chambers Associate 2026", "Ranked 'The Elite' for AI Integration, 'Excellent Performer' for Pro Bono, and 'Strong Performer' for Junior Satisfaction & Culture " + S('WEB')]
+      ]
+    },
+    pts: [
+      "Chambers Associate 2026 ranks DLA Piper 'The Elite' nationwide for AI Integration and an 'Excellent Performer' for Pro Bono, with ~131 summer associates (including 34 1Ls) across US offices " + S('WEB'),
+      "Candidates apply directly into specific practice tracks—such as the U.S. Summer Program Litigation track—giving litigation-focused summers immediate exposure to case teams, hearings, and pro bono matters " + L('https://www.dlapiper.com/en-us/careers/law-students', 'page') + " " + S('WEB')
+    ],
+    offices: {
+      ny: {
+        hc: "—",
+        pa: "Commercial & securities litigation · White collar · IP & restructuring disputes",
+        rec: "US Law Student Recruiting (dlapiper.com)",
+        pts: [],
+        ask: "DLA Piper hires summers directly into a dedicated Litigation track and was ranked 'The Elite' by Chambers Associate for AI integration and 'Excellent Performer' for pro bono. How do those tools and pro bono opportunities shape a junior litigator's day-to-day brief writing and case prep in New York?",
+        you: [],
+        alum: []
+      },
+      dc: {
+        hc: "—",
+        pa: "Appellate · Government affairs & regulatory enforcement · Antitrust · International arbitration",
+        rec: "US Law Student Recruiting (dlapiper.com)",
+        pts: [],
+        ask: "DLA Piper's D.C. office pairs a top-ranked government relations and regulatory practice with appellate and complex litigation. How often do junior litigators work across regulatory enforcement and appellate teams?",
+        you: [],
+        alum: []
+      }
+    }
+  });
+
+  FIRMS.push({
+    id: "wsgr",
+    name: "Wilson Sonsini Goodrich & Rosati",
+    side: "def",
+    home: ["Palo Alto · tech, antitrust & appellate litigation", "west"],
+    added: "20 Oct",
+    facts: {
+      us: "1,100+ lawyers worldwide (13 US offices incl. NY & D.C.) " + S('WEB'),
+      lit: null, corp: null, cls: "—",
+      program: "10-week summer program (~70–90 summers firmwide); direct placement into Litigation or Antitrust/Regulatory tracks " + S('WEB'),
+      assign: "Group-specific workflow coordinators pair litigation summers with active antitrust, appellate, IP/AI, and securities trials " + S('WEB')
+    },
+    buzz: ["#1 Tech & Growth Litigation", "NLJ Appellate Hot List", "FTC/DOJ merger trials"],
+    programs: [
+      "1L Summer Associate positions (including 1L Diversity Summit & Scholarship and IP/Litigation opportunities) " + L('https://careers.wsgr.com/', 'page') + " " + S('WEB')
+    ],
+    timing: {
+      hires: "Yes: hires 1Ls (select offices/programs) and 2Ls " + S('WEB'),
+      app: "Direct portal (careers.wsgr.com)",
+      window: "Opens Nov 2026 (rolling fall/winter window) " + CD("2026-11-01") + " " + L('https://careers.wsgr.com/', 'page') + " " + S('WEB'),
+      money: "$4,327/wk ($225k scale) " + S('WEB')
+    },
+    lb: null,
+    std: {
+      v: 34,
+      vp: "#2 Emerging Companies/VC · #4 NorCal · Top 15 IP & Antitrust",
+      ch: "Antitrust B2 · Artificial Intelligence · IP/Patent & Securities Lit (44 Chambers 2026 practice rankings)",
+      notes: [
+        ["Appellate group", "Yes: Supreme Court & Appellate practice named a National Law Journal 'Appellate Hot List' finalist and ranked by Legal 500 " + S('WEB')],
+        ["2026 Recognition", "Earned 44 practice rankings and 97 individual lawyer rankings in Chambers USA 2026 across Antitrust, AI, IP, Appellate, and Securities Litigation " + S('WEB')]
+      ]
+    },
+    pts: [
+      "Recognized in 44 practice areas in Chambers USA 2026—including Nationwide Antitrust, Cartel, Artificial Intelligence, IP/Patent & Copyright Litigation, Securities Litigation, and Appellate Law " + L('https://www.wsgr.com/', 'firm site') + " " + S('WEB'),
+      "New York and D.C. litigation groups anchor high-profile FTC/DOJ merger trials, tech antitrust defense, generative AI copyright disputes, and federal circuit appeals " + S('WEB')
+    ],
+    offices: {
+      ny: {
+        hc: "—",
+        pa: "Antitrust & merger trials · Commercial & securities litigation · AI & copyright disputes",
+        rec: "Law Student Recruiting (careers.wsgr.com)",
+        pts: [],
+        ask: "Wilson Sonsini's New York litigators regularly defend tech and life-sciences companies in high-stakes antitrust trials, securities cases, and cutting-edge AI disputes. How early do junior associates get brief-writing and witness-prep roles on those teams?",
+        you: [],
+        alum: []
+      },
+      dc: {
+        hc: "—",
+        pa: "Antitrust & FTC/DOJ litigation · Supreme Court & Appellate · National Security / Trade & CFIUS",
+        rec: "Law Student Recruiting (careers.wsgr.com)",
+        pts: [],
+        ask: "Wilson Sonsini's D.C. office is a hub for antitrust litigation, appellate advocacy, and regulatory defense. How do D.C. appellate and antitrust associates collaborate with the New York and California trial teams?",
+        you: [],
+        alum: []
+      }
+    }
+  });
+
+  FIRMS.push({
+    id: "wilkinson",
+    name: "Wilkinson Stekloff",
+    side: "both",
+    home: ["Washington, DC · elite trial boutique", "dc"],
+    added: "20 Oct",
+    facts: {
+      us: "~45 trial lawyers across D.C., New York & Miami " + S('WEB'),
+      lit: 45, corp: 0, cls: "—",
+      program: "Selective 2L & pre-clerkship 3L summer program in D.C. and NY; every application is reviewed directly by a partner " + S('WEB'),
+      assign: "Lean trial teams (typically 1–2 partners and a couple of associates) operating under a fixed-fee client billing model so juniors attend depositions, hearings, and strategy sessions without billable-hour bloat concerns " + S('WEB')
+    },
+    buzz: ["2026 Trial Firm of the Year (Benchmark)", "fixed-fee billing enables junior courtroom roles", "130+ trials"],
+    programs: [
+      "Summer Associate Program for rising 2Ls and rising 3Ls planning to clerk after graduation " + L('https://www.wilkinsonstekloff.com/careers/', 'page') + " " + S('WEB')
+    ],
+    timing: {
+      hires: "2Ls, pre-clerkship 3Ls & judicial clerks (no headhunters; partners review every application) " + S('WEB'),
+      app: "Direct via wilkinsonstekloff.com/careers",
+      window: "Rolling review (check careers portal for 2028 2L dates) " + L('https://www.wilkinsonstekloff.com/careers/', 'page') + " " + S('WEB'),
+      money: "$235,000 first-year scale (~$4,519/wk summer; raised salaries June 9, 2026 up to $455k for senior associates) " + S('WEB')
+    },
+    lb: null,
+    std: {
+      vp: "Benchmark Litigation 2026 'Trial Firm of the Year' · Elite D.C. & NY Trial Boutique",
+      ch: "Nationwide Trial Lawyers (Beth Wilkinson Star Individual · Brian Stekloff B2) · D.C. Commercial & Antitrust Lit",
+      notes: [
+        ["2026 news", "Named 2026 Trial Firm of the Year by Benchmark Litigation; matched the $235k–$455k salary scale on June 9, 2026; opened a Miami office in summer 2026; served as lead trial counsel in blockbuster 2026 antitrust and sports/media trials (including the NCAA, NFL, Microsoft, and Paramount matters) " + S('WEB')],
+        ["Training & Pro Bono", "Fixed-fee billing means clients pay the same regardless of how many associates attend depositions or court; over 100 pro bono cases handled where juniors frequently take lead examination and oral argument roles " + S('WEB')]
+      ]
+    },
+    pts: [
+      "Named 2026 Trial Firm of the Year by Benchmark Litigation; founding partner Beth Wilkinson is a Chambers Star Individual and Brian Stekloff is Band 2 nationwide among trial lawyers " + L('https://www.wilkinsonstekloff.com/', 'firm site') + " " + S('WEB'),
+      "Uses an alternative fixed-fee billing model instead of traditional billable hours, allowing junior associates to travel to depositions, strategy sessions, and trials and take witness examinations early " + S('WEB'),
+      "Matched the $235,000 first-year associate pay scale (reaching $455,000 for senior associates) on June 9, 2026, and expanded with a new Miami office alongside D.C. and New York " + S('WEB')
+    ],
+    offices: {
+      ny: {
+        hc: "NY trial office (130 W 42nd St)",
+        pa: "100% High-stakes commercial, antitrust, sports & mass-tort trial litigation",
+        rec: "Partner-reviewed applications (wilkinsonstekloff.com/careers)",
+        pts: [],
+        ask: "Wilkinson Stekloff uses a fixed-fee billing model so junior associates can join depositions, client strategy sessions, and trial teams without hourly-billing constraints. What has that meant for your courtroom experience in New York?",
+        you: [],
+        alum: []
+      },
+      dc: {
+        hc: "Flagship D.C. office (2001 M St NW)",
+        pa: "100% Bet-the-company trials · Antitrust · Sports & media · Products liability · Pro bono trials",
+        rec: "Partner-reviewed applications (wilkinsonstekloff.com/careers)",
+        pts: [],
+        ask: "Wilkinson Stekloff was just named 2026 Trial Firm of the Year and staffs trials leanly under a fixed-fee model while handling over 100 pro bono cases. How quickly do first- and second-year associates get to examine witnesses or argue motions in court?",
+        you: [],
+        alum: []
+      }
+    }
+  });
+
+  // Update FOOTER to reflect 20 Oct 2026 check, Vault 2026-2027 rankings, and new profiles
+  FOOTER[0] = "Checked 20 Oct 2026. Chambers USA 2026 tables: " + L(CH.app,'Appellate Law, Nationwide') + ", " + L(CH.ny,'Litigation: General Commercial, Elite, New York') + ", " + L(CH.hr,'Highly Regarded, New York') + ", plus Vault Law 100 (2026–2027) rankings.";
+  FOOTER[1] = "Columbia OPSC Look Book (2L 2027 hires by office, 1L hiring, firm size, summer pay, assignment system, return offers) and Vault 2026–2027 Prestige & Practice rankings are integrated. Firm Prospects lit:corp bars show — where unavailable. Alumni lists come from firm bio pages and networking notes.";
+})();
+
 /* ============================ ENGINE ============================
    No edits needed below this line.
    ================================================================ */
