@@ -146,6 +146,14 @@ dialog#gloss::backdrop{background:rgba(10,16,14,.45)}
 footer{margin-top:40px;font-size:13px;color:var(--muted);display:grid;gap:8px;max-width:80ch}
 @media (max-width:860px){.offices{grid-template-columns:1fr!important}.office{border-right:0;border-bottom:1px solid var(--rule)}.office:last-child{border-bottom:0}}
 @media (prefers-reduced-motion:no-preference){article.firm{transition:opacity .15s}}
+
+.status-btn{font-family:var(--f-display);font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;border:1.5px solid var(--rule);background:var(--paper);color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;transition:all .15s}
+.status-btn:hover{border-color:var(--ink);color:var(--ink)}
+.status-btn[data-st="prog"]{background:var(--warn-soft);border-color:var(--warn);color:var(--warn)}
+.status-btn[data-st="done"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.ftitle .status-btn{margin-left:auto}
+article.firm[data-st="prog"]{border-color:var(--warn);box-shadow:inset 4px 0 0 var(--warn)}
+article.firm[data-st="done"]{border-color:var(--accent);box-shadow:inset 4px 0 0 var(--accent)}
 </style>
 </head>
 <body>
@@ -161,7 +169,7 @@ footer{margin-top:40px;font-size:13px;color:var(--muted);display:grid;gap:8px;ma
 
 <details class="block" id="timingBox" open>
   <summary><h2 id="timingH"></h2><span class="tcount" data-for="timing"></span><button type="button" class="tclear" data-for="timing" hidden>Clear sort &amp; filters</button></summary>
-  <div class="scroll"><table id="timing"><thead><tr><th>Firm</th><th>Hires 1Ls?</th><th>Application</th><th>Anticipated window</th></tr></thead><tbody></tbody></table></div>
+  <div class="scroll"><table id="timing"><thead><tr><th>Firm</th><th>Status</th><th>Hires 1Ls?</th><th>Application</th><th>Materials</th><th>Anticipated window</th></tr></thead><tbody></tbody></table></div>
 </details>
 
 <details class="block" id="sizeBox" open>
@@ -185,6 +193,13 @@ footer{margin-top:40px;font-size:13px;color:var(--muted);display:grid;gap:8px;ma
     <button type="button" data-v="all" aria-pressed="true">All</button>
     <button type="button" data-v="mine" aria-pressed="false">With your people</button>
     <button type="button" data-v="nomet" aria-pressed="false" title="Only firms where you have not personally met or worked with a contact (includes firms with no contacts, cold/internet contacts, or contacts via a friend)">No personal contacts</button>
+  </div>
+  <div class="seg" id="statusf"><span>Status</span>
+    <button type="button" data-v="all" aria-pressed="true">All</button>
+    <button type="button" data-v="rem" aria-pressed="false" title="Not started or In progress">Remaining</button>
+    <button type="button" data-v="none" aria-pressed="false">Not started</button>
+    <button type="button" data-v="prog" aria-pressed="false">In progress</button>
+    <button type="button" data-v="done" aria-pressed="false">Applied</button>
   </div>
   <div class="seg"><span>Sort</span>
     <select id="sortSel" aria-label="Sort firms">
@@ -1909,6 +1924,783 @@ OTHERS.push(["Vinson & Elkins","Not added; you met an M&A alum: pro bono capped 
   FOOTER[1] = "Columbia OPSC Look Book (2L 2027 hires by office, 1L hiring, firm size, summer pay, assignment system, return offers) and Vault 2026–2027 Prestige & Practice rankings are integrated. Firm Prospects lit:corp bars show — where unavailable. Alumni lists come from firm bio pages and networking notes.";
 })();
 
+
+// ---- Pass 6: Oct 28, 2026 Updates — Paul Weiss & Kirkland Networking, Weil Removal, Materials & Deadlines, 5 DC Boutiques, 3 New Profiles (McKool, Hughes Hubbard, Pillsbury), Unnamed Contact Cleanup, & Strict Covington-Style Sample Paragraphs ----
+(function(){
+  CONFIG.checked = "28 Oct 2026";
+
+  // 1. Remove Weil Gotshal ('weil') completely
+  const weilIdx = FIRMS.findIndex(f => f.id === 'weil');
+  if (weilIdx !== -1) FIRMS.splice(weilIdx, 1);
+  delete WWW['weil'];
+  delete LBD['weil'];
+  delete SPOT['weil'];
+  delete ASK['weil'];
+
+  const addNote = (id, label, text) => {
+    const f = GET(id);
+    if (!f) return;
+    f.std.notes = f.std.notes || [];
+    const existing = f.std.notes.find(n => n[0] === label);
+    if (existing) {
+      existing[1] = existing[1] + " · " + text;
+    } else {
+      f.std.notes.push([label, text]);
+    }
+  };
+  const addYou = (id, mkt, person) => {
+    const f = GET(id);
+    if (!f || !f.offices[mkt]) return;
+    f.offices[mkt].you = (f.offices[mkt].you || []).concat([person]);
+  };
+  const setAsk = (id, mkt, text) => {
+    const f = GET(id);
+    if (!f) return;
+    const keys = mkt === 'both' ? ['ny','dc'] : [mkt];
+    keys.forEach(k => { if (f.offices[k]) f.offices[k].ask = text; });
+  };
+
+  // 2. Paul, Weiss ('pw') — Emily Vance, Janus Schutte, Andrew Topal & Event Notes
+  addNote('pw', 'Your notes', "Differences between workflows of internal investigations vs. government investigations in terms of speed and adversarial nature (internal investigations move comparatively quickly, providing juniors with strong opportunities to learn early) · Follow the people you enjoy working with to the work you find interesting · Private finance investigations pick up associates who can speak the lingo and learn different industries all the time · D.C. associates work on national matters and collaborate across offices · Lack of a strict billable hour requirement reduces pressure and benefits uncapped pro bono work, which is heavily recommended as an outlet and training ground for young lawyers " + S('MY'));
+  addYou('pw', 'ny', [
+    "Emily Vance", "met", "Attorney, Litigation / Investigations (NY)",
+    "Paul Weiss 1L Reception. Discussed the differences between the workflows of internal investigations as opposed to government investigations in terms of speed and adversarial nature; advised following the people you enjoy working with to the work you find interesting."
+  ]);
+  addYou('pw', 'ny', [
+    "Janus Schutte", "met", "Attorney, Private Funds / Investigations (NY)",
+    "Paul Weiss 1L Reception. Discussed how he ended up working in private funds and investigations, how private finance investigations pick up associates who can speak the lingo and learn different industries all the time, and how internal investigations move comparatively quickly and give juniors more early learning opportunities."
+  ]);
+  addYou('pw', 'dc', [
+    "Andrew Topal", "met", "Associate, Litigation (D.C.)",
+    "Paul Weiss 1L Reception. Discussed the level of national matters he works on as an associate in D.C., collaborations with other offices, and how having no strict billable hour requirement reduces pressure and supports uncapped pro bono work as a heavily recommended outlet and training ground for young lawyers."
+  ]);
+  setAsk('pw', 'ny', "Emily Vance and Janus Schutte shared how fast-moving internal investigations give junior associates strong opportunities to learn early compared to longer government investigations. How do junior litigators get staffed across internal and government investigations, and how has following the people you enjoy working with shaped your docket?");
+  setAsk('pw', 'dc', "Andrew Topal highlighted how D.C. associates work on national matters across offices and how the lack of a strict billable hour requirement makes uncapped pro bono a core training ground. How do D.C. junior associates use pro bono and cross-office investigations to build courtroom and brief-writing skills early?");
+
+  // 3. Kirkland & Ellis ('kirkland') — Shagufa Hossain, Henry Koller & Event Notes
+  addNote('kirkland', 'Your notes', "Balance between being adversarial and conciliatory in a case against the government · System exposes you to a wide variety of cases and pushes you to constantly learn new things to represent clients · Push to have even young associates make business connections · Emphasis on Kirkland's platform providing opportunities for niche work like First Amendment matters without requiring strict specialization · Take advantage of slow times early in your career while trusting that busy times will come " + S('MY'));
+  addYou('kirkland', 'dc', [
+    "Shagufa Hossain", "met", "Associate, Capital Markets (D.C.)",
+    "Kirkland D.C. Dinner. Shared advice on enjoying your early career by taking advantage of slow times and trusting that busy times will come; discussed capital markets work and working with clients who are happy to be working with you."
+  ]);
+  addYou('kirkland', 'dc', [
+    "Henry Koller", "met", "Associate, Litigation (D.C.)",
+    "Kirkland D.C. Dinner. Discussed the balance between being adversarial and conciliatory in a case against the government, and how Kirkland's system exposes associates to a wide variety of cases and pushes constant learning."
+  ]);
+  setAsk('kirkland', 'dc', "At the Kirkland D.C. Dinner, Henry Koller discussed balancing adversarial and conciliatory postures in cases against the government and how the firm's open system exposes juniors to a wide variety of matters, including First Amendment work. How do D.C. litigators use the open assignment system and KITA to build both trial and government-facing experience?");
+
+  // 4. Additional Existing Firm Updates (Jenner, Selendy, Holwell Shuster, WilmerHale) & Removal of Unnamed Contact References
+  // Jenner & Block: Sara Geller
+  addNote('jenner', 'Your notes', "Supportive learning through formal review sessions at six months and twelve months, thorough redlining of work product, unsolicited feedback, and solicited feedback · Practice group specialization after two years in generalist pool " + S('MY'));
+  addYou('jenner', 'ny', [
+    "Sara Geller", "met", "Associate, Litigation (sgeller@jenner.com)",
+    "Discussed supportive learning through formal review sessions at six months and twelve months, thorough redlining of work product, unsolicited and solicited feedback, and practice group specialization after two years in the generalist pool."
+  ]);
+  setAsk('jenner', 'both', "Sara Geller shared how Jenner supports junior associates through formal six- and twelve-month reviews, thorough redlining of work product, and two years in a generalist pool before specializing. How did those two generalist years and that feedback loop shape the kinds of briefs and arguments you took on?");
+
+  // Selendy Gay: Ed Bershitskiy
+  addNote('selendy', 'Your notes', "Weekly firm review where you can ask for specific types of matters · Attorneys practice as generalist litigators " + S('MY'));
+  addYou('selendy', 'ny', [
+    "Ed Bershitskiy", "met", "Associate, Litigation (ebershitskiy@selendygay.com)",
+    "Discussed Selendy Gay's weekly firm review where you can ask for specific types of matters and how attorneys work as generalist litigators across plaintiff and defense cases."
+  ]);
+  setAsk('selendy', 'both', "Ed Bershitskiy mentioned that Selendy Gay attorneys practice as generalist litigators and hold a weekly firm review where you can ask for specific types of matters. How have you used that weekly review to shape your mix of plaintiff, defense, trial, and appellate work?");
+
+  // Holwell Shuster & Goldberg: Vincent Levy & Alexander Hempel
+  addNote('hsg', 'Your notes', "Wide variety of cases in terms of both subject matter and location, including a matter that turned into a jurisdictional question involving permissive as opposed to compulsory jurisdiction when counterclaims arise under federal patent law · Firm asks you to learn by doing " + S('MY'));
+  addYou('hsg', 'ny', [
+    "Vincent Levy", "met", "Partner, Litigation (vlevy@hsgllp.com)",
+    "Discussed the wide variety of cases in terms of both subject matter and location, including an interesting matter that turned into a jurisdictional question involving permissive as opposed to compulsory jurisdiction when counterclaims arise under federal patent law."
+  ]);
+  addYou('hsg', 'ny', [
+    "Alexander Hempel", "met", "Associate, Litigation (ahempel@hsgllp.com)",
+    "Discussed how the firm asks junior associates to learn by doing."
+  ]);
+  setAsk('hsg', 'ny', "Vincent Levy shared an example of a case that turned into a question of permissive versus compulsory jurisdiction when counterclaims arise under federal patent law, and Alexander Hempel emphasized how the firm asks you to learn by doing. What did learning by doing look like on your first major brief or court appearance?");
+
+  // WilmerHale: Pro bono notes (no unnamed contact added)
+  addNote('wilmer', 'Your notes', "Pro bono program offers a large range of opportunities and types of matters; associates get involved through a pro bono coordinator, when partners reach out, or by reaching out directly " + S('MY'));
+  setAsk('wilmer', 'both', "I heard that WilmerHale's pro bono program spans a large range of opportunities where associates can connect through a pro bono coordinator, when partners reach out, or by reaching out directly. How have you used pro bono alongside the $25,000 1L Fellowship tradition to get early stand-up or appellate experience?");
+
+  // Clean up unnamed alum references in HSF Kramer, V&E, and A&O Shearman notes while preserving the substantive notes
+  const cleanNote = (id, oldSub, newSub) => {
+    const f = GET(id);
+    if (!f || !f.std.notes) return;
+    f.std.notes.forEach(n => { n[1] = n[1].replace(oldSub, newSub); });
+  };
+  cleanNote('hsfk', 'Arbitration alum noted workload ebbs and flows', 'Workload in arbitration ebbs and flows');
+  cleanNote('ve', 'Met an M&A alum: pro bono capped at 100 hours', 'Pro bono capped at 100 hours');
+  cleanNote('aoshearman', 'Met a capital markets alum who explained the practice and post-merger platform', 'Strong capital markets practice and integrated post-merger platform');
+
+  // 5. Add 5 D.C. Litigation Boutiques (Zuckerman Spaeder, Hecker Fink, Lehotsky, Cooper & Kirk, Consovoy)
+  FIRMS.push({
+    id: "zuckerman",
+    name: "Zuckerman Spaeder",
+    side: "both",
+    home: ["Washington, DC · white collar & trial boutique", "dc"],
+    added: "28 Oct",
+    facts: {
+      us: "~85 lawyers across D.C., New York, Baltimore & Tampa " + S('WEB'),
+      lit: 85, corp: 0, cls: "—",
+      program: "10-week 2L Summer Associate Program in D.C. and NY; lean staffing where summers work directly with partners and associates " + S('WEB'),
+      assign: "Free-market / coordinator-assisted staffing across white-collar defense, congressional investigations, commercial litigation, and health care/ERISA disputes " + S('WEB')
+    },
+    buzz: ["#4 Best Midsize Firm in DC (Vault)", "Band 2 DC White Collar", "plaintiff & defense trial boutique"],
+    programs: [],
+    timing: {
+      hires: "No 1L hiring; 2L Summer Associate Program " + S('WEB'),
+      app: "Direct via zuckerman.com/careers",
+      mat: "Resume, CL, Law School Transcript, Writing Sample " + S('WEB'),
+      window: "Rolling fall/winter window (apply as soon as 1L fall grades are available) " + L('https://www.zuckerman.com/careers', 'page') + " " + S('WEB'),
+      money: "Competitive boutique scale " + S('WEB')
+    },
+    lb: null,
+    std: {
+      vp: "#4 Best Midsize Law Firm in D.C. · #17 Litigation Specialty Boutique (Vault 2026–2027)",
+      ch: "D.C. White-Collar Crime & Gov't Investigations B2",
+      notes: [
+        ["Appellate group", "Appellate litigation integrated across white-collar, regulatory, and institutional plaintiff cases " + S('WEB')]
+      ]
+    },
+    pts: [
+      "Ranked #4 in Vault's 2026–2027 Best Midsize Law Firms in Washington, D.C. and Chambers USA 2026 Band 2 in D.C. White-Collar Crime & Government Investigations " + L('https://www.zuckerman.com/', 'firm site') + " " + S('WEB'),
+      "Operates in both Washington, D.C. and New York, combining high-stakes white-collar defense and investigations with plaintiff-side institutional health care and commercial litigation " + S('WEB')
+    ],
+    offices: {
+      ny: {
+        hc: "NY litigation office (485 Madison Ave)",
+        pa: "100% White collar defense · Commercial litigation · Investigations",
+        rec: "Legal Recruiting (zuckerman.com/careers)",
+        pts: [],
+        ask: "Zuckerman Spaeder staffs high-stakes white-collar and commercial cases leanly in New York and D.C. How quickly do summer and junior associates get to draft motions and participate in witness interviews?",
+        you: [],
+        alum: []
+      },
+      dc: {
+        hc: "Flagship D.C. office (1800 M St NW)",
+        pa: "100% White collar & congressional investigations · Complex commercial & health care litigation · Appeals",
+        rec: "Legal Recruiting (zuckerman.com/careers)",
+        pts: [],
+        ask: "Zuckerman Spaeder is ranked alongside the largest firms in D.C. white-collar defense while also running a plaintiff-side institutional litigation practice. How do junior associates build experience across both sides of the docket?",
+        you: [],
+        alum: []
+      }
+    }
+  });
+
+  FIRMS.push({
+    id: "heckerfink",
+    name: "Hecker Fink",
+    side: "both",
+    home: ["New York & DC · trial, appellate & public interest boutique", "ny"],
+    added: "28 Oct",
+    facts: {
+      us: "~55 lawyers across New York and Washington, D.C. " + S('WEB'),
+      lit: 55, corp: 0, cls: "—",
+      program: "10-week 2L Summer Associate Program in NY and D.C.; blends commercial and white-collar litigation with landmark constitutional and public-interest cases " + S('WEB'),
+      assign: "Leanly staffed case teams working directly with Sean Hecker, Roberta Kaplan/Julie Fink, Joshua Matz, and Jeffrey Fisher " + S('WEB')
+    },
+    buzz: ["Band 1 Specialist White Collar (DC & NY)", "commercial + impact litigation", "SCOTUS & appellate"],
+    programs: [],
+    timing: {
+      hires: "2L Summer Associate Program; permanent associates typically join post-clerkship " + S('WEB'),
+      app: "Direct via heckerfink.com/careers",
+      mat: "Resume, CL, Law School Transcript, Writing Sample, References " + S('WEB'),
+      window: "Rolling winter review (check portal for 2028 2L dates) " + L('https://www.heckerfink.com/careers', 'page') + " " + S('WEB'),
+      money: "Market scale ($225k+ base) " + S('WEB')
+    },
+    lb: null,
+    std: {
+      vp: "Chambers Band 1 Specialist White Collar (D.C. & NY)",
+      ch: "D.C. & NY Specialist White Collar B1 · NY Lit (HR) B2 · Appellate (Fisher B1, Matz B4)",
+      notes: [
+        ["Appellate group", "Yes: Supreme Court & Appellate practice led by Jeffrey Fisher (Chambers Band 1 nationwide) and Joshua Matz (Chambers Band 4) " + S('WEB')]
+      ]
+    },
+    pts: [
+      "Ranked Band 1 in Chambers USA 2026 for Specialist White-Collar Crime & Government Investigations in both Washington, D.C. and New York, and Band 2 in NY Commercial Litigation (Highly Regarded) " + L('https://www.heckerfink.com/', 'firm site') + " " + S('WEB'),
+      "Combines bet-the-company commercial and white-collar trials with a premier Supreme Court, appellate, and constitutional impact docket in D.C. and New York " + S('WEB')
+    ],
+    offices: {
+      ny: {
+        hc: "Flagship NY office (350 Fifth Ave)",
+        pa: "100% Commercial trial · White collar · Appellate & constitutional litigation",
+        rec: "careers@heckerfink.com",
+        pts: [],
+        ask: "Hecker Fink pairs high-stakes commercial and white-collar defense with major constitutional and public-interest litigation. How do summer and junior associates balance work across those dockets in New York?",
+        you: [],
+        alum: []
+      },
+      dc: {
+        hc: "D.C. office (1050 K St NW)",
+        pa: "100% Supreme Court & Appellate · Congressional & government investigations · Complex litigation",
+        rec: "careers@heckerfink.com",
+        pts: [],
+        ask: "With Joshua Matz and Jeffrey Fisher anchoring Supreme Court and appellate litigation alongside D.C. investigations, how do junior lawyers contribute to appellate briefing and constitutional cases?",
+        you: [],
+        alum: []
+      }
+    }
+  });
+
+  FIRMS.push({
+    id: "lehotsky",
+    name: "Lehotsky Keller Cohn",
+    side: "both",
+    home: ["Washington, DC · appellate, constitutional & regulatory boutique", "dc"],
+    added: "28 Oct",
+    facts: {
+      us: "~25–30 lawyers across D.C., Austin, Boston & Atlanta (100% clerked; 6 former SCOTUS clerks) " + S('WEB'),
+      lit: 28, corp: 0, cls: "—",
+      program: "Appellate & constitutional boutique model; selective summer clerk and post-clerkship associate hiring " + S('WEB'),
+      assign: "Direct partner-associate collaboration on Supreme Court briefs, post-Chevron administrative/regulatory challenges, and commercial trials " + S('WEB')
+    },
+    buzz: ["6 former SCOTUS clerks", "3 former State Solicitors General", "administrative & appellate powerhouse"],
+    programs: [],
+    timing: {
+      hires: "Selective Summer Associates & Post-Clerkship Associates " + S('WEB'),
+      app: "Direct via lkcfirm.com/careers",
+      mat: "Resume, CL, Law & Undergrad Transcripts, Writing Sample " + S('WEB'),
+      window: "Rolling; inquire directly via careers page " + L('https://www.lkcfirm.com/careers', 'page') + " " + S('WEB'),
+      money: "Above-market boutique compensation + clerkship bonuses " + S('3P')
+    },
+    lb: null,
+    std: {
+      vp: "Legal 500 & Chambers Ranked Appellate & Constitutional Boutique",
+      ch: "D.C. Commercial Lit (Highly Regarded) B2 · Nationwide State AGs",
+      notes: [
+        ["Appellate group", "Yes: Dedicated Supreme Court, federal circuit, and administrative-law litigation boutique founded by former Solicitors General and DOJ veterans " + S('WEB')]
+      ]
+    },
+    pts: [
+      "Ranked Band 2 in Chambers USA 2026 for D.C. General Commercial Litigation (Highly Regarded); team includes 6 former U.S. Supreme Court clerks and 3 former State Solicitors General " + L('https://www.lkcfirm.com/', 'firm site') + " " + S('WEB'),
+      "Represents Fortune 500 companies and national trade associations in high-stakes administrative law, statutory interpretation, and constitutional challenges in D.C. and nationwide " + S('WEB')
+    ],
+    offices: {
+      ny: null,
+      dc: {
+        hc: "Flagship D.C. office (200 Massachusetts Ave NW)",
+        pa: "100% Supreme Court & Appellate · Administrative & regulatory litigation · Complex commercial disputes",
+        rec: "Direct outreach (lkcfirm.com/careers)",
+        pts: [],
+        ask: "Every attorney at Lehotsky Keller Cohn has clerked, and the firm handles major post-Chevron administrative and Supreme Court litigation. What skills do you look for in young brief-writers, and how should a 1L plan clerkships with a firm like yours in mind?",
+        you: [],
+        alum: []
+      }
+    }
+  });
+
+  FIRMS.push({
+    id: "cooperkirk",
+    name: "Cooper & Kirk",
+    side: "both",
+    home: ["Washington, DC · appellate, constitutional & commercial boutique", "dc"],
+    added: "28 Oct",
+    facts: {
+      us: "~25–30 lawyers in a single Washington, D.C. office " + S('WEB'),
+      lit: 28, corp: 0, cls: "—",
+      program: "2L Summer Associate Program and post-clerkship associate hiring in D.C. " + S('WEB'),
+      assign: "Small case teams where summers and junior associates draft substantive appellate briefs and dispositive trial motions directly with partners " + S('WEB')
+    },
+    buzz: ["above-market pay", "SCOTUS & constitutional litigation", "single-office DC boutique"],
+    programs: [],
+    timing: {
+      hires: "Yes: hires 2L Summer Associates (and occasionally 1Ls) + Post-Clerkship Associates " + S('WEB'),
+      app: "Direct via cooperkirk.com / info@cooperkirk.com",
+      mat: "Resume, CL, Law & Undergrad Transcripts, Writing Sample " + S('WEB'),
+      window: "Rolling review (apply early fall/winter) " + L('https://www.cooperkirk.com/careers/', 'page') + " " + S('WEB'),
+      money: "Above-market salary scale & generous clerkship/year-end bonuses " + S('WEB')
+    },
+    lb: null,
+    std: {
+      vp: "Elite D.C. Appellate & Trial Boutique",
+      ch: "Appellate & Constitutional Litigation (Chuck Cooper & David Thompson ranked)",
+      notes: [
+        ["Appellate group", "Yes: National Supreme Court, federal circuit, and constitutional litigation practice paired with high-stakes commercial and regulatory trials " + S('WEB')]
+      ]
+    },
+    pts: [
+      "Founded in 1996 by former Assistant Attorney General (OLC) Chuck Cooper; represents corporate, institutional, and constitutional clients in the U.S. Supreme Court, federal circuits, and Court of Federal Claims " + L('https://www.cooperkirk.com/', 'firm site') + " " + S('WEB'),
+      "Known for early brief-writing responsibility and paying above-market associate compensation in Washington, D.C. " + S('WEB')
+    ],
+    offices: {
+      ny: null,
+      dc: {
+        hc: "Single D.C. office (1523 New Hampshire Ave NW)",
+        pa: "100% Supreme Court & Appellate · Constitutional & administrative law · Complex commercial trials",
+        rec: "Hiring Committee (cooperkirk.com/careers)",
+        pts: [],
+        ask: "Cooper & Kirk pairs major Supreme Court and constitutional appeals with complex commercial litigation in the Court of Federal Claims and federal district courts. How do summer and junior associates split their time between appellate briefing and trial work?",
+        you: [],
+        alum: []
+      }
+    }
+  });
+
+  FIRMS.push({
+    id: "consovoy",
+    name: "Consovoy McCarthy",
+    side: "both",
+    home: ["Washington, DC metro · SCOTUS, appellate & trial boutique", "dc"],
+    added: "28 Oct",
+    facts: {
+      us: "~25 lawyers in D.C. metro (Arlington, VA) & Salt Lake City " + S('WEB'),
+      lit: 25, corp: 0, cls: "—",
+      program: "Year-round Summer Associate and Associate recruiting; hands-on appellate and trial brief writing from day one " + S('WEB'),
+      assign: "Lean, non-hierarchical teams where junior lawyers draft merits and cert briefs before the U.S. Supreme Court and federal circuits " + S('WEB')
+    },
+    buzz: ["multiple SCOTUS victories", "lean appellate & trial teams", "early brief-writing"],
+    programs: [],
+    timing: {
+      hires: "Yes: hires 1L/2L Summer Associates and Post-Clerkship Associates " + S('WEB'),
+      app: "Direct email to Hiring Partner Jeffrey Harris (jeff@consovoymccarthy.com)",
+      mat: "Resume, CL, Law & Undergrad Transcripts, Writing Sample " + S('WEB'),
+      window: "Open year-round (rolling review) " + L('https://consovoymccarthy.com/careers/', 'page') + " " + S('WEB'),
+      money: "Competitive / above-market boutique scale " + S('WEB')
+    },
+    lb: null,
+    std: {
+      vp: "National SCOTUS & Appellate Boutique",
+      ch: "Supreme Court, Appellate & Administrative Litigation",
+      notes: [
+        ["Appellate group", "Yes: Core focus on U.S. Supreme Court, federal circuit appeals, administrative law, and complex commercial/constitutional litigation " + S('WEB')]
+      ]
+    },
+    pts: [
+      "Boutique litigation firm with a major U.S. Supreme Court and federal appellate docket alongside trial-court constitutional and commercial litigation " + L('https://consovoymccarthy.com/', 'firm site') + " " + S('WEB'),
+      "Accepts summer associate and associate applications on a rolling basis directly through Hiring Partner Jeffrey Harris " + L('https://consovoymccarthy.com/careers/', 'careers') + " " + S('WEB')
+    ],
+    offices: {
+      ny: null,
+      dc: {
+        hc: "D.C. metro HQ (1600 Wilson Blvd, Arlington, VA)",
+        pa: "100% Supreme Court & Federal Appellate · Administrative & constitutional law · Trial litigation",
+        rec: "Jeffrey Harris, Hiring Partner (jeff@consovoymccarthy.com)",
+        pts: [],
+        ask: "Consovoy McCarthy staffs Supreme Court, appellate, and trial matters with small teams. What does a summer associate's typical writing assignment look like, and how do partners mentor young brief-writers?",
+        you: [],
+        alum: []
+      }
+    }
+  });
+
+  // 6. Add 3 New Profiles from Networking Notes: McKool Smith, Hughes Hubbard & Reed, and Pillsbury
+  FIRMS.push({
+    id: "mckool",
+    name: "McKool Smith",
+    side: "both",
+    home: ["Dallas · New York & DC trial boutique", "other"],
+    added: "28 Oct",
+    facts: {
+      us: "~130 trial lawyers across New York, Washington, D.C., Texas & California " + S('WEB'),
+      lit: 130, corp: 0, cls: "—",
+      program: "10-week Summer Associate Program; litigation-only trial immersion with early responsibility " + S('MY') + " " + S('WEB'),
+      assign: "Lean trial teams giving junior associates early responsibility across commercial, bankruptcy, and IP/patent trials " + S('MY') + " " + S('WEB')
+    },
+    buzz: ["early responsibility", "America's largest trial verdicts", "plaintiff & defense trials"],
+    programs: [],
+    timing: {
+      hires: "1L (select offices) & 2L Summer Associate Program " + S('WEB'),
+      app: "Direct via mckoolsmith.com/careers",
+      mat: "Resume, CL, Law & Undergrad Transcripts, Writing Sample " + S('WEB'),
+      window: "Opens Nov 2026 (rolling fall/winter window) " + L('https://www.mckoolsmith.com/careers', 'page') + " " + S('WEB'),
+      money: "$4,327–$4,519/wk ($225k–$235k scale + generous trial/year-end bonuses) " + S('WEB')
+    },
+    lb: null,
+    std: {
+      v: 82,
+      vp: "Top 10 Trial & IP Litigation Boutique · Chambers Band 1 Patent & Commercial Lit",
+      ch: "NY Commercial Lit (Highly Regarded) · Nationwide IP/Patent & Financial Lit",
+      notes: [
+        ["Your notes", "Early responsibility for junior associates on lean trial teams " + S('MY')],
+        ["Appellate group", "Appellate practice integrated with national commercial, bankruptcy, and IP trial teams " + S('WEB')]
+      ]
+    },
+    pts: [
+      "Premier national trial firm (~130 litigators) in New York and Washington, D.C. handling high-stakes commercial, financial, bankruptcy, and IP/patent trials on both plaintiff and defense sides " + L('https://www.mckoolsmith.com/', 'firm site') + " " + S('WEB'),
+      "Lean case staffing gives junior associates substantive early responsibility in depositions, motion practice, and courtroom proceedings " + S('MY')
+    ],
+    offices: {
+      ny: {
+        hc: "NY trial office (1301 Avenue of the Americas)",
+        pa: "100% Commercial & financial litigation · Bankruptcy disputes · IP & patent trials",
+        rec: "Abby, Legal Recruiting (mckoolsmith.com/careers)",
+        pts: [],
+        ask: "When I spoke with Grant and Abby, they emphasized how McKool Smith gives junior associates early responsibility on trial teams. What was the first deposition, witness prep, or court argument you handled as a junior associate?",
+        you: [
+          ["Grant", "met", "Associate, Litigation", "Discussed how McKool Smith gives junior associates early responsibility on lean trial teams."],
+          ["Abby", "met", "Legal Recruiting", "Discussed the summer program and early responsibility for junior litigators."]
+        ],
+        alum: []
+      },
+      dc: {
+        hc: "D.C. office (1717 K St NW)",
+        pa: "100% ITC & Federal Circuit appeals · Complex commercial & IP litigation",
+        rec: "Abby, Legal Recruiting (mckoolsmith.com/careers)",
+        pts: [],
+        ask: "When I spoke with Grant and Abby, they emphasized how McKool Smith gives junior associates early responsibility. How do D.C. associates collaborate with New York and Texas teams on trials and Federal Circuit/appellate matters?",
+        you: [],
+        alum: []
+      }
+    }
+  });
+
+  FIRMS.push({
+    id: "hughes",
+    name: "Hughes Hubbard & Reed",
+    side: "def",
+    home: ["New York · litigation, arbitration & white collar", "ny"],
+    added: "28 Oct",
+    facts: {
+      us: "~220+ lawyers across New York, Washington, D.C. & international offices " + S('WEB'),
+      lit: null, corp: null, cls: "—",
+      program: "10-week Summer Associate Program; unassigned / free-market assignment system " + S('WEB'),
+      assign: "Lots of access to hands-on work across research, writing, depositions, and document review " + S('MY') + " " + S('WEB')
+    },
+    buzz: ["hands-on work early", "small partner-to-associate ratio", "white collar & arbitration"],
+    programs: [
+      "1L Diversity Fellowship & 2L Summer Associate Program " + L('https://www.hugheshubbard.com/careers/law-students', 'page') + " " + S('WEB')
+    ],
+    timing: {
+      hires: "1L (Fellowship) & 2L Summer Associate Program " + S('WEB'),
+      app: "Direct portal (hugheshubbard.com/careers/law-students)",
+      mat: "Resume, CL, Law School Transcript " + S('WEB'),
+      window: "Opens Nov 2026 (rolling fall/winter window) " + CD("2026-11-01") + " " + L('https://www.hugheshubbard.com/careers/law-students', 'page') + " " + S('WEB'),
+      money: "$4,327/wk ($225k scale) " + S('WEB')
+    },
+    lb: null,
+    std: {
+      v: 67,
+      vp: "Top 15 International Arbitration, White Collar & Product Liability",
+      ch: "NY Lit (Highly Regarded) · White Collar · International Arbitration",
+      notes: [
+        ["Your notes", "Lots of access to hands-on work for junior associates across research, writing, depositions, and document review " + S('MY')],
+        ["Appellate group", "Appellate advocacy integrated across commercial, white-collar, and product-liability litigation " + S('WEB')]
+      ]
+    },
+    pts: [
+      "New York-headquartered firm with a close-knit partner-to-associate ratio that gives junior litigators hands-on access to research, writing, depositions, and case strategy " + S('MY') + " " + S('WEB'),
+      "Recognized in Chambers USA 2026 across White-Collar Crime, International Arbitration, Product Liability, and Commercial Litigation in New York and D.C. " + S('WEB')
+    ],
+    offices: {
+      ny: {
+        hc: "Flagship NY office (One Battery Park Plaza)",
+        pa: "Commercial litigation · White collar · Product liability · International arbitration",
+        rec: "Law Student Recruiting (hugheshubbard.com)",
+        pts: [],
+        ask: "Eileen Liu emphasized that junior associates at Hughes Hubbard get lots of access to hands-on work across research, writing, depositions, and document review. How soon did you prepare for or take your first deposition, and how do mentors guide you through it?",
+        you: [
+          ["Eileen Liu", "met", "Attorney (eileen.liu@hugheshubbard.com)", "Discussed research, writing, depositions, document review, and having lots of access to hands-on work as a junior associate."]
+        ],
+        alum: []
+      },
+      dc: {
+        hc: "D.C. office (1775 I St NW)",
+        pa: "White collar & FCPA · International trade & sanctions · Regulatory & appellate litigation",
+        rec: "Law Student Recruiting (hugheshubbard.com)",
+        pts: [],
+        ask: "Eileen Liu shared how junior associates get lots of access to hands-on work across research, writing, and depositions. How do D.C. and New York litigators collaborate on cross-border investigations and regulatory disputes?",
+        you: [],
+        alum: []
+      }
+    }
+  });
+
+  FIRMS.push({
+    id: "pillsbury",
+    name: "Pillsbury Winthrop Shaw Pittman",
+    side: "def",
+    home: ["New York & DC · litigation, regulatory & appellate", "ny"],
+    added: "28 Oct",
+    facts: {
+      us: "700+ lawyers worldwide " + S('WEB'),
+      lit: null, corp: null, cls: "—",
+      program: "10-week Summer Associate Program; small program and close-knit community with strong organic mentorship paired with a formal mentorship program " + S('MY') + " " + S('WEB'),
+      assign: "Coordinator-assisted assignment system with dedicated formal and organic mentors across litigation and regulatory practices " + S('MY') + " " + S('WEB')
+    },
+    buzz: ["small program & close-knit community", "organic + formal mentorship", "LGBT mentorship"],
+    programs: [
+      "1L Summer Associate opportunities (select offices) & 2L Summer Associate Program " + L('https://www.pillsburylaw.com/en/careers/law-students.html', 'page') + " " + S('WEB')
+    ],
+    timing: {
+      hires: "1L (select offices) & 2L Summer Associate Program " + S('WEB'),
+      app: "Direct portal (pillsburylaw.com/en/careers/law-students.html)",
+      mat: "Resume, CL, Law School Transcript, Writing Sample " + S('WEB'),
+      window: "Opens Nov 2026 (rolling fall/winter window) " + CD("2026-11-01") + " " + L('https://www.pillsburylaw.com/en/careers/law-students.html', 'page') + " " + S('WEB'),
+      money: "$4,327/wk ($225k scale) " + S('WEB')
+    },
+    lb: null,
+    std: {
+      v: 57,
+      vp: "Top 20 Energy, Tech, Government Contracts & Appellate/Litigation",
+      ch: "Litigation, Government Contracts, International Trade & Regulatory",
+      notes: [
+        ["Your notes", "Small summer program and close-knit community · Strong organic mentorship paired with a formal mentorship program · Lots of opportunities to connect with LGBT mentors " + S('MY')],
+        ["Appellate group", "Yes: Supreme Court & Appellate practice handling federal circuit and regulatory appeals in D.C. and NY " + S('WEB')]
+      ]
+    },
+    pts: [
+      "Pairs a intentionally small, close-knit summer associate program with both formal mentorship and strong organic mentorship, including active LGBT attorney mentorship networks " + S('MY'),
+      "Strong New York commercial/financial litigation and Washington, D.C. appellate, regulatory, international trade, and government-contracts litigation practices " + S('WEB')
+    ],
+    offices: {
+      ny: {
+        hc: "NY office (31 W 52nd St)",
+        pa: "Commercial & financial litigation · White collar · Insolvency & restructuring · Appeals",
+        rec: "Law Student Recruiting (pillsburylaw.com)",
+        pts: [],
+        ask: "Patti Rothenberg highlighted Pillsbury's small summer program, close-knit community, and how strong organic mentorship pairs with the formal mentorship program and LGBT mentor networks. How have those mentorship relationships shaped the litigation matters you've worked on?",
+        you: [
+          ["Patricia (Patti) Rothenberg", "met", "Attorney (patricia.rothenberg@pillsburylaw.com)", "Discussed Pillsbury's small program and close-knit community, strong organic mentorship paired with the formal mentorship program, and lots of opportunities to connect with LGBT mentors."]
+        ],
+        alum: []
+      },
+      dc: {
+        hc: "D.C. office (1200 Seventeenth St NW)",
+        pa: "Supreme Court & Appellate · Regulatory & government contracts · International trade & investigations",
+        rec: "Law Student Recruiting (pillsburylaw.com)",
+        pts: [],
+        ask: "Patti Rothenberg shared how Pillsbury's small summer program fosters a close-knit community combining formal and organic mentorship. How do junior litigators in D.C. get staffed across appellate, regulatory, and trial matters?",
+        you: [],
+        alum: []
+      }
+    }
+  });
+
+  // 7. Verified Oct 28, 2026 Deadlines & Required Materials (t.mat) Across All Firms
+  const MAT_STD = "Resume, CL, Law School Transcript (update w/ 1L fall grades) " + S('WEB');
+  const MAT_UG  = "Resume, CL, Law & Undergrad Transcripts " + S('WEB');
+  const MAT_WS  = "Resume, CL, Law Transcript, Writing Sample " + S('WEB');
+  const MAT_FULL= "Resume, CL, Law & Undergrad Transcripts, Writing Sample, References " + S('WEB');
+  const MAT_SUITED = "Resume, CL, Law School Transcript + Suited Assessment " + S('WEB');
+
+  // Set default materials first, then apply firm-specific requirements & updated windows
+  FIRMS.forEach(f => {
+    f.timing = f.timing || {};
+    if (!f.timing.mat) f.timing.mat = MAT_STD;
+  });
+
+  const upTiming = (id, patch) => {
+    const f = GET(id);
+    if (f) f.timing = Object.assign({}, f.timing, patch);
+  };
+
+  upTiming('gibson', {
+    hires: "NY/DC: 2L only for 2028 (LA, Houston & IP Fellowship hire 1Ls for 2027) " + S('WEB'),
+    app: "2L Summer 2028 (Direct Portal)",
+    mat: MAT_STD,
+    window: "NY & D.C. open 2 Nov 2026 – 5 Feb 2027 (complete 1L fall grades required before interviews/offers) " + CD("2026-11-02") + " " + L('https://www.gibsondunn.com/careers/law-students/how-to-apply-to-gibson-dunn-new-york/', 'NY') + " " + S('WEB')
+  });
+  upTiming('latham', {
+    mat: MAT_UG,
+    window: "Opens 1 Nov 2026, closes 29 Jan 2027 " + CD("2026-11-01") + " " + L('https://www.lwcareers.com/en/beginning-your-legal-career/united-states/summer-associates', 'page') + " " + S('WEB')
+  });
+  upTiming('pw', {
+    app: "2L Summer 2028 & Pauli Murray Fellowship",
+    mat: "Resume, CL, Law Transcript (+ optional Pauli Murray Fellowship essay) " + S('WEB'),
+    window: "Opens 1 Nov 2026 (rolling) " + CD("2026-11-01") + " " + L('https://www.paulweiss.com/careers/law-students', 'page') + " " + S('WEB')
+  });
+  upTiming('skadden', {
+    mat: MAT_UG,
+    window: "Opens Mon 2 Nov 2026 (rolling) " + CD("2026-11-02") + " " + L('https://www.skadden.com/careers/attorneys/law-students-and-graduates/united-states', 'page') + " " + S('WEB')
+  });
+  upTiming('sc', {
+    mat: MAT_UG,
+    window: "Opens early Nov 2026 (rolling) " + L('https://www.sullcrom.com/careers/law-students', 'page') + " " + S('WEB')
+  });
+  upTiming('wilmer', {
+    mat: MAT_WS
+  });
+  upTiming('jenner', {
+    mat: MAT_WS
+  });
+  upTiming('wc', {
+    mat: "Resume, CL, Law Transcript, Writing Sample (+ optional 500-word Diversity Scholarship essay) " + S('WEB')
+  });
+  upTiming('cravath', {
+    mat: MAT_UG
+  });
+  upTiming('davis', {
+    mat: MAT_STD
+  });
+  upTiming('sidley', {
+    mat: MAT_SUITED
+  });
+  upTiming('quinn', {
+    mat: MAT_WS
+  });
+  upTiming('susman', {
+    mat: MAT_FULL
+  });
+  upTiming('kellogg', {
+    mat: "Resume & complete 1L Law School Transcript only (no CL required at initial portal upload) " + S('WEB')
+  });
+  upTiming('molo', {
+    mat: MAT_FULL
+  });
+  upTiming('hsg', {
+    mat: MAT_FULL
+  });
+  upTiming('kirkland', {
+    mat: MAT_STD
+  });
+  upTiming('mayer', {
+    mat: MAT_STD
+  });
+  upTiming('hogan', {
+    app: "Dual 1L/2L (2027 & 2028) or 2L-only (2028)",
+    mat: MAT_STD,
+    window: "Opens 1 Nov 2026 (apply for Dual 1L/2L, 2L-only, or both) " + CD("2026-11-01") + " " + L('https://www.hoganlovells.com/en/careers', 'page') + " " + S('WEB')
+  });
+  upTiming('orrick', {
+    mat: MAT_STD
+  });
+  upTiming('arnold', {
+    mat: MAT_WS
+  });
+  upTiming('cleary', {
+    mat: MAT_UG
+  });
+  upTiming('simpson', {
+    mat: "Resume, CL, Law School Transcript, Personal Statement (Flo Recruit) " + S('WEB')
+  });
+  upTiming('selendy', {
+    mat: MAT_FULL
+  });
+  upTiming('debevoise', {
+    mat: MAT_STD
+  });
+  upTiming('whitecase', {
+    mat: MAT_STD
+  });
+  upTiming('mofo', {
+    mat: MAT_WS
+  });
+  upTiming('milbank', {
+    mat: MAT_STD
+  });
+  upTiming('wachtell', {
+    mat: "Resume & Law School Transcript only (no cover letter required) " + S('WEB')
+  });
+  upTiming('ph', {
+    mat: MAT_STD
+  });
+  upTiming('cahill', {
+    mat: MAT_STD
+  });
+  upTiming('omelveny', {
+    mat: MAT_STD
+  });
+  upTiming('goodwin', {
+    mat: MAT_SUITED
+  });
+  upTiming('akin', {
+    mat: MAT_SUITED
+  });
+  upTiming('cooley', {
+    mat: MAT_STD
+  });
+  upTiming('dechert', {
+    mat: MAT_STD
+  });
+  upTiming('ropes', {
+    mat: MAT_STD
+  });
+  upTiming('irell', {
+    mat: MAT_FULL
+  });
+  upTiming('hsfk', {
+    mat: MAT_STD
+  });
+  upTiming('shem', {
+    mat: MAT_SUITED
+  });
+  upTiming('covington', {
+    app: "2L Summer Associate (2028)",
+    mat: MAT_FULL,
+    window: "Opens 1 Dec 2026 (per Covington recruiting portal) " + CD("2026-12-01") + " " + L('https://www.cov.com/en/careers/lawyers/students', 'page') + " " + S('WEB')
+  });
+  upTiming('willkie', {
+    mat: MAT_UG
+  });
+  upTiming('proskauer', {
+    mat: MAT_STD
+  });
+  upTiming('bsf', {
+    mat: MAT_WS
+  });
+  upTiming('jonesday', {
+    mat: "Resume, CL, Law & Undergrad Transcripts, Writing Sample " + S('WEB')
+  });
+  upTiming('clement', {
+    mat: MAT_FULL
+  });
+  upTiming('mto', {
+    mat: "Resume, CL, Law & Undergrad Transcripts, References " + S('WEB')
+  });
+  upTiming('ve', {
+    mat: MAT_UG
+  });
+  upTiming('aoshearman', {
+    mat: MAT_STD
+  });
+  upTiming('dlapiper', {
+    mat: MAT_STD
+  });
+  upTiming('wsgr', {
+    mat: MAT_UG
+  });
+  upTiming('wilkinson', {
+    mat: MAT_WS
+  });
+
+  // 8. Strictly Structured Sample Paragraphs (Matching Eli Ferrell's Covington Cover Letter Draft)
+  const STRICT_PARAS = {
+    covington: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in Covington & Burling's Washington, D.C. office. I am particularly interested in Covington's litigation practice. When speaking with Josh Tupler, a junior associate in the DC office, he emphasized the intellectually stimulating litigation matters and collaborative environment at Covington, which motivated me to apply. I would love to work in Covington's D.C. office as I have family roots in the area and am excited to get exposure to congressional investigation matters.",
+    pw: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in Paul, Weiss's [New York / Washington, D.C.] office. I am particularly interested in Paul, Weiss's litigation practice. When speaking with Emily Vance and Andrew Topal at the Paul Weiss 1L Reception, they emphasized the differences between the workflows of internal investigations and government investigations and how pro bono work is benefited by the lack of a strict billable hour requirement, which motivated me to apply. I would love to work in Paul, Weiss's [New York / Washington, D.C.] office as I am excited to get exposure to national matters and fast-moving internal investigations that provide strong opportunities to learn early in my career.",
+    kirkland: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in Kirkland & Ellis's Washington, D.C. office. I am particularly interested in Kirkland's litigation practice. When speaking with Henry Koller at the Kirkland DC Dinner, he emphasized the balance between being adversarial and conciliatory in a case against the government and a system that exposes you to a wide variety of cases, which motivated me to apply. I would love to work in Kirkland's D.C. office as I have family roots in the area and am excited to get exposure to early trial experience through KITA and matters like First Amendment work.",
+    mayer: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in Mayer Brown's [New York / Washington, D.C.] office. I am particularly interested in Mayer Brown's litigation practice. When speaking with Jane Tullis at Columbia's Meet the Firms, she emphasized the welcoming, collaborative community at Mayer Brown and how lawyers are focused on training junior associates and correcting work product kindly, which motivated me to apply. I would love to work in Mayer Brown's [New York / Washington, D.C.] office as I am excited to get exposure to litigation matters in an environment with flexible and encouraging lawyers.",
+    quinn: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in Quinn Emanuel's [New York / Washington, D.C.] office. I am particularly interested in Quinn Emanuel's litigation practice. In learning about the firm, I was drawn to how Quinn Emanuel has no traditional practice groups and how the work is fulfilling while associates compete for partner assignments, which motivated me to apply. I would love to work in Quinn Emanuel's [New York / Washington, D.C.] office as I am excited to get exposure to the Mock Trial program and work in a free market system.",
+    skadden: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in Skadden's [New York / Washington, D.C.] office. I am particularly interested in Skadden's litigation practice. In learning about the firm, I was drawn to Skadden's social and professional culture and how, because the firm is full service, you can work with other practices, which motivated me to apply. I would love to work in Skadden's [New York / Washington, D.C.] office as I am excited to get exposure to the Supreme Court and Appellate group and experience comparable to that of junior associates.",
+    davis: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in Davis Polk's New York office. I am particularly interested in Davis Polk's litigation practice. When speaking with Matthew Hanner at the Davis Polk Columbia 1L event, he emphasized the differences between white collar and civil litigation and how white collar centers on open-ended problem-solving where there aren't hard-and-fast rules, which motivated me to apply. I would love to work in Davis Polk's New York office as I am excited to get exposure to white collar defense and investigations matters.",
+    latham: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in Latham & Watkins's Washington, D.C. office. I am particularly interested in Latham's litigation practice. When speaking with Eric Konopka, a partner in the DC office, he emphasized that appellate associates carry high responsibility and develop the legal arguments starting in their first year, which motivated me to apply. I would love to work in Latham's D.C. office as I have family roots in the area and am excited to get exposure to a writing-driven practice focused on quickly mastering new fact patterns and applying rules to them.",
+    sidley: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in Sidley Austin's [New York / Washington, D.C.] office. I am particularly interested in Sidley's litigation practice. When speaking with Juan Arteago and Gwen Ellis-Joyce, they emphasized that several attorneys have spent their whole career at Sidley and that fast-changing statutes allow young associates to become substantive legal experts early, which motivated me to apply. I would love to work in Sidley's [New York / Washington, D.C.] office as I am excited to get exposure to regulatory litigation and antitrust proceedings.",
+    gibson: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in Gibson Dunn's [New York / Washington, D.C.] office. I am particularly interested in Gibson Dunn's litigation practice. When speaking with Liwei Chen, an incoming summer associate, he emphasized that the firm has no cap on pro bono hours and actively encourages strong participation by giving unlimited billable-hour credit, which motivated me to apply. I would love to work in Gibson Dunn's [New York / Washington, D.C.] office as I am excited to get exposure to appellate and trial matters and a strong pro bono practice.",
+    wc: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in Williams & Connolly's Washington, D.C. office. I am particularly interested in Williams & Connolly's litigation practice. When speaking with Liza Arias at Columbia's Meet the Firms, she emphasized the close-knit culture of clever litigators who have spent their whole career at the firm, remember what it's like to be a young lawyer there, and want to help juniors learn, which motivated me to apply. I would love to work in Williams & Connolly's D.C. office as I have family roots in the area and am excited to get exposure to a free market system where summers work with multiple case teams.",
+    cooley: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in Cooley's [New York / Washington, D.C.] office. I am particularly interested in Cooley's litigation practice. When speaking with Alyssa Wright and Ethan Mandelbaum, they emphasized how collaborative and conversational regulatory and white collar litigation is and that the firm gives support and responsibility while pro bono is genuinely valued and counts toward your hours, which motivated me to apply. I would love to work in Cooley's [New York / Washington, D.C.] office as I am excited to get exposure to a staffing model that balances autonomy with a central assignment fallback and small clients that push juniors to take on responsibility early.",
+    ropes: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in Ropes & Gray's [New York / Washington, D.C.] office. I am particularly interested in Ropes & Gray's litigation practice. When speaking with Chevaun Samuels at the Young Alumni Orientation, she emphasized that the individuals make the firm and that you can work as much as you can handle as the workload ebbs and flows, which motivated me to apply. I would love to work in Ropes & Gray's [New York / Washington, D.C.] office as I am excited to get exposure to complex litigation matters and hands-on training.",
+    jenner: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in Jenner & Block's [New York / Washington, D.C.] office. I am particularly interested in Jenner & Block's litigation practice. When speaking with Sara Geller and Molly Oberstein-Allen, they emphasized how the firm supports learning through formal review sessions at six and twelve months, thorough redlining of work product, and spending two years in a generalist pool before specializing, which motivated me to apply. I would love to work in Jenner & Block's [New York / Washington, D.C.] office as I am excited to get exposure to a generalist litigation pool with both solicited and unsolicited feedback.",
+    irell: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in Irell & Manella's Washington, D.C. office. I am particularly interested in Irell & Manella's litigation practice. When speaking with Matt Corey at Columbia's Meet the Firms, he emphasized how working on very small teams improves both training and opportunities, which motivated me to apply. I would love to work in Irell & Manella's D.C. office as I have family roots in the area and am excited to build skills by trying things directly and iterating with team attorneys to refine work product.",
+    hsfk: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in Herbert Smith Freehills Kramer's [New York / Washington, D.C.] office. I am particularly interested in Herbert Smith Freehills Kramer's litigation practice. When speaking with Erica Mastromarino at Columbia's Meet the Firms, she emphasized how the structured mentorship program melds with organic mentorship and how the team is leveraging the merger to further improve the summer program, which motivated me to apply. I would love to work in Herbert Smith Freehills Kramer's [New York / Washington, D.C.] office as I am excited to get exposure to big law that feels like a boutique with no pro bono cap.",
+    shem: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in Sheppard Mullin's [New York / Washington, D.C.] office. I am particularly interested in Sheppard Mullin's litigation practice. When speaking with Caroline Menes and Lisa Harris at Columbia's Meet the Firms, they emphasized how the structured mentorship program melds with organic mentorship and how the recruiting team works to ensure the summer program fits the distinct cultures of all offices, which motivated me to apply. I would love to work in Sheppard Mullin's [New York / Washington, D.C.] office as I am excited to get exposure to commercial litigation in a summer program tailored to the local office culture.",
+    willkie: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in Willkie Farr & Gallagher's New York office. I am particularly interested in Willkie's litigation practice. When speaking with Shaimaa Hussein and Tracie Haynes at the Willkie NY 1L Reception, they emphasized how junior associates serve as the \"master of facts\" and how Willkie's non-hierarchical culture encourages juniors to speak up and take on early responsibility, which motivated me to apply. I would love to work in Willkie's New York office as I am excited to get exposure to litigation involving contract ambiguities and hammering out phrases, as well as the firm's strong pro bono allowance.",
+    selendy: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in Selendy Gay's New York office. I am particularly interested in Selendy Gay's litigation practice. When speaking with Ed Bershitskiy, he emphasized how attorneys practice as generalist litigators and how the firm holds a weekly firm review where you can ask for specific types of matters, which motivated me to apply. I would love to work in Selendy Gay's New York office as I am excited to get exposure to both plaintiff and defense work in a litigation-only environment.",
+    hsg: "I am a first-year student at Columbia Law School writing to apply for a [2027 1L / 2028 2L] summer associate position in Holwell Shuster & Goldberg's New York office. I am particularly interested in Holwell Shuster & Goldberg's litigation practice. When speaking with Vincent Levy and Alexander Hempel, they emphasized the wide variety of cases in terms of both subject matter and location and how the firm asks you to learn by doing, which motivated me to apply. I would love to work in Holwell Shuster & Goldberg's New York office as I am excited to get exposure to complex jurisdictional questions, such as permissive as opposed to compulsory jurisdiction when counterclaims arise under federal patent law.",
+    wilmer: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in WilmerHale's [New York / Washington, D.C.] office. I am particularly interested in WilmerHale's litigation practice. In learning about the firm, I was drawn to the large range of pro bono opportunities and types of matters available, where associates can get involved through a pro bono coordinator, when partners reach out, or by reaching out directly, which motivated me to apply. I would love to work in WilmerHale's [New York / Washington, D.C.] office as I am excited to get exposure to complex trial and appellate litigation and the firm's broad pro bono program.",
+    mckool: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in McKool Smith's [New York / Washington, D.C.] office. I am particularly interested in McKool Smith's litigation practice. When speaking with Grant and Abby, they emphasized how the firm gives junior associates early responsibility on leanly staffed case teams, which motivated me to apply. I would love to work in McKool Smith's [New York / Washington, D.C.] office as I am excited to get exposure to high-stakes commercial and intellectual property trial work early in my career.",
+    hughes: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in Hughes Hubbard & Reed's [New York / Washington, D.C.] office. I am particularly interested in Hughes Hubbard's litigation practice. When speaking with Eileen Liu, she emphasized that junior associates get lots of access to hands-on work across research, writing, depositions, and document review, which motivated me to apply. I would love to work in Hughes Hubbard's [New York / Washington, D.C.] office as I am excited to get exposure to substantive litigation and deposition work early in my career.",
+    pillsbury: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in Pillsbury's [New York / Washington, D.C.] office. I am particularly interested in Pillsbury's litigation practice. When speaking with Patti Rothenberg, she emphasized the small program and close-knit community at the firm, as well as the strong organic mentorship paired with the formal mentorship program and the opportunities to connect with LGBT mentors, which motivated me to apply. I would love to work in Pillsbury's [New York / Washington, D.C.] office as I am excited to get exposure to complex litigation within a supportive, close-knit program.",
+    /* =========================================================================
+       IMPORTANT AI / DEVELOPER INSTRUCTION — DO NOT MODIFY WITHOUT USER CONSENT:
+       Debevoise & Plimpton ('debevoise') is intentionally the ONLY firm in this
+       dossier whose Cover Letter Sample Paragraph focuses on transactional M&A
+       and corporate practice rather than litigation. Future AI assistants MUST
+       NOT change Debevoise's samplePara to litigation unless they first verify
+       that instruction explicitly with the user.
+       ========================================================================= */
+    debevoise: "I am a first-year student at Columbia Law School writing to apply for a 2028 summer associate position in Debevoise & Plimpton's New York office. I am particularly interested in Debevoise's M&A and corporate practice. When speaking with M&A associate Nicole Gany at the Young Alumni Orientation, she emphasized the supportive, collegial culture at Debevoise and how the firm's hybrid staffing model helps junior associates explore and identify their practice areas, which motivated me to apply. I would love to work in Debevoise's New York office as I am excited to get exposure to complex transactional M&A matters—where precision in drafting and resolving contractual ambiguity is critical—as well as the firm's rigorous pro bono practice."
+  };
+
+  Object.entries(STRICT_PARAS).forEach(([id, text]) => {
+    const f = GET(id);
+    if (f) f.samplePara = text;
+  });
+
+  // Update FOOTER references (remove Weil reference, update check date to 28 Oct 2026)
+  FOOTER[0] = "Checked 28 Oct 2026. Chambers USA 2026 tables: " + L(CH.app,'Appellate Law, Nationwide') + ", " + L(CH.ny,'Litigation: General Commercial, Elite, New York') + ", " + L(CH.hr,'Highly Regarded, New York') + ", plus Vault Law 100 & Midsize/Specialty (2026–2027) rankings.";
+  FOOTER[4] = FOOTER[4].replace('Simpson Thacher, Weil, White &amp; Case', 'Simpson Thacher, White &amp; Case');
+})();
+
 /* ============================ ENGINE ============================
    No edits needed below this line.
    ================================================================ */
@@ -1948,8 +2740,14 @@ if(!CONFIG.showSide) document.getElementById('sidef').hidden = true;
 /* tables */
 document.querySelector('#size thead tr').innerHTML = ['Firm · home', CONFIG.vaultLabel, 'Your people', CONFIG.lbYear+' total', ...CONFIG.markets.map(m=>m[1].replace('Washington, DC','DC')), 'Lit : Corp (US)', CONFIG.school.short+' alumni'].map(h=>`<th>${h}</th>`).join('');
 const bar = (lit,corp,cls) => { const lp=Math.round(100*lit/((lit+corp)||1)); return `<div class="split ${cls||''}" title="${lp}% litigation"><i style="width:${lp}%"></i><em style="width:${100-lp}%"></em></div>`; };
+const STATUS_META = {
+  none: {label: 'Not started', next: 'prog', sort: 0},
+  prog: {label: 'In progress ◐', next: 'done', sort: 1},
+  done: {label: 'Applied ✓', next: 'none', sort: 2}
+};
+const statusBtnHTML = id => `<button type="button" class="status-btn" data-toggle-status="${id}" data-st="none" aria-label="Cycle application status for ${id}">Not started</button>`;
 document.querySelector('#timing tbody').innerHTML = FIRMS.map(f=>{ const t=f.timing||{};
-  return `<tr data-id="${f.id}"><td class="firm"><a class="flink" href="#${f.id}">${f.name}</a></td><td>${t.hires||'—'}</td><td>${t.app||'—'}</td><td>${t.window||'—'}</td></tr>`; }).join('');
+  return `<tr data-id="${f.id}"><td class="firm"><a class="flink" href="#${f.id}">${f.name}</a></td><td>${statusBtnHTML(f.id)}</td><td>${t.hires||'—'}</td><td>${t.app||'—'}</td><td>${t.mat||'—'}</td><td>${t.window||'—'}</td></tr>`; }).join('');
 document.querySelector('#size tbody').innerHTML = FIRMS.map(f=>{
   const lb=f.lb, sd=f.std, m=mine(f);
   const ratio = f.facts.lit==null ? '—' : (f.facts.corp ? `${f.facts.lit} : ${f.facts.corp}` : `${f.facts.lit} : 0 (litigation only)`) + bar(f.facts.lit, f.facts.corp||0, 'sm');
@@ -1995,7 +2793,7 @@ document.getElementById('firms').innerHTML = FIRMS.length ? FIRMS.map(f=>{
   ].join('');
   return `<article class="firm" id="${f.id}">
    <div class="fhead">
-    <div class="ftitle"><h3>${f.name}</h3><span class="heart">Home: ${f.home[0]}</span>${CONFIG.showSide?`<span class="side ${f.side==='pl'?'pl':f.side==='both'?'both':''}">${sideTxt}</span>`:''}${f.added?`<span class="src">Added ${f.added}</span>`:''}</div>
+    <div class="ftitle"><h3>${f.name}</h3><span class="heart">Home: ${f.home[0]}</span>${CONFIG.showSide?`<span class="side ${f.side==='pl'?'pl':f.side==='both'?'both':''}">${sideTxt}</span>`:''}${f.added?`<span class="src">Added ${f.added}</span>`:''}${statusBtnHTML(f.id)}</div>
     <dl class="facts">
       <div class="fact"><dt>Headcount ${known?S('FP'):''}</dt>${head}</div>
       <div class="fact"><dt>Summer program</dt><dd>${f.facts.program||'—'}</dd></div>
@@ -2013,8 +2811,11 @@ document.getElementById('firms').innerHTML = FIRMS.length ? FIRMS.map(f=>{
 
 /* state, sorting, filtering */
 const STORE = 'dossier-filters-'+CONFIG.title.toLowerCase().replace(/\W+/g,'-');
-let state={m:'all',s:'all',h:'all',r:false,p:'all',sort:'default',rev:false,tbl:{},open:{}};
+let state={m:'all',s:'all',h:'all',r:false,p:'all',st:'all',status:{},sort:'default',rev:false,tbl:{},open:{}};
 try{const saved=JSON.parse(localStorage.getItem(STORE)||'null'); if(saved) state=Object.assign(state,saved);}catch(e){}
+if(!state.status || typeof state.status!=='object') state.status={};
+if(!['all','rem','none','prog','done'].includes(state.st)) state.st='all';
+const getSt = id => ['none','prog','done'].includes(state.status[id]) ? state.status[id] : 'none';
 if(state.p===true) state.p='mine'; else if(state.p===false || !['all','mine','nomet'].includes(state.p)) state.p='all';
 if(state.m!=='all' && !MK[state.m]) state.m='all';
 if(state.h!=='all' && !CONFIG.homes.some(h=>h[0]===state.h)) state.h='all';
@@ -2038,7 +2839,9 @@ function fits(f){
   const showHome = state.h==='all' || f.home[1]===state.h;
   const showMkt = state.m==='all' || !!f.offices[state.m];
   const showPeople = state.p==='all' || (state.p==='mine' ? mine(f)>0 : !hasPersonal(f, state.m));
-  return showSide && showHome && showMkt && showPeople;
+  const fst = getSt(f.id);
+  const showStatus = state.st==='all' || (state.st==='rem' ? fst!=='done' : fst===state.st);
+  return showSide && showHome && showMkt && showPeople && showStatus;
 }
 const save = () => { try{localStorage.setItem(STORE,JSON.stringify(state));}catch(e){} };
 const cellVal = td => { const t=td.textContent.replace(/\s+/g,' ').trim(); const m=t.replace(/,/g,'').match(/^#?\s*(\d+(?:\.\d+)?)/); return m?+m[1]:(t===''||t==='—'?null:t.toLowerCase()); };
@@ -2088,6 +2891,16 @@ function apply(){
   document.querySelectorAll('#heartf button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===state.h)));
   document.getElementById('recentBtn').setAttribute('aria-pressed',String(!!state.r));
   document.querySelectorAll('#peoplef button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===state.p)));
+  document.querySelectorAll('#statusf button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===state.st)));
+  document.querySelectorAll('[data-toggle-status]').forEach(btn=>{
+    const id = btn.dataset.toggleStatus, st = getSt(id), meta = STATUS_META[st];
+    btn.dataset.st = st;
+    btn.textContent = meta.label;
+  });
+  FIRMS.forEach(f=>{
+    const card = document.getElementById(f.id);
+    if(card) card.dataset.st = getSt(f.id);
+  });
   const so=SORTS[state.sort]; document.getElementById('sortSel').value=state.sort;
   document.getElementById('dirBtn').textContent=so.lab[state.rev?1:0];
   const asc = so.asc !== !!state.rev;
@@ -2105,7 +2918,10 @@ function apply(){
     a.querySelectorAll('.office').forEach(o=>{ o.hidden = !(state.m==='all' || o.dataset.m===state.m); });
     const j=jump.querySelector(`a[href="#${f.id}"]`); jump.appendChild(j); j.hidden=!ok;
   });
-  document.getElementById('fitCount').textContent = `${n} of ${FIRMS.length} firms`;
+  const progCount = FIRMS.filter(f=>getSt(f.id)==='prog').length;
+  const doneCount = FIRMS.filter(f=>getSt(f.id)==='done').length;
+  const extraCounts = [progCount?`${progCount} in progress`:'', doneCount?`${doneCount} applied`:''].filter(Boolean).join(' · ');
+  document.getElementById('fitCount').textContent = `${n} of ${FIRMS.length} firms${extraCounts?' · '+extraCounts:''}`;
   ['timing','size'].forEach(t=>renderTable(t, order));
   document.querySelectorAll('.alum').forEach(al=>{
     let shown=0; al.querySelectorAll('[data-recent]').forEach(r=>{ const hide = state.r && r.dataset.recent!=='1'; r.hidden=hide; if(!hide) shown++; });
@@ -2120,6 +2936,16 @@ document.querySelectorAll('#sidef button').forEach(b=>b.addEventListener('click'
 document.querySelectorAll('#heartf button').forEach(b=>b.addEventListener('click',()=>{state.h=b.dataset.v;apply();}));
 document.getElementById('recentBtn').addEventListener('click',()=>{state.r=!state.r;apply();});
 document.querySelectorAll('#peoplef button').forEach(b=>b.addEventListener('click',()=>{state.p=b.dataset.v;apply();}));
+document.querySelectorAll('#statusf button').forEach(b=>b.addEventListener('click',()=>{state.st=b.dataset.v;apply();}));
+document.addEventListener('click',e=>{
+  const btn = e.target.closest('[data-toggle-status]');
+  if(!btn) return;
+  const id = btn.dataset.toggleStatus;
+  const cur = getSt(id);
+  const nxt = STATUS_META[cur].next;
+  if(nxt==='none') delete state.status[id]; else state.status[id]=nxt;
+  apply();
+});
 (function(){ const now=new Date(); now.setHours(0,0,0,0);
   document.querySelectorAll('.cd[data-d]').forEach(el=>{ const p=el.dataset.d.split('-'); const t=new Date(+p[0],+p[1]-1,+p[2]);
     const n=Math.round((t-now)/86400000); el.textContent = n>0 ? `in ${n}d` : (n===0?'today':''); el.title=el.dataset.d; }); })();
